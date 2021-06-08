@@ -1,0 +1,6 @@
+= Diet server
+:groupId: io.github.oliviercailloux
+:artifactId: diet-server
+:repository: Diet-server
+
+A JAX-RS server for the Diet project. Based on my https://github.com/oliviercailloux/Sample-Quarkus-Heroku[Sample Quarkus on Heroku].
