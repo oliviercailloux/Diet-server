@@ -1,10 +1,12 @@
 #Maven
 target/
-.mvn/wrapper/
 
 # Eclipse
 .project
 .classpath
 .settings/
 bin/
+
+#Quarkus
+.env
 
