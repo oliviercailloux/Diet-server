@@ -21,7 +21,7 @@ public class Startup {
 		userService.add("admin", "admin", "admin");
 		final User user = userService.add("user", "user", "user");
 
-		final Event event = new Event(user, Instant.now());
+		final Event event = new EventAccepted(user, Instant.now());
 		user.addEvent(event);
 		em.persist(event);
 		em.persist(user);
