@@ -4,6 +4,7 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 @RequestScoped
 public class UserService {
@@ -15,14 +16,16 @@ public class UserService {
 	 *
 	 * @param username the user name
 	 * @param password the unencrypted password (it will be encrypted with bcrypt)
-	 * @param role     the comma-separated roles
+	 * @param role     a role, no comma
 	 */
-	public void add(String username, String password, String role) {
+	@Transactional
+	public User add(String username, String password, String role) {
 		User user = new User();
-		user.username = username;
-		user.password = BcryptUtil.bcryptHash(password);
-		user.role = role;
+		user.setUsername(username);
+		user.setPassword(BcryptUtil.bcryptHash(password));
+		user.setRole(role);
 		em.persist(user);
+		return user;
 	}
 
 }
