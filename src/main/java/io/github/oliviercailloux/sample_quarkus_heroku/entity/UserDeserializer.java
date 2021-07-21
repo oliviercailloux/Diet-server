@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import java.io.IOException;
 
+/**
+ * Untested.
+ */
 @SuppressWarnings("serial")
 public class UserDeserializer extends StdDeserializer<User> {
 	public UserDeserializer() {
