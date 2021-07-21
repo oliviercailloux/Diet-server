@@ -1,5 +1,6 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;

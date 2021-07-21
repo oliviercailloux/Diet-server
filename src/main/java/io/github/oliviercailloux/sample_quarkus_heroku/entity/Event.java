@@ -1,9 +1,8 @@
-package io.github.oliviercailloux.sample_quarkus_heroku;
+package io.github.oliviercailloux.sample_quarkus_heroku.entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.time.Instant;
@@ -16,9 +15,13 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
+/**
+ * Deserializing with the default Jackson strategy will create an event with a
+ * null user, which we do not want. We should deserialize only in the context of
+ * a User.
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonDeserialize(using = EventDeserializer.class)
 public class Event {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

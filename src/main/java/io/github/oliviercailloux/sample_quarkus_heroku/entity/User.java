@@ -1,8 +1,9 @@
-package io.github.oliviercailloux.sample_quarkus_heroku;
+package io.github.oliviercailloux.sample_quarkus_heroku.entity;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @UserDefinition
+@JsonDeserialize(using = UserDeserializer.class)
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,6 +44,10 @@ public class User {
 
 	public User() {
 		events = new ArrayList<>();
+	}
+
+	void rectifyEvents() {
+		events.forEach(e -> e.user = this);
 	}
 
 	public String getUsername() {

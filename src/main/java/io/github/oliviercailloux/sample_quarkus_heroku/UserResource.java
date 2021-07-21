@@ -1,5 +1,6 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.Event;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

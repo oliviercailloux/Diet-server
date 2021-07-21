@@ -1,5 +1,8 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.Event;
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
 import io.quarkus.runtime.StartupEvent;
 import java.time.Instant;
 import javax.enterprise.event.Observes;
