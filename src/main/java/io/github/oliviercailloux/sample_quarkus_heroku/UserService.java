@@ -5,13 +5,16 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NamedQuery;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RequestScoped
-@NamedQuery(name = "getUser", query = "SELECT u FROM User u WHERE username = :username")
 public class UserService {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+
 	@Inject
 	EntityManager em;
 
@@ -36,7 +39,9 @@ public class UserService {
 	public User get(String username) {
 		final TypedQuery<User> q = em.createNamedQuery("getUser", User.class);
 		q.setParameter("username", username);
-		return q.getSingleResult();
+		final User user = q.getSingleResult();
+		LOGGER.info("Got user {}, with events size {}.", username, user.getEvents().size());
+		return user;
 	}
 
 }

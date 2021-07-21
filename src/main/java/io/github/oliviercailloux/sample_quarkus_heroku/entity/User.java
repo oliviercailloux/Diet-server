@@ -3,8 +3,10 @@ package io.github.oliviercailloux.sample_quarkus_heroku.entity;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
@@ -17,12 +19,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @UserDefinition
 @JsonDeserialize(using = UserDeserializer.class)
+@NamedQuery(name = "getUser", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE username = :username")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +38,7 @@ public class User {
 	private String username;
 	@Password
 	@NotNull
+	@JsonIgnore
 	private String password;
 	@Roles
 	@NotNull
@@ -74,6 +79,10 @@ public class User {
 	public void setRole(String role) {
 		checkArgument(!role.contains(","));
 		this.role = role;
+	}
+
+	public List<Event> getEvents() {
+		return ImmutableList.copyOf(events);
 	}
 
 	public void addEvent(Event event) {
