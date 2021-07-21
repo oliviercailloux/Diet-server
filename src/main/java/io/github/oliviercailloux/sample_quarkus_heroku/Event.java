@@ -2,6 +2,8 @@ package io.github.oliviercailloux.sample_quarkus_heroku;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.time.Instant;
@@ -16,6 +18,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@JsonDeserialize(using = EventDeserializer.class)
 public class Event {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +26,7 @@ public class Event {
 
 	@ManyToOne
 	@NotNull
+	@JsonIgnore
 	User user;
 
 	@NotNull
