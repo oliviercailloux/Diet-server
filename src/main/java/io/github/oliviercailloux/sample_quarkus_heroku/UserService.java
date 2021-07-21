@@ -5,9 +5,12 @@ import io.quarkus.elytron.security.common.BcryptUtil;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NamedQuery;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 @RequestScoped
+@NamedQuery(name = "getUser", query = "SELECT u FROM User u WHERE username = :username")
 public class UserService {
 	@Inject
 	EntityManager em;
@@ -27,6 +30,13 @@ public class UserService {
 		user.setRole(role);
 		em.persist(user);
 		return user;
+	}
+
+	@Transactional
+	public User get(String username) {
+		final TypedQuery<User> q = em.createNamedQuery("getUser", User.class);
+		q.setParameter("username", username);
+		return q.getSingleResult();
 	}
 
 }
