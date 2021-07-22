@@ -13,6 +13,9 @@ import javax.ws.rs.core.SecurityContext;
 @Path("/users")
 public class UserResource {
 
+	@Context
+	SecurityContext securityContext;
+
 	@Inject
 	UserService service;
 
@@ -20,8 +23,17 @@ public class UserResource {
 	@RolesAllowed("user")
 	@Path("/me")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public User me(@Context SecurityContext securityContext) {
+	public User me() {
+		return getCurrentUser();
+	}
+
+	private String getCurrentUsername() {
 		final String username = securityContext.getUserPrincipal().getName();
+		return username;
+	}
+
+	private User getCurrentUser() {
+		final String username = getCurrentUsername();
 		return service.get(username);
 	}
 }
