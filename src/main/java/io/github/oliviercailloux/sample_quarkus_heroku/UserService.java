@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,9 @@ public class UserService {
 
 	@Inject
 	EntityManager em;
+
+	@Inject
+	SecurityContext securityContext;
 
 	/**
 	 * Adds a new user in the database
@@ -42,6 +46,15 @@ public class UserService {
 		final User user = q.getSingleResult();
 		LOGGER.info("Got user {}, with events size {}.", username, user.getEvents().size());
 		return user;
+	}
+
+	public User getCurrentUser() {
+		return get(getCurrentUsername());
+	}
+
+	public String getCurrentUsername() {
+		LOGGER.info("Context: {}.", securityContext);
+		return securityContext.getUserPrincipal().getName();
 	}
 
 }
