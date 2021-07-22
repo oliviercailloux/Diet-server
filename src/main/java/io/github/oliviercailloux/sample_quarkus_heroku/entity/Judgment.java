@@ -18,9 +18,9 @@ public class Judgment {
 	private int id;
 
 	@NotNull
-	int daysVegan;
+	private int daysVegan;
 	@NotNull
-	int daysMeat;
+	private int daysMeat;
 
 	Judgment() {
 		/* For JPA. */

@@ -6,10 +6,12 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.time.Instant;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class EventJudgment extends Event {
 
+	@NotNull
 	private Judgment judgment;
 
 	EventJudgment() {
