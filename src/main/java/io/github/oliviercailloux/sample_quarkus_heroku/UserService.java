@@ -1,5 +1,6 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.Event;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import javax.enterprise.context.RequestScoped;
@@ -42,6 +43,13 @@ public class UserService {
 		final User user = q.getSingleResult();
 		LOGGER.info("Got user {}, with events size {}.", username, user.getEvents().size());
 		return user;
+	}
+
+	public void addEvent(Event event) {
+		final User user = event.getUser();
+		user.addEvent(event);
+		em.persist(event);
+		em.persist(user);
 	}
 
 }
