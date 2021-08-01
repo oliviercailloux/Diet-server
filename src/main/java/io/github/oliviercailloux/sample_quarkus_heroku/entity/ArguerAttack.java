@@ -4,11 +4,11 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
-import javax.annotation.Nonnull;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class ArguerAttack {
@@ -17,10 +17,10 @@ public class ArguerAttack {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Nonnull
+	@NotNull
 	private Video video;
 
-	@Nonnull
+	@NotNull
 	private Video counters;
 
 	ArguerAttack() {
