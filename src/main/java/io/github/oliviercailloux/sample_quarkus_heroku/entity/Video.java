@@ -21,7 +21,6 @@ public class Video {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@NotNull
 	@Column(unique = true)
 	private int fileId;
