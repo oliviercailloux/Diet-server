@@ -1,6 +1,8 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Event;
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.Judgment;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import javax.enterprise.context.RequestScoped;
@@ -45,9 +47,19 @@ public class UserService {
 		return user;
 	}
 
-	public void addEvent(Event event) {
+	public void addEvent(EventAccepted event) {
 		final User user = event.getUser();
 		user.addEvent(event);
+		em.persist(event);
+		em.persist(user);
+	}
+
+	public void addEvent(EventJudgment event) {
+		final User user = event.getUser();
+		user.addEvent(event);
+		final Judgment judgment = event.getJudgment();
+		em.persist(judgment);
+		LOGGER.info("Persisting {}.", judgment);
 		em.persist(event);
 		em.persist(user);
 	}

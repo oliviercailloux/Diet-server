@@ -30,6 +30,8 @@ public class Judgment {
 		checkArgument(0 <= daysVegan);
 		checkArgument(0 <= daysMeat);
 		checkArgument(daysVegan + daysMeat <= 5);
+		this.daysVegan = daysVegan;
+		this.daysMeat = daysMeat;
 	}
 
 	public int getDaysVegan() {

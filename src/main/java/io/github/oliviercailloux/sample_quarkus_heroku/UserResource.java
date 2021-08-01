@@ -1,6 +1,5 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Event;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.Judgment;
@@ -59,7 +58,7 @@ public class UserResource {
 			throw new WebApplicationException(Response.Status.CONFLICT);
 		}
 
-		final Event event = new EventAccepted(user, Instant.now());
+		final EventAccepted event = new EventAccepted(user, Instant.now());
 		service.addEvent(event);
 		return user;
 	}
@@ -76,7 +75,7 @@ public class UserResource {
 			throw new WebApplicationException(Response.Status.CONFLICT);
 		}
 
-		final Event event = new EventJudgment(user, Instant.now(), judgment);
+		final EventJudgment event = new EventJudgment(user, Instant.now(), judgment);
 		service.addEvent(event);
 		return user;
 	}

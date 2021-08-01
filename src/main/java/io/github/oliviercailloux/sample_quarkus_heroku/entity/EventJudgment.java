@@ -1,16 +1,20 @@
 package io.github.oliviercailloux.sample_quarkus_heroku.entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.time.Instant;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
 public class EventJudgment extends Event {
 
+	@ManyToOne(fetch = FetchType.EAGER)
 	@NotNull
 	private Judgment judgment;
 
@@ -24,6 +28,7 @@ public class EventJudgment extends Event {
 	}
 
 	public Judgment getJudgment() {
+		verify(judgment != null);
 		return judgment;
 	}
 

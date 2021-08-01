@@ -95,6 +95,6 @@ public class User {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("username", username).add("role", role).toString();
+		return MoreObjects.toStringHelper(this).add("id", id).add("username", username).add("role", role).toString();
 	}
 }
