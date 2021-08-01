@@ -38,9 +38,11 @@ public class Video {
 
 	Video() {
 		counters = new LinkedHashSet<>();
+		counteredBy = new LinkedHashSet<>();
 	}
 
 	public Video(String description) {
+		this();
 		this.description = checkNotNull(description);
 	}
 
