@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	private int id;
 
 	@Username
@@ -50,6 +51,13 @@ public class User {
 
 	public User() {
 		events = new ArrayList<>();
+	}
+
+	public User(String username, String encryptedPassword, String role) {
+		this();
+		this.username = checkNotNull(username);
+		this.password = checkNotNull(encryptedPassword);
+		this.role = checkNotNull(role);
 	}
 
 	void rectifyEvents() {
@@ -91,6 +99,11 @@ public class User {
 		final boolean isAccepted = event instanceof EventAccepted;
 		checkArgument(isAccepted == events.isEmpty());
 		events.add(event);
+	}
+
+	public ImmutableList<Video> getSeen() {
+		return events.stream().filter(e -> e instanceof EventSeen).map(e -> (EventSeen) e).map(EventSeen::getVideo)
+				.collect(ImmutableList.toImmutableList());
 	}
 
 	@Override

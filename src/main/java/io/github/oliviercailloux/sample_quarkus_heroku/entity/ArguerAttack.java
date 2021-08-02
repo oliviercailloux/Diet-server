@@ -46,7 +46,8 @@ public class ArguerAttack {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("id", id).add("video", video).add("counters", counters).toString();
+		return MoreObjects.toStringHelper(this).add("id", id).add("video file id", video.getFileId())
+				.add("counters file id", counters.getFileId()).toString();
 	}
 
 }

@@ -1,9 +1,12 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
+import com.google.common.collect.ImmutableList;
+import io.github.oliviercailloux.sample_quarkus_heroku.dao.UserStatus;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.Judgment;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
+import io.github.oliviercailloux.sample_quarkus_heroku.entity.Video;
 import java.time.Instant;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -43,8 +46,10 @@ public class UserResource {
 	@RolesAllowed("user")
 	@Path("/status")
 	@Produces({ MediaType.APPLICATION_JSON })
-	public User status() {
-		return getCurrentUser();
+	public UserStatus status() {
+		final User user = getCurrentUser();
+		final ImmutableList<Video> seen = user.getSeen();
+		return seen;
 	}
 
 	@PUT

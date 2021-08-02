@@ -30,10 +30,8 @@ public class UserService {
 	 */
 	@Transactional
 	public User add(String username, String password, String role) {
-		User user = new User();
-		user.setUsername(username);
-		user.setPassword(BcryptUtil.bcryptHash(password));
-		user.setRole(role);
+		final String encryptedPassword = BcryptUtil.bcryptHash(password);
+		User user = new User(username, encryptedPassword, role);
 		em.persist(user);
 		return user;
 	}

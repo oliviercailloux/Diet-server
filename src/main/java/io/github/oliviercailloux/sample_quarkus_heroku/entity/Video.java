@@ -3,6 +3,7 @@ package io.github.oliviercailloux.sample_quarkus_heroku.entity;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import java.util.LinkedHashSet;
@@ -12,13 +13,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@NamedQuery(name = "latest file id", query = "SELECT MAX(v.fileId) FROM Video v")
+@NamedQuery(name = "replies", query = "SELECT a.video FROM Video v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
+@NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.fileId IN (1, 2)")
 public class Video {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonIgnore
 	private int id;
 
 	@NotNull
@@ -30,9 +36,11 @@ public class Video {
 	private String description;
 
 	@OneToMany(mappedBy = "video")
+	@JsonIgnore
 	private Set<ArguerAttack> counters;
 
 	@OneToMany(mappedBy = "counters")
+	@JsonIgnore
 	private Set<ArguerAttack> counteredBy;
 
 	Video() {
@@ -40,8 +48,9 @@ public class Video {
 		counteredBy = new LinkedHashSet<>();
 	}
 
-	public Video(String description) {
+	public Video(int fileId, String description) {
 		this();
+		this.fileId = fileId;
 		this.description = checkNotNull(description);
 	}
 
