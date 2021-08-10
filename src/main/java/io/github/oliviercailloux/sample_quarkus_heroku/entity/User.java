@@ -6,7 +6,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
@@ -44,6 +43,7 @@ public class User {
 	private String password;
 	@Roles
 	@NotNull
+	@JsonIgnore
 	private String role;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
@@ -90,8 +90,8 @@ public class User {
 		this.role = role;
 	}
 
-	public List<Event> getEvents() {
-		return ImmutableList.copyOf(events);
+	public ImmutableSet<Event> getEvents() {
+		return ImmutableSet.copyOf(events);
 	}
 
 	public void addEvent(Event event) {

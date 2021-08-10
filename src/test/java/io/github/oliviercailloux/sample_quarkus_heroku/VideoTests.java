@@ -1,6 +1,5 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableSet;
@@ -12,7 +11,6 @@ import javax.transaction.Transactional;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
-import org.hamcrest.text.MatchesPattern;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +24,8 @@ public class VideoTests {
 	VideoService videoService;
 
 	@Test
-	public void testNE() {
-		given().when().get("/v0/notexists").then().statusCode(404);
-	}
-
-	@Test
 	@Transactional
-	public void testGet() {
+	public void testGet() throws Exception {
 		final ImmutableSet<Video> starters = videoService.getStarters();
 		assertEquals(ImmutableSet.of(1, 2, 3, 4, 5, 6, 7, 8, 16),
 				starters.stream().map(Video::getFileId).collect(ImmutableSet.toImmutableSet()));
@@ -52,25 +45,16 @@ public class VideoTests {
 
 	@Test
 	@Transactional
-	public void testDl() {
+	public void testDl() throws Exception {
 		final ImmutableSet<Video> starters = videoService.getStarters();
 		final URI url = starters.iterator().next().getUrl();
 		LOGGER.info("Testing {}.", url);
 //		given().when().get(url).then().statusCode(Response.Status.OK.getStatusCode()).contentType(ContentType.BINARY);
 
-		Client client = ClientBuilder.newClient();
+		final Client client = ClientBuilder.newClient();
 		try (Response res = client.target(url).request().head()) {
 			assertEquals(Response.Status.OK.getStatusCode(), res.getStatus());
 		}
-	}
-
-	@Test
-	public void testPost() {
-		given().post("/v0/items");
-		given().when().get("/v0/items").then().statusCode(200).body(MatchesPattern.matchesPattern("MyItem dated .*"));
-		given().post("/v0/items");
-		given().when().get("/v0/items").then().statusCode(200)
-				.body(MatchesPattern.matchesPattern("MyItem dated .*\nMyItem dated .*"));
 	}
 
 }

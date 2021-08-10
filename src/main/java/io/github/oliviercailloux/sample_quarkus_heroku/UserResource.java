@@ -55,7 +55,7 @@ public class UserResource {
 		final ImmutableSet<Video> replies = videoService.getReplies(seen);
 		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(videoService.getStarters(), replies), seen)
 				.immutableCopy();
-		return new UserStatus(toSee.asList());
+		return new UserStatus(user, toSee.asList());
 	}
 
 	@PUT
