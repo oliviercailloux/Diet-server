@@ -22,14 +22,38 @@ public class UserService {
 	EntityManager em;
 
 	/**
-	 * Adds a new user in the database
+	 * Adds a new user in the database with role admin
 	 *
 	 * @param username the user name
 	 * @param password the unencrypted password (it will be encrypted with bcrypt)
 	 * @param role     a role, no comma
 	 */
 	@Transactional
-	public User add(String username, String password, String role) {
+	public User addAdmin(String username, String password) {
+		return add(username, password, "admin");
+	}
+
+	/**
+	 * Adds a new user in the database with role user
+	 *
+	 * @param username the user name
+	 * @param password the unencrypted password (it will be encrypted with bcrypt)
+	 * @param role     a role, no comma
+	 */
+	@Transactional
+	public User addUser(String username, String password) {
+		return add(username, password, "user");
+	}
+
+	/**
+	 * Adds a new user in the database with role user
+	 *
+	 * @param username the user name
+	 * @param password the unencrypted password (it will be encrypted with bcrypt)
+	 * @param role     a role, no comma
+	 */
+	@Transactional
+	private User add(String username, String password, String role) {
 		final String encryptedPassword = BcryptUtil.bcryptHash(password);
 		User user = new User(username, encryptedPassword, role);
 		em.persist(user);

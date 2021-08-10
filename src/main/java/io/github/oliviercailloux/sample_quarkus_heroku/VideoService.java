@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.Video;
 import java.util.List;
@@ -23,8 +25,9 @@ public class VideoService {
 	@Transactional
 	public ImmutableSet<Video> getStarters() {
 		final TypedQuery<Video> q = em.createNamedQuery("starters", Video.class);
-		final List<Video> replies = q.getResultList();
-		return ImmutableSet.copyOf(replies);
+		final List<Video> starters = q.getResultList();
+		verify(!starters.isEmpty());
+		return ImmutableSet.copyOf(starters);
 	}
 
 	@Transactional

@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import io.github.oliviercailloux.sample_quarkus_heroku.dao.UserStatus;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
@@ -30,7 +31,9 @@ public class UserResource {
 	SecurityContext securityContext;
 
 	@Inject
-	UserService service;
+	UserService userService;
+	@Inject
+	VideoService videoService;
 
 	private String getCurrentUsername() {
 		final String username = securityContext.getUserPrincipal().getName();
@@ -39,7 +42,7 @@ public class UserResource {
 
 	private User getCurrentUser() {
 		final String username = getCurrentUsername();
-		return service.get(username);
+		return userService.get(username);
 	}
 
 	@GET
@@ -48,8 +51,11 @@ public class UserResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public UserStatus status() {
 		final User user = getCurrentUser();
-		final ImmutableList<Video> seen = user.getSeen();
-		return seen;
+		final ImmutableSet<Video> seen = user.getSeen();
+		final ImmutableSet<Video> replies = videoService.getReplies(seen);
+		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(videoService.getStarters(), replies), seen)
+				.immutableCopy();
+		return new UserStatus(toSee.asList());
 	}
 
 	@PUT
@@ -64,7 +70,7 @@ public class UserResource {
 		}
 
 		final EventAccepted event = new EventAccepted(user, Instant.now());
-		service.addEvent(event);
+		userService.addEvent(event);
 		return user;
 	}
 
@@ -81,7 +87,7 @@ public class UserResource {
 		}
 
 		final EventJudgment event = new EventJudgment(user, Instant.now(), judgment);
-		service.addEvent(event);
+		userService.addEvent(event);
 		return user;
 	}
 }

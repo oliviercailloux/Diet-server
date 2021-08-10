@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
@@ -101,9 +102,12 @@ public class User {
 		events.add(event);
 	}
 
-	public ImmutableList<Video> getSeen() {
+	/**
+	 * @return in order seen
+	 */
+	public ImmutableSet<Video> getSeen() {
 		return events.stream().filter(e -> e instanceof EventSeen).map(e -> (EventSeen) e).map(EventSeen::getVideo)
-				.collect(ImmutableList.toImmutableList());
+				.collect(ImmutableSet.toImmutableSet());
 	}
 
 	@Override

@@ -6,7 +6,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import io.github.oliviercailloux.sample_quarkus_heroku.utils.Utils;
+import java.net.URI;
+import java.text.NumberFormat;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,8 +24,15 @@ import javax.validation.constraints.NotNull;
 @Entity
 @NamedQuery(name = "latest file id", query = "SELECT MAX(v.fileId) FROM Video v")
 @NamedQuery(name = "replies", query = "SELECT a.video FROM Video v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
-@NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.fileId IN (1, 2)")
+@NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.counters IS EMPTY")
 public class Video {
+	private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.ENGLISH);
+
+	static {
+		FORMATTER.setMinimumIntegerDigits(3);
+		FORMATTER.setMaximumIntegerDigits(3);
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonIgnore
@@ -56,6 +67,10 @@ public class Video {
 
 	public int getFileId() {
 		return fileId;
+	}
+
+	public URI getUrl() {
+		return Utils.https("www.lamsade.dauphine.fr", "/~ocailloux/Diet/" + FORMATTER.format(fileId) + ".mp4");
 	}
 
 	public String getDescription() {
