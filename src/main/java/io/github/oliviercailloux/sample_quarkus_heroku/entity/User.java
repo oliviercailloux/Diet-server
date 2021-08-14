@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
+import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
+import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
@@ -22,12 +24,17 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @UserDefinition
 @JsonDeserialize(using = UserDeserializer.class)
-@NamedQuery(name = "getUser", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE username = :username")
+@NamedQuery(name = "getBase64User", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.usernameUtf8ThenBase64Encoded = :username")
 public class User {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonIgnore
@@ -36,15 +43,16 @@ public class User {
 	@Username
 	@NotNull
 	@Column(unique = true)
-	private String username;
+	@JsonIgnore
+	String usernameUtf8ThenBase64Encoded;
 	@Password
 	@NotNull
 	@JsonIgnore
-	private String password;
+	String passwordUtf8ThenBase64EncodedThenEncrypted;
 	@Roles
 	@NotNull
 	@JsonIgnore
-	private String role;
+	String role;
 
 	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
 	@NotNull
@@ -54,10 +62,12 @@ public class User {
 		events = new ArrayList<>();
 	}
 
-	public User(String username, String encryptedPassword, String role) {
+	public User(String username, String clearPassword, String role) {
 		this();
-		this.username = checkNotNull(username);
-		this.password = checkNotNull(encryptedPassword);
+		this.usernameUtf8ThenBase64Encoded = Base64.from(username).getRawBase64String();
+		LOGGER.debug("Username {} stored as {}.", username, this.usernameUtf8ThenBase64Encoded);
+		final String passwordUtf8ThenBase64Encoded = Base64.from(clearPassword).getRawBase64String();
+		this.passwordUtf8ThenBase64EncodedThenEncrypted = BcryptUtil.bcryptHash(passwordUtf8ThenBase64Encoded);
 		this.role = checkNotNull(role);
 	}
 
@@ -66,28 +76,11 @@ public class User {
 	}
 
 	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+		return Base64.alreadyBase64(usernameUtf8ThenBase64Encoded).getUnencoded();
 	}
 
 	public String getRole() {
 		return role;
-	}
-
-	public void setRole(String role) {
-		checkArgument(!role.contains(","));
-		this.role = role;
 	}
 
 	public ImmutableSet<Event> getEvents() {
@@ -112,6 +105,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("id", id).add("username", username).add("role", role).toString();
+		return MoreObjects.toStringHelper(this).add("id", id).add("username base64", usernameUtf8ThenBase64Encoded)
+				.add("role", role).toString();
 	}
 }

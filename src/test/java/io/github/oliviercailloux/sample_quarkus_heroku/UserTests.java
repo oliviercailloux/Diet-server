@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.io.Resources;
+import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
 import io.quarkus.test.junit.QuarkusTest;
 import java.nio.charset.StandardCharsets;
 import javax.inject.Inject;
@@ -42,17 +43,22 @@ public class UserTests {
 	@Test
 	@Transactional
 	public void testLogIn() throws Exception {
-		given().auth().basic("user0", "user").get("/v0/me/status").then()
-				.statusCode(Response.Status.OK.getStatusCode());
+		final io.restassured.response.Response response = given().auth()
+				.basic(Base64.from("user0").getRawBase64String(), Base64.from("user").getRawBase64String())
+				.get("/v0/me/status");
+		LOGGER.info("Log in yielded: {}.", response.asPrettyString());
+		response.then().statusCode(Response.Status.OK.getStatusCode());
 	}
 
 	@Test
 	@Transactional
-	public void testGet() throws Exception {
+	public void testStatusUser0() throws Exception {
 		final String expected = Resources.toString(getClass().getResource("user0.json"), StandardCharsets.UTF_8);
-		final io.restassured.response.Response response = given().auth().basic("inited", "user").get("/v0/me/status");
+		final io.restassured.response.Response response = given().auth()
+				.basic(Base64.from("user0").getRawBase64String(), Base64.from("user").getRawBase64String())
+//				.basic(Base64.from("inited").getRawBase64String(), Base64.from("user").getRawBase64String())
+				.get("/v0/me/status");
 		final String obtained = response.body().asPrettyString();
-		LOGGER.info("Got: {}.", obtained);
 		assertEquals(expected, obtained);
 	}
 

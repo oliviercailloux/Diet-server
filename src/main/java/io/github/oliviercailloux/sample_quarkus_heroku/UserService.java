@@ -1,10 +1,10 @@
 package io.github.oliviercailloux.sample_quarkus_heroku;
 
+import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.Judgment;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
-import io.quarkus.elytron.security.common.BcryptUtil;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -54,18 +54,23 @@ public class UserService {
 	 */
 	@Transactional
 	private User add(String username, String password, String role) {
-		final String encryptedPassword = BcryptUtil.bcryptHash(password);
-		User user = new User(username, encryptedPassword, role);
+		User user = new User(username, password, role);
 		em.persist(user);
 		return user;
 	}
 
 	@Transactional
-	public User get(String username) {
-		final TypedQuery<User> q = em.createNamedQuery("getUser", User.class);
-		q.setParameter("username", username);
+	public User get(String unencodedUsername) {
+		final Base64 base64 = Base64.from(unencodedUsername);
+		LOGGER.info("Searching for unencoded {}, thus encoded {}.", unencodedUsername, base64);
+		return get(base64);
+	}
+
+	public User get(Base64 base64Username) {
+		final TypedQuery<User> q = em.createNamedQuery("getBase64User", User.class);
+		q.setParameter("username", base64Username.getRawBase64String());
 		final User user = q.getSingleResult();
-		LOGGER.info("Got user {}, with events size {}.", username, user.getEvents().size());
+		LOGGER.info("Got user encoded {}, with events size {}.", base64Username, user.getEvents().size());
 		return user;
 	}
 

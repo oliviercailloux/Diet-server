@@ -2,6 +2,7 @@ package io.github.oliviercailloux.sample_quarkus_heroku;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
 import io.github.oliviercailloux.sample_quarkus_heroku.dao.UserStatus;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
 import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
@@ -35,13 +36,13 @@ public class UserResource {
 	@Inject
 	VideoService videoService;
 
-	private String getCurrentUsername() {
+	private Base64 getCurrentUsername() {
 		final String username = securityContext.getUserPrincipal().getName();
-		return username;
+		return Base64.alreadyBase64(username);
 	}
 
 	private User getCurrentUser() {
-		final String username = getCurrentUsername();
+		final Base64 username = getCurrentUsername();
 		return userService.get(username);
 	}
 
