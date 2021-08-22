@@ -87,7 +87,7 @@ public class UserResource {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public User postJudgment(Judgment judgment) throws WebApplicationException {
+	public UserStatus postJudgment(Judgment judgment) throws WebApplicationException {
 		final User user = getCurrentUser();
 		if (user.getEvents().isEmpty()) {
 			throw new WebApplicationException(Response.Status.CONFLICT);
@@ -95,6 +95,6 @@ public class UserResource {
 
 		final EventJudgment event = new EventJudgment(user, Instant.now(), judgment);
 		userService.addEvent(event);
-		return user;
+		return getStatus(user);
 	}
 }

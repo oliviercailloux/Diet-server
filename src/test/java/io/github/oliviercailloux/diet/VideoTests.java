@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.sample_quarkus_heroku;
+package io.github.oliviercailloux.diet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
