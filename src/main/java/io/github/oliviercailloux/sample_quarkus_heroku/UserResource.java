@@ -46,12 +46,8 @@ public class UserResource {
 		return userService.get(username);
 	}
 
-	@GET
-	@RolesAllowed("user")
-	@Path("/status")
-	@Produces({ MediaType.APPLICATION_JSON })
-	public UserStatus status() {
-		final User user = getCurrentUser();
+	@Transactional
+	private UserStatus getStatus(User user) {
 		final ImmutableSet<Video> seen = user.getSeen();
 		final ImmutableSet<Video> replies = videoService.getReplies(seen);
 		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(videoService.getStarters(), replies), seen)
@@ -59,12 +55,22 @@ public class UserResource {
 		return new UserStatus(user, toSee.asList());
 	}
 
+	@GET
+	@RolesAllowed("user")
+	@Path("/status")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Transactional
+	public UserStatus status() {
+		final User user = getCurrentUser();
+		return getStatus(user);
+	}
+
 	@PUT
 	@RolesAllowed("user")
 	@Path("/accept")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public User putAccept() throws WebApplicationException {
+	public UserStatus putAccept() throws WebApplicationException {
 		final User user = getCurrentUser();
 		if (!user.getEvents().isEmpty()) {
 			throw new WebApplicationException(Response.Status.CONFLICT);
@@ -72,7 +78,7 @@ public class UserResource {
 
 		final EventAccepted event = new EventAccepted(user, Instant.now());
 		userService.addEvent(event);
-		return user;
+		return getStatus(user);
 	}
 
 	@POST
