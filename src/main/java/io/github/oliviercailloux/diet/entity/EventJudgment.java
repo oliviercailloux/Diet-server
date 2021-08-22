@@ -1,6 +1,7 @@
-package io.github.oliviercailloux.sample_quarkus_heroku.entity;
+package io.github.oliviercailloux.diet.entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -11,30 +12,31 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class EventSeen extends Event {
+public class EventJudgment extends Event {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@NotNull
-	private Video video;
+	private Judgment judgment;
 
-	EventSeen() {
+	EventJudgment() {
 		/* For JPA. */
 	}
 
-	public EventSeen(User user, Instant creation, Video video) {
+	public EventJudgment(User user, Instant creation, Judgment judgment) {
 		super(user, creation);
-		this.video = checkNotNull(video);
+		this.judgment = checkNotNull(judgment);
 	}
 
-	public Video getVideo() {
-		return video;
+	public Judgment getJudgment() {
+		verify(judgment != null);
+		return judgment;
 	}
 
 	@Override
 	public String toString() {
 		final ToStringHelper stringHelper = MoreObjects.toStringHelper(this);
 		populate(stringHelper);
-		return stringHelper.add("Video", video).toString();
+		return stringHelper.add("Judgment", judgment).toString();
 	}
 
 }

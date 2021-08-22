@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.sample_quarkus_heroku.entity;
+package io.github.oliviercailloux.diet.entity;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -6,7 +6,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.sample_quarkus_heroku.utils.Utils;
+import io.github.oliviercailloux.diet.utils.Utils;
 import java.net.URI;
 import java.text.NumberFormat;
 import java.util.LinkedHashSet;

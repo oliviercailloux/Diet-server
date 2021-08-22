@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.sample_quarkus_heroku.entity;
+package io.github.oliviercailloux.diet.entity;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;

@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.sample_quarkus_heroku.entity;
+package io.github.oliviercailloux.diet.entity;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;

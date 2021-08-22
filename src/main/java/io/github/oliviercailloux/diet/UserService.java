@@ -1,10 +1,10 @@
-package io.github.oliviercailloux.sample_quarkus_heroku;
+package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Judgment;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
+import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.entity.EventAccepted;
+import io.github.oliviercailloux.diet.entity.EventJudgment;
+import io.github.oliviercailloux.diet.entity.Judgment;
+import io.github.oliviercailloux.diet.entity.User;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

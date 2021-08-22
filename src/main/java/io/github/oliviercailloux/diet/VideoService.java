@@ -1,9 +1,9 @@
-package io.github.oliviercailloux.sample_quarkus_heroku;
+package io.github.oliviercailloux.diet;
 
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Video;
+import io.github.oliviercailloux.diet.entity.Video;
 import java.util.List;
 import java.util.Set;
 import javax.enterprise.context.RequestScoped;

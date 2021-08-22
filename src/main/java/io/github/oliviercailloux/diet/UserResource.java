@@ -1,14 +1,14 @@
-package io.github.oliviercailloux.sample_quarkus_heroku;
+package io.github.oliviercailloux.diet;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
-import io.github.oliviercailloux.sample_quarkus_heroku.dao.UserStatus;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Judgment;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Video;
+import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.UserStatus;
+import io.github.oliviercailloux.diet.entity.EventAccepted;
+import io.github.oliviercailloux.diet.entity.EventJudgment;
+import io.github.oliviercailloux.diet.entity.Judgment;
+import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.entity.Video;
 import java.time.Instant;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

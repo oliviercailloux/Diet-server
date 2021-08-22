@@ -1,13 +1,13 @@
-package io.github.oliviercailloux.sample_quarkus_heroku.dao;
+package io.github.oliviercailloux.diet.dao;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Event;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Video;
+import io.github.oliviercailloux.diet.entity.Event;
+import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.entity.Video;
 import java.util.List;
 
 @JsonPropertyOrder({ "username", "events", "seen", "toSee" })

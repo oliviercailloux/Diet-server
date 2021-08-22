@@ -4,7 +4,8 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.io.Resources;
-import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
+import io.github.oliviercailloux.diet.UserService;
+import io.github.oliviercailloux.diet.dao.Base64;
 import io.quarkus.test.junit.QuarkusTest;
 import java.nio.charset.StandardCharsets;
 import javax.inject.Inject;

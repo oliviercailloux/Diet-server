@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.sample_quarkus_heroku.entity;
+package io.github.oliviercailloux.diet.entity;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.sample_quarkus_heroku.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Base64;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;

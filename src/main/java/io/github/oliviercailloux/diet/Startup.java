@@ -1,12 +1,12 @@
-package io.github.oliviercailloux.sample_quarkus_heroku;
+package io.github.oliviercailloux.diet;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventAccepted;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.EventJudgment;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Judgment;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.User;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Video;
+import io.github.oliviercailloux.diet.entity.EventAccepted;
+import io.github.oliviercailloux.diet.entity.EventJudgment;
+import io.github.oliviercailloux.diet.entity.Judgment;
+import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.entity.Video;
 import io.quarkus.runtime.StartupEvent;
 import java.time.Instant;
 import java.util.Optional;

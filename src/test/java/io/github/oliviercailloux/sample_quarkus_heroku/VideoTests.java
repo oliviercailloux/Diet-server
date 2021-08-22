@@ -3,7 +3,8 @@ package io.github.oliviercailloux.sample_quarkus_heroku;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.sample_quarkus_heroku.entity.Video;
+import io.github.oliviercailloux.diet.VideoService;
+import io.github.oliviercailloux.diet.entity.Video;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URI;
 import javax.inject.Inject;

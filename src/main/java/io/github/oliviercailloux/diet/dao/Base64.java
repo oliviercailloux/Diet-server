@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.sample_quarkus_heroku.dao;
+package io.github.oliviercailloux.diet.dao;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
