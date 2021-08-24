@@ -36,11 +36,11 @@ public class Startup {
 		userService.addUser("user0", "user");
 		{
 			final User userAccepted = userService.addUser("accepted", "user");
-			userService.addEvent(new EventAccepted(userAccepted, Instant.now()));
+			userService.addSimpleEvent(new EventAccepted(userAccepted, Instant.now()));
 		}
 		{
 			final User userInited = userService.addUser("inited", "user");
-			userService.addEvent(new EventAccepted(userInited, Instant.now()));
+			userService.addSimpleEvent(new EventAccepted(userInited, Instant.now()));
 			final EventJudgment je = new EventJudgment(userInited, Instant.now(), new Judgment(1, 2));
 			LOGGER.info("Adding {}.", je);
 			userService.addEvent(je);

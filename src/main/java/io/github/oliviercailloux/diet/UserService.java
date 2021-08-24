@@ -1,10 +1,14 @@
 package io.github.oliviercailloux.diet;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.dao.Base64;
-import io.github.oliviercailloux.diet.entity.EventAccepted;
+import io.github.oliviercailloux.diet.dao.UserStatus;
+import io.github.oliviercailloux.diet.entity.Event;
 import io.github.oliviercailloux.diet.entity.EventJudgment;
 import io.github.oliviercailloux.diet.entity.Judgment;
 import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.entity.Video;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -20,6 +24,9 @@ public class UserService {
 
 	@Inject
 	EntityManager em;
+
+	@Inject
+	VideoService videoService;
 
 	/**
 	 * Adds a new user in the database with role admin
@@ -74,7 +81,7 @@ public class UserService {
 		return user;
 	}
 
-	public void addEvent(EventAccepted event) {
+	public void addSimpleEvent(Event event) {
 		final User user = event.getUser();
 		user.addEvent(event);
 		em.persist(event);
@@ -89,6 +96,15 @@ public class UserService {
 		LOGGER.info("Persisting {}.", judgment);
 		em.persist(event);
 		em.persist(user);
+	}
+
+	@Transactional
+	public UserStatus getStatus(User user) {
+		final ImmutableSet<Video> seen = user.getSeen();
+		final ImmutableSet<Video> replies = videoService.getReplies(seen);
+		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(videoService.getStarters(), replies), seen)
+				.immutableCopy();
+		return new UserStatus(user, toSee.asList());
 	}
 
 }

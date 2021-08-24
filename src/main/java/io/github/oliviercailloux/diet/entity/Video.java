@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 @NamedQuery(name = "latest file id", query = "SELECT MAX(v.fileId) FROM Video v")
 @NamedQuery(name = "replies", query = "SELECT a.video FROM Video v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
 @NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.counters IS EMPTY")
+@NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
 public class Video {
 	private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.ENGLISH);
 

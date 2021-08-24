@@ -23,6 +23,13 @@ public class VideoService {
 	EntityManager em;
 
 	@Transactional
+	public Video getVideo(int fileId) {
+		final TypedQuery<Video> q = em.createNamedQuery("get", Video.class);
+		q.setParameter("fileId", fileId);
+		return q.getSingleResult();
+	}
+
+	@Transactional
 	public ImmutableSet<Video> getStarters() {
 		final TypedQuery<Video> q = em.createNamedQuery("starters", Video.class);
 		final List<Video> starters = q.getResultList();
