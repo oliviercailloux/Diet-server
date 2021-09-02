@@ -3,6 +3,7 @@ package io.github.oliviercailloux.diet;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Login;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.Event;
 import io.github.oliviercailloux.diet.entity.EventJudgment;
@@ -30,38 +31,29 @@ public class UserService {
 
 	/**
 	 * Adds a new user in the database with role admin
-	 *
-	 * @param username the user name
-	 * @param password the unencrypted password (it will be encrypted with bcrypt)
-	 * @param role     a role, no comma
 	 */
 	@Transactional
-	public User addAdmin(String username, String password) {
-		return add(username, password, "admin");
+	public User addAdmin(Login login) {
+		return add(login, "admin");
+	}
+
+	/**
+	 * Adds a new user in the database with role user
+	 */
+	@Transactional
+	public User addUser(Login login) {
+		return add(login, "user");
 	}
 
 	/**
 	 * Adds a new user in the database with role user
 	 *
-	 * @param username the user name
-	 * @param password the unencrypted password (it will be encrypted with bcrypt)
-	 * @param role     a role, no comma
+	 * @param login with the unencrypted password (it will be encrypted with bcrypt)
+	 * @param role  a role, no comma
 	 */
 	@Transactional
-	public User addUser(String username, String password) {
-		return add(username, password, "user");
-	}
-
-	/**
-	 * Adds a new user in the database with role user
-	 *
-	 * @param username the user name
-	 * @param password the unencrypted password (it will be encrypted with bcrypt)
-	 * @param role     a role, no comma
-	 */
-	@Transactional
-	private User add(String username, String password, String role) {
-		User user = new User(username, password, role);
+	private User add(Login login, String role) {
+		User user = new User(login, role);
 		em.persist(user);
 		return user;
 	}

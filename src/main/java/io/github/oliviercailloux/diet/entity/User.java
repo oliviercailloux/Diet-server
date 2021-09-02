@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Login;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
@@ -62,11 +63,11 @@ public class User {
 		events = new ArrayList<>();
 	}
 
-	public User(String username, String clearPassword, String role) {
+	public User(Login login, String role) {
 		this();
-		this.usernameUtf8ThenBase64Encoded = Base64.from(username).getRawBase64String();
-		LOGGER.debug("Username {} stored as {}.", username, this.usernameUtf8ThenBase64Encoded);
-		final String passwordUtf8ThenBase64Encoded = Base64.from(clearPassword).getRawBase64String();
+		this.usernameUtf8ThenBase64Encoded = Base64.from(login.getUsername()).getRawBase64String();
+		LOGGER.debug("Username {} stored as {}.", login.getUsername(), this.usernameUtf8ThenBase64Encoded);
+		final String passwordUtf8ThenBase64Encoded = Base64.from(login.getPassword()).getRawBase64String();
 		this.passwordUtf8ThenBase64EncodedThenEncrypted = BcryptUtil.bcryptHash(passwordUtf8ThenBase64Encoded);
 		this.role = checkNotNull(role);
 	}

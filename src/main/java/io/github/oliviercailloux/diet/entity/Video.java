@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.utils.Utils;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotNull;
 @NamedQuery(name = "replies", query = "SELECT a.video FROM Video v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
 @NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
+@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 public class Video {
 	private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.ENGLISH);
 

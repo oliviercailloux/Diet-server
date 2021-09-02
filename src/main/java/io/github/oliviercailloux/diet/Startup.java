@@ -2,6 +2,7 @@ package io.github.oliviercailloux.diet;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import io.github.oliviercailloux.diet.dao.Login;
 import io.github.oliviercailloux.diet.entity.EventAccepted;
 import io.github.oliviercailloux.diet.entity.EventJudgment;
 import io.github.oliviercailloux.diet.entity.Judgment;
@@ -32,14 +33,14 @@ public class Startup {
 
 	@Transactional
 	public void loadUsers(@SuppressWarnings("unused") @Observes StartupEvent evt) {
-		userService.addAdmin("admin", "admin");
-		userService.addUser("user0", "user");
+		userService.addAdmin(new Login("admin", "admin"));
+		userService.addUser(new Login("user0", "user"));
 		{
-			final User userAccepted = userService.addUser("accepted", "user");
+			final User userAccepted = userService.addUser(new Login("accepted", "user"));
 			userService.addSimpleEvent(new EventAccepted(userAccepted, Instant.now()));
 		}
 		{
-			final User userInited = userService.addUser("inited", "user");
+			final User userInited = userService.addUser(new Login("inited", "user"));
 			userService.addSimpleEvent(new EventAccepted(userInited, Instant.now()));
 			final EventJudgment je = new EventJudgment(userInited, Instant.now(), new Judgment(1, 2));
 			LOGGER.info("Adding {}.", je);

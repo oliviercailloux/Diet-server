@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.diet;
 
 import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Login;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.EventAccepted;
 import io.github.oliviercailloux.diet.entity.EventJudgment;
@@ -48,6 +49,24 @@ public class UserResource {
 	@Transactional
 	public UserStatus status() {
 		final User user = getCurrentUser();
+		return userService.getStatus(user);
+	}
+
+	/**
+	 * Idempotent: when body changes, new user is created; otherwise, does not
+	 * create new user.
+	 *
+	 * This should return a HTTP created, I suppose, and be based at the root.
+	 */
+	@PUT
+	@Path("/create-accept")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Transactional
+	public UserStatus createAcceptingUser(Login login) throws WebApplicationException {
+		final User user = userService.addUser(login);
+		final EventAccepted event = new EventAccepted(user, Instant.now());
+		userService.addSimpleEvent(event);
 		return userService.getStatus(user);
 	}
 
