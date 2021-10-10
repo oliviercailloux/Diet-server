@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 @NamedQuery(name = "replies", query = "SELECT a.video FROM Video v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
 @NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
+@NamedQuery(name = "get all", query = "SELECT v FROM Video v")
 @JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 public class Video {
 	private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.ENGLISH);
@@ -82,6 +83,10 @@ public class Video {
 
 	public ImmutableSet<Video> getCounters() {
 		return counters.stream().map(ArguerAttack::getCounters).collect(ImmutableSet.toImmutableSet());
+	}
+
+	public ImmutableSet<Integer> getCountersFileIds() {
+		return getCounters().stream().map(Video::getFileId).collect(ImmutableSet.toImmutableSet());
 	}
 
 	public ImmutableSet<Video> getCounteredBy() {
