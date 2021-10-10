@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.common.io.Resources;
 import io.github.oliviercailloux.diet.dao.Base64;
 import io.github.oliviercailloux.diet.dao.StaticUserStatus;
+import io.github.oliviercailloux.diet.dao.UserStatus;
+import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.entity.Video;
 import io.quarkus.test.junit.QuarkusTest;
 import java.nio.charset.StandardCharsets;
 import javax.inject.Inject;
@@ -51,6 +54,18 @@ public class UserTests {
 				.get("/v0/me/status");
 		LOGGER.info("Log in yielded: {}.", response.asPrettyString());
 		response.then().statusCode(Response.Status.OK.getStatusCode());
+	}
+
+	@Test
+	public void testStatusUser0Internal() throws Exception {
+		final User user0 = service.get("user0");
+		final UserStatus status = service.getStatus(user0);
+		assertEquals("user0", status.getUsername());
+		assertEquals(ImmutableSet.of(), status.getSeen());
+		final Video videoSeen0 = status.getToSee().asList().get(0);
+		assertEquals(1, videoSeen0.getFileId());
+		assertEquals(ImmutableSet.of(), videoSeen0.getCounters());
+		assertEquals(ImmutableSet.of(), videoSeen0.getCountersFileIds());
 	}
 
 	@Test
