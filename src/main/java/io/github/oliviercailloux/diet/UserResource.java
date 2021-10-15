@@ -8,6 +8,7 @@ import io.github.oliviercailloux.diet.entity.EventJudgment;
 import io.github.oliviercailloux.diet.entity.Judgment;
 import io.github.oliviercailloux.diet.entity.User;
 import java.time.Instant;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -22,9 +23,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("/me")
 public class UserResource {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(UserResource.class);
 
 	@Context
 	SecurityContext securityContext;
@@ -59,11 +64,13 @@ public class UserResource {
 	 * This should return a HTTP created, I suppose, and be based at the root.
 	 */
 	@PUT
+	@PermitAll
 	@Path("/create-accept")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserStatus createAcceptingUser(Login login) throws WebApplicationException {
+		LOGGER.info("Creating {}.", login);
 		final User user = userService.addUser(login);
 		final EventAccepted event = new EventAccepted(user, Instant.now());
 		userService.addSimpleEvent(event);
