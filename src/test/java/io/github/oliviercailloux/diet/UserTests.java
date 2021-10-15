@@ -69,17 +69,6 @@ public class UserTests {
 	}
 
 	@Test
-	public void testStatusUserSeenInternal() throws Exception {
-		final User user = service.get("seen");
-		final UserStatus status = service.getStatus(user);
-		assertEquals("seen", status.getUsername());
-		final Video videoSeen = Iterables.getOnlyElement(status.getSeen());
-		assertEquals(3, videoSeen.getFileId());
-		assertEquals(ImmutableSet.of(), videoSeen.getCounters());
-		assertEquals(ImmutableSet.of(), videoSeen.getCountersFileIds());
-	}
-
-	@Test
 	@Transactional
 	public void testStatusUser0() throws Exception {
 		final String expected = Resources.toString(getClass().getResource("user0.json"), StandardCharsets.UTF_8);
@@ -89,6 +78,17 @@ public class UserTests {
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
 		final String obtained = response.body().asPrettyString();
 		assertEquals(expected, obtained);
+	}
+
+	@Test
+	public void testStatusUserSeenInternal() throws Exception {
+		final User user = service.get("seen");
+		final UserStatus status = service.getStatus(user);
+		assertEquals("seen", status.getUsername());
+		final Video videoSeen = Iterables.getOnlyElement(status.getSeen());
+		assertEquals(3, videoSeen.getFileId());
+		assertEquals(ImmutableSet.of(), videoSeen.getCounters());
+		assertEquals(ImmutableSet.of(), videoSeen.getCountersFileIds());
 	}
 
 	/**
