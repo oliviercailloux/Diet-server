@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import io.github.oliviercailloux.diet.dao.Login;
 import io.github.oliviercailloux.diet.entity.EventAccepted;
 import io.github.oliviercailloux.diet.entity.EventJudgment;
+import io.github.oliviercailloux.diet.entity.EventSeen;
 import io.github.oliviercailloux.diet.entity.Judgment;
 import io.github.oliviercailloux.diet.entity.User;
 import io.github.oliviercailloux.diet.entity.Video;
@@ -29,27 +30,20 @@ public class Startup {
 	EntityManager em;
 
 	@Inject
+	VideoService videoService;
+
+	@Inject
 	UserService userService;
 
 	@Transactional
-	public void loadUsers(@SuppressWarnings("unused") @Observes StartupEvent evt) {
-		userService.addAdmin(new Login("admin", "admin"));
-		userService.addUser(new Login("user0", "user"));
-		{
-			final User userAccepted = userService.addUser(new Login("accepted", "user"));
-			userService.addSimpleEvent(new EventAccepted(userAccepted, Instant.now()));
-		}
-		{
-			final User userInited = userService.addUser(new Login("inited", "user"));
-			userService.addSimpleEvent(new EventAccepted(userInited, Instant.now()));
-			final EventJudgment je = new EventJudgment(userInited, Instant.now(), new Judgment(1, 2));
-			LOGGER.info("Adding {}.", je);
-			userService.addEvent(je);
-		}
+	public void loadAtStartup(@Observes StartupEvent evt) {
+		LOGGER.info("Loading at startup, considering {}.", evt);
+		loadVideos();
+		loadUsers();
 	}
 
 	@Transactional
-	public void loadVideos(@SuppressWarnings("unused") @Observes StartupEvent evt) {
+	public void loadVideos() {
 		final TypedQuery<Integer> q = em.createNamedQuery("latest file id", Integer.class);
 		final Optional<Integer> initialLatest = Optional.ofNullable(q.getSingleResult());
 		checkState(initialLatest.isEmpty());
@@ -96,5 +90,28 @@ public class Startup {
 		final TypedQuery<Integer> q2 = em.createNamedQuery("latest file id", Integer.class);
 		final int newLatest = q2.getSingleResult();
 		checkState(newLatest == 16);
+	}
+
+	@Transactional
+	public void loadUsers() {
+		userService.addAdmin(new Login("admin", "admin"));
+		userService.addUser(new Login("user0", "user"));
+		{
+			final User userAccepted = userService.addUser(new Login("accepted", "user"));
+			userService.addSimpleEvent(new EventAccepted(userAccepted, Instant.now()));
+		}
+		{
+			final User user = userService.addUser(new Login("inited", "user"));
+			userService.addSimpleEvent(new EventAccepted(user, Instant.now()));
+			final EventJudgment je = new EventJudgment(user, Instant.now(), new Judgment(1, 2));
+			LOGGER.info("Adding {}.", je);
+			userService.addEvent(je);
+		}
+		{
+			final User user = userService.addUser(new Login("seen", "user"));
+			userService.addSimpleEvent(new EventAccepted(user, Instant.now()));
+			userService.addEvent(new EventJudgment(user, Instant.now(), new Judgment(3, 1)));
+			userService.addSimpleEvent(new EventSeen(user, Instant.now(), videoService.getVideo(3)));
+		}
 	}
 }
