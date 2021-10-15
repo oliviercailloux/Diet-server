@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
 @NamedQuery(name = "all", query = "SELECT v FROM Video v")
+@NamedQuery(name = "all with counters", query = "SELECT v FROM Video v LEFT OUTER JOIN FETCH v.counters a LEFT OUTER JOIN FETCH a.counters")
 @JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 public class Video {
 	@SuppressWarnings("unused")
