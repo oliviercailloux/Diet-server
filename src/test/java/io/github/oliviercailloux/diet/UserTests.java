@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.StaticUserStatus;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.User;
 import io.github.oliviercailloux.diet.entity.Video;
@@ -112,12 +113,12 @@ public class UserTests {
 //		RestAssured.registerParser("text/plain", Parser.JSON);
 		final io.restassured.response.Response response = given().contentType(MediaType.APPLICATION_JSON)
 				.body("{ \"username\": \"test-create-accept-username\", \"password\": \"test-create-accept-password\"}")
-				.post("/v0/me/create-accept");
+				.put("/v0/me/create-accept");
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
-		final String obtained = response.body().asPrettyString();
-		assertEquals("", obtained);
-//		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
-//		assertEquals(ImmutableSet.of(), obtained.getSeen());
+		final String str = response.body().asPrettyString();
+//		assertEquals("", str);
+		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
+		assertEquals(ImmutableSet.of(), obtained.getSeen());
 	}
 
 }
