@@ -3,6 +3,7 @@ package io.github.oliviercailloux.diet;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
 import io.github.oliviercailloux.diet.dao.Base64;
 import io.github.oliviercailloux.diet.dao.StaticUserStatus;
@@ -15,7 +16,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.gradle.internal.impldep.com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
