@@ -30,6 +30,14 @@ public class VideoService {
 	}
 
 	@Transactional
+	public ImmutableSet<Video> getAll() {
+		final TypedQuery<Video> q = em.createNamedQuery("all", Video.class);
+		final List<Video> result = q.getResultList();
+		verify(!result.isEmpty());
+		return ImmutableSet.copyOf(result);
+	}
+
+	@Transactional
 	public ImmutableSet<Video> getStarters() {
 		final TypedQuery<Video> q = em.createNamedQuery("starters", Video.class);
 		final List<Video> starters = q.getResultList();
