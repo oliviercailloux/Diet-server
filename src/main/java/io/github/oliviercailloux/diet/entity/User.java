@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @UserDefinition
 @JsonDeserialize(using = UserDeserializer.class)
-@NamedQuery(name = "getBase64User", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH TREAT(u.events AS EventSeen) s LEFT OUTER JOIN FETCH s.video v LEFT OUTER JOIN FETCH v.counters a LEFT OUTER JOIN FETCH a.counters WHERE u.usernameUtf8ThenBase64Encoded = :username")
+@NamedQuery(name = "getBase64User", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.usernameUtf8ThenBase64Encoded = :username")
 public class User {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
