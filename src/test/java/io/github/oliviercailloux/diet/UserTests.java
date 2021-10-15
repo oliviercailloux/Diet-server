@@ -98,26 +98,32 @@ public class UserTests {
 	@Test
 	@Transactional
 	public void testJudge() throws Exception {
-		final String expected = Resources.toString(getClass().getResource("user0.json"), StandardCharsets.UTF_8);
 		final io.restassured.response.Response response = given().auth()
 				.basic(Base64.from("accepted").getRawBase64String(), Base64.from("user").getRawBase64String())
 				.contentType(MediaType.APPLICATION_JSON).body("{ \"daysVegan\": 1,\"daysMeat\": 2}")
 				.post("/v0/me/judgment");
-		final String obtained = response.body().asPrettyString();
-		assertEquals("", obtained);
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
+		/*
+		 * Deserialization does not work yet: events are not supported because of
+		 * polymorphism.
+		 */
+//		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
+//		assertEquals("accepted", obtained.getUsername());
+//		assertEquals("", obtained.getEvents());
 	}
 
 	@Test
 	@Transactional
 	public void testCreateAccept() throws Exception {
-//		RestAssured.registerParser("text/plain", Parser.JSON);
+		final String username = "test-create-accept-username";
 		final io.restassured.response.Response response = given().contentType(MediaType.APPLICATION_JSON)
-				.body("{ \"username\": \"test-create-accept-username\", \"password\": \"test-create-accept-password\"}")
+				.body("{ \"username\": \"" + username + "\", \"password\": \"test-create-accept-password\"}")
 				.put("/v0/me/create-accept");
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
 		final String str = response.body().asPrettyString();
-//		assertEquals("", str);
+		LOGGER.info("Resp create accept: {}.", str);
 		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
+		assertEquals(username, obtained.getUsername());
 		assertEquals(ImmutableSet.of(), obtained.getSeen());
 	}
 
