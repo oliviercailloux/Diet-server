@@ -86,6 +86,7 @@ public class UserTests {
 		final io.restassured.response.Response response = given().auth()
 				.basic(Base64.from("user0").getRawBase64String(), Base64.from("user").getRawBase64String())
 				.get("/v0/me/status");
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
 		final String obtained = response.body().asPrettyString();
 		assertEquals(expected, obtained);
 	}
