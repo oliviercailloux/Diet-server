@@ -15,12 +15,15 @@ import java.util.Locale;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @NamedQuery(name = "latest file id", query = "SELECT MAX(v.fileId) FROM Video v")
@@ -30,6 +33,9 @@ import javax.validation.constraints.NotNull;
 @NamedQuery(name = "get all", query = "SELECT v FROM Video v")
 @JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 public class Video {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(Video.class);
+
 	private static final NumberFormat FORMATTER = NumberFormat.getInstance(Locale.ENGLISH);
 
 	static {
@@ -50,7 +56,7 @@ public class Video {
 	@Column(unique = true)
 	private String description;
 
-	@OneToMany(mappedBy = "video")
+	@OneToMany(mappedBy = "video", fetch = FetchType.EAGER)
 	@JsonIgnore
 	private Set<ArguerAttack> counters;
 
