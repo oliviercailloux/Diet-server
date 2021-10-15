@@ -84,14 +84,22 @@ public class UserService {
 		final User user = event.getUser();
 		user.addEvent(event);
 		final Judgment judgment = event.getJudgment();
-		em.persist(judgment);
 		LOGGER.info("Persisting {}.", judgment);
+		em.persist(judgment);
 		em.persist(event);
 		em.persist(user);
 	}
 
 	@Transactional
 	public UserStatus getStatus(User user) {
+		final ImmutableSet<Video> seen = user.getSeen();
+		final ImmutableSet<Video> all = videoService.getAll();
+		final ImmutableSet<Video> toSee = Sets.difference(all, seen).immutableCopy();
+		return new UserStatus(user, toSee.asList());
+	}
+
+	@Transactional
+	public UserStatus getStatusWithImmediateRepliesOnly(User user) {
 		final ImmutableSet<Video> seen = user.getSeen();
 		final ImmutableSet<Video> replies = videoService.getReplies(seen);
 		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(videoService.getStarters(), replies), seen)

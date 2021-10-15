@@ -4,9 +4,9 @@ import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import io.github.oliviercailloux.diet.dao.Base64;
-import io.github.oliviercailloux.diet.dao.StaticUserStatus;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.User;
 import io.github.oliviercailloux.diet.entity.Video;
@@ -30,7 +30,7 @@ public class UserTests {
 
 	@Test
 	public void testNE() throws Exception {
-		given().when().get("/v0/notexists").then().statusCode(404);
+		given().when().get("/v0/notexists").then().statusCode(Response.Status.NOT_FOUND.getStatusCode());
 	}
 
 	@Test
@@ -69,6 +69,17 @@ public class UserTests {
 	}
 
 	@Test
+	public void testStatusUserSeenInternal() throws Exception {
+		final User user = service.get("seen");
+		final UserStatus status = service.getStatus(user);
+		assertEquals("seen", status.getUsername());
+		final Video videoSeen = Iterables.getOnlyElement(status.getSeen());
+		assertEquals(3, videoSeen.getFileId());
+		assertEquals(ImmutableSet.of(), videoSeen.getCounters());
+		assertEquals(ImmutableSet.of(), videoSeen.getCountersFileIds());
+	}
+
+	@Test
 	@Transactional
 	public void testStatusUser0() throws Exception {
 		final String expected = Resources.toString(getClass().getResource("user0.json"), StandardCharsets.UTF_8);
@@ -97,11 +108,15 @@ public class UserTests {
 	@Test
 	@Transactional
 	public void testCreateAccept() throws Exception {
+//		RestAssured.registerParser("text/plain", Parser.JSON);
 		final io.restassured.response.Response response = given().contentType(MediaType.APPLICATION_JSON)
 				.body("{ \"username\": \"test-create-accept-username\", \"password\": \"test-create-accept-password\"}")
 				.post("/v0/me/create-accept");
-		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
-		assertEquals(ImmutableSet.of(), obtained.getSeen());
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
+		final String obtained = response.body().asPrettyString();
+		assertEquals("", obtained);
+//		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
+//		assertEquals(ImmutableSet.of(), obtained.getSeen());
 	}
 
 }
