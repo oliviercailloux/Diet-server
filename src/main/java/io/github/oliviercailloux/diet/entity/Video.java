@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
 @NamedQuery(name = "all", query = "SELECT v FROM Video v")
 @JsonIgnoreProperties(value = { "url" }, allowGetters = true)
-@JsonPropertyOrder({ "fileId", "description", "url", "countersFileIds" })
+@JsonPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class Video {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Video.class);
@@ -66,15 +66,18 @@ public class Video {
 	@JsonIgnore
 	private Set<ArguerAttack> counteredBy;
 
+	private Side side;
+
 	Video() {
 		counters = new LinkedHashSet<>();
 		counteredBy = new LinkedHashSet<>();
 	}
 
-	public Video(int fileId, String description) {
+	public Video(int fileId, String description, Side side) {
 		this();
 		this.fileId = fileId;
 		this.description = checkNotNull(description);
+		this.side = checkNotNull(side);
 	}
 
 	public int getFileId() {
@@ -87,6 +90,10 @@ public class Video {
 
 	public String getDescription() {
 		return description;
+	}
+
+	public Side getSide() {
+		return side;
 	}
 
 	public ImmutableSet<Video> getCounters() {
