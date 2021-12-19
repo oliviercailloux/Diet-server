@@ -4,8 +4,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.io.BaseEncoding;
 import java.nio.charset.StandardCharsets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Base64 {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(Base64.class);
+
 	private static final BaseEncoding ENCODER = BaseEncoding.base64();
 
 	public static Base64 from(String unencoded) {
