@@ -69,6 +69,7 @@ public class UserService {
 		final TypedQuery<User> q = em.createNamedQuery("getBase64User", User.class);
 		q.setParameter("username", base64Username.getRawBase64String());
 		final User user = q.getSingleResult();
+		LOGGER.info("Got user encoded {}.", base64Username);
 		LOGGER.info("Got user encoded {}, with events size {}.", base64Username, user.getEvents().size());
 		return user;
 	}
