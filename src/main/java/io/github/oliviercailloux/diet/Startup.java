@@ -96,6 +96,10 @@ public class Startup {
 	@Transactional
 	public void loadUsers() {
 		userService.addAdmin(new Login("admin", "admin"));
+		/*
+		 * For the utf8-base64 equivalent to 'user0:user' for curl, use
+		 * 'dXNlcjA=:dXNlcg=='.
+		 */
 		userService.addUser(new Login("user0", "user"));
 		{
 			final User userAccepted = userService.addUser(new Login("accepted", "user"));
