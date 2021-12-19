@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "replies", query = "SELECT a.video FROM Video v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
 @NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
-@NamedQuery(name = "all", query = "SELECT v FROM Video v")
+@NamedQuery(name = "all", query = "SELECT v FROM Video v LEFT JOIN FETCH v.counters")
 @JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 @JsonPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class Video {
