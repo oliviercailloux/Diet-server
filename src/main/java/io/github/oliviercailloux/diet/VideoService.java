@@ -32,8 +32,11 @@ public class VideoService {
 	@Transactional
 	public ImmutableSet<Video> getAll() {
 		final TypedQuery<Video> q = em.createNamedQuery("all", Video.class);
+		LOGGER.info("Querying for videos.");
 		final List<Video> result = q.getResultList();
+		LOGGER.info("Obtained result.");
 		verify(!result.isEmpty());
+		LOGGER.info("Result size {}.", result.size());
 		return ImmutableSet.copyOf(result);
 	}
 
