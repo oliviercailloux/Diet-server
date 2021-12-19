@@ -28,6 +28,7 @@ public class TestResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public User getUser0() {
+		LOGGER.info("Getting user0.");
 		return userService.get("user0");
 	}
 
