@@ -12,6 +12,7 @@ import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.User;
 import io.github.oliviercailloux.diet.entity.Video;
 import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.specification.RequestSpecification;
 import java.nio.charset.StandardCharsets;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -50,10 +51,12 @@ public class UserTests {
 	@Test
 	@Transactional
 	public void testLogIn() throws Exception {
-		final io.restassured.response.Response response = given().auth()
-				.basic(Base64.from("user0").getRawBase64String(), Base64.from("user").getRawBase64String())
-				.get("/v0/me/status");
-		LOGGER.info("Log in yielded: {}.", response.asPrettyString());
+		final RequestSpecification basic = given().auth().basic(Base64.from("user0").getRawBase64String(),
+				Base64.from("user").getRawBase64String());
+		LOGGER.info("Sending basic to user0.");
+		final io.restassured.response.Response response = basic.get("/v0/me/status");
+//		LOGGER.info("Log in yielded: {}.", response.asPrettyString());
+		LOGGER.info("Log in yielded: {}.", response.getStatusCode());
 		response.then().statusCode(Response.Status.OK.getStatusCode());
 	}
 
