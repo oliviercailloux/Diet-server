@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @UserDefinition
 @JsonDeserialize(using = UserDeserializer.class)
+@NamedQuery(name = "getBase64UserWithoutEvents", query = "SELECT u FROM User u WHERE u.usernameUtf8ThenBase64Encoded = :username")
 @NamedQuery(name = "getBase64User", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.usernameUtf8ThenBase64Encoded = :username")
 public class User {
 	@SuppressWarnings("unused")
