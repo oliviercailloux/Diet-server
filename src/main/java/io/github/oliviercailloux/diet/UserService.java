@@ -74,6 +74,12 @@ public class UserService {
 		return user;
 	}
 
+	public User getWithoutEvents(Base64 base64Username) {
+		final TypedQuery<User> q = em.createNamedQuery("getBase64UserWithoutEvents", User.class);
+		q.setParameter("username", base64Username.getRawBase64String());
+		return q.getSingleResult();
+	}
+
 	public void addSimpleEvent(Event event) {
 		final User user = event.getUser();
 		user.addEvent(event);
