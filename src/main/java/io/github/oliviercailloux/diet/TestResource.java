@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.diet;
 
 import io.github.oliviercailloux.diet.entity.User;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -21,6 +22,24 @@ public class TestResource {
 	SecurityContext securityContext;
 	@Inject
 	UserService userService;
+
+	@GET
+	@PermitAll
+	@Path("/unauthenticated")
+	@Produces({ MediaType.TEXT_PLAIN })
+	public String getUnauthenticated() {
+		LOGGER.info("Getting unauthenticated.");
+		return "Unauthenticated.";
+	}
+
+	@GET
+	@RolesAllowed("user")
+	@Path("/authenticated")
+	@Produces({ MediaType.TEXT_PLAIN })
+	public String getAuthenticated() {
+		LOGGER.info("Getting authenticated.");
+		return "Authenticated.";
+	}
 
 	@GET
 	@RolesAllowed("user")
