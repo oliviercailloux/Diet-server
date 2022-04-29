@@ -2,7 +2,7 @@ package io.github.oliviercailloux.diet;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.dao.Login;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.Event;
@@ -60,19 +60,19 @@ public class UserService {
 
 	@Transactional
 	public User get(String unencodedUsername) {
-		final Base64 base64 = Base64.from(unencodedUsername);
+		final Base64String base64 = Base64String.from(unencodedUsername);
 		LOGGER.info("Searching for unencoded {}, thus encoded {}.", unencodedUsername, base64);
 		return get(base64);
 	}
 
-	public User get(Base64 base64Username) {
+	public User get(Base64String base64Username) {
 		final TypedQuery<User> q = em.createNamedQuery("getBase64User", User.class);
 		q.setParameter("username", base64Username.getRawBase64String());
 		final User user = q.getSingleResult();
 		return user;
 	}
 
-	public User getWithoutEvents(Base64 base64Username) {
+	public User getWithoutEvents(Base64String base64Username) {
 		final TypedQuery<User> q = em.createNamedQuery("getBase64UserWithoutEvents", User.class);
 		q.setParameter("username", base64Username.getRawBase64String());
 		return q.getSingleResult();
@@ -100,7 +100,9 @@ public class UserService {
 		final ImmutableSet<Video> seen = user.getSeen();
 		final ImmutableSet<Video> all = videoService.getAll();
 		final ImmutableSet<Video> toSee = Sets.difference(all, seen).immutableCopy();
-		return new UserStatus(user, toSee.asList());
+		UserStatus userStatus = new UserStatus(user, toSee.asList());
+		LOGGER.info("Returning for user {} the status {}.", user, userStatus);
+		return userStatus;
 	}
 
 	@Transactional

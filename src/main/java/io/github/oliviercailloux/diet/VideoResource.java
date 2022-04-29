@@ -1,6 +1,6 @@
 package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.EventSeen;
 import io.github.oliviercailloux.diet.entity.User;
@@ -29,13 +29,13 @@ public class VideoResource {
 	@Inject
 	VideoService videoService;
 
-	private Base64 getCurrentUsername() {
+	private Base64String getCurrentUsername() {
 		final String username = securityContext.getUserPrincipal().getName();
-		return Base64.alreadyBase64(username);
+		return Base64String.alreadyBase64(username);
 	}
 
 	private User getCurrentUser() {
-		final Base64 username = getCurrentUsername();
+		final Base64String username = getCurrentUsername();
 		return userService.get(username);
 	}
 

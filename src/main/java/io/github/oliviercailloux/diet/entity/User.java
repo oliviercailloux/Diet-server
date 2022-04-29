@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.dao.Login;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
@@ -65,9 +65,9 @@ public class User {
 
 	public User(Login login, String role) {
 		this();
-		this.usernameUtf8ThenBase64Encoded = Base64.from(login.getUsername()).getRawBase64String();
+		this.usernameUtf8ThenBase64Encoded = Base64String.from(login.getUsername()).getRawBase64String();
 		LOGGER.debug("Username {} stored as {}.", login.getUsername(), this.usernameUtf8ThenBase64Encoded);
-		final String passwordUtf8ThenBase64Encoded = Base64.from(login.getPassword()).getRawBase64String();
+		final String passwordUtf8ThenBase64Encoded = Base64String.from(login.getPassword()).getRawBase64String();
 		this.passwordUtf8ThenBase64EncodedThenEncrypted = BcryptUtil.bcryptHash(passwordUtf8ThenBase64Encoded);
 		this.role = checkNotNull(role);
 	}
@@ -77,7 +77,7 @@ public class User {
 	}
 
 	public String getUsername() {
-		return Base64.alreadyBase64(usernameUtf8ThenBase64Encoded).getUnencoded();
+		return Base64String.alreadyBase64(usernameUtf8ThenBase64Encoded).getUnencoded();
 	}
 
 	public String getRole() {

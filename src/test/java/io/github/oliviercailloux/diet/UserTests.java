@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
-import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.dao.StaticUserStatus;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.User;
@@ -51,8 +51,8 @@ public class UserTests {
 	@Test
 	@Transactional
 	public void testLogIn() throws Exception {
-		final RequestSpecification basic = given().auth().basic(Base64.from("user0").getRawBase64String(),
-				Base64.from("user").getRawBase64String());
+		final RequestSpecification basic = given().auth().basic(Base64String.from("user0").getRawBase64String(),
+				Base64String.from("user").getRawBase64String());
 		LOGGER.info("Sending basic to user0.");
 		final io.restassured.response.Response response = basic.get("/v0/me/status");
 //		LOGGER.info("Log in yielded: {}.", response.asPrettyString());
@@ -77,7 +77,7 @@ public class UserTests {
 	public void testStatusUser0() throws Exception {
 		final String expected = Resources.toString(getClass().getResource("user0.json"), StandardCharsets.UTF_8);
 		final io.restassured.response.Response response = given().auth()
-				.basic(Base64.from("user0").getRawBase64String(), Base64.from("user").getRawBase64String())
+				.basic(Base64String.from("user0").getRawBase64String(), Base64String.from("user").getRawBase64String())
 				.get("/v0/me/status");
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
 		final String obtained = response.body().asPrettyString();
@@ -102,7 +102,7 @@ public class UserTests {
 	@Transactional
 	public void testJudge() throws Exception {
 		final io.restassured.response.Response response = given().auth()
-				.basic(Base64.from("accepted").getRawBase64String(), Base64.from("user").getRawBase64String())
+				.basic(Base64String.from("accepted").getRawBase64String(), Base64String.from("user").getRawBase64String())
 				.contentType(MediaType.APPLICATION_JSON).body("{ \"daysVegan\": 1,\"daysMeat\": 2}")
 				.post("/v0/me/judgment");
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());

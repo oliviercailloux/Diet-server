@@ -1,6 +1,6 @@
 package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.diet.dao.Base64;
+import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.dao.Login;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.EventAccepted;
@@ -37,13 +37,13 @@ public class UserResource {
 	@Inject
 	UserService userService;
 
-	private Base64 getCurrentUsername() {
+	private Base64String getCurrentUsername() {
 		final String username = securityContext.getUserPrincipal().getName();
-		return Base64.alreadyBase64(username);
+		return Base64String.alreadyBase64(username);
 	}
 
 	private User getCurrentUser() {
-		final Base64 username = getCurrentUsername();
+		final Base64String username = getCurrentUsername();
 		return userService.get(username);
 	}
 
@@ -69,7 +69,7 @@ public class UserResource {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserStatus createAcceptingUser(Login login) throws WebApplicationException {
+	public UserStatus createAcceptingUser(Login login) {
 		LOGGER.info("Creating {}.", login);
 		final User user = userService.addUser(login);
 		final EventAccepted event = new EventAccepted(user, Instant.now());
