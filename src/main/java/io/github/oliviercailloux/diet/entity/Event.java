@@ -2,10 +2,12 @@ package io.github.oliviercailloux.diet.entity;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.time.Instant;
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +31,7 @@ public class Event {
 
 	@ManyToOne
 	@NotNull
-	@JsonIgnore
+	@JsonbTransient
 	User user;
 
 	@NotNull
@@ -39,7 +41,8 @@ public class Event {
 		/* For JPA. */
 	}
 
-	public Event(User user, Instant creation) {
+	@JsonbCreator
+	public Event(@JsonbProperty("user") User user, @JsonbProperty("creation") Instant creation) {
 		checkNotNull(user);
 		checkNotNull(creation);
 		this.user = user;

@@ -2,8 +2,10 @@ package io.github.oliviercailloux.diet.entity;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.MoreObjects;
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class Judgment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonIgnore
+	@JsonbTransient
 	private int id;
 
 	@NotNull
@@ -26,7 +28,8 @@ public class Judgment {
 		/* For JPA. */
 	}
 
-	public Judgment(int daysVegan, int daysMeat) {
+	@JsonbCreator
+	public Judgment(@JsonbProperty("daysVegan") int daysVegan, @JsonbProperty("daysMeat") int daysMeat) {
 		checkArgument(0 <= daysVegan);
 		checkArgument(0 <= daysMeat);
 		checkArgument(daysVegan + daysMeat <= 5);

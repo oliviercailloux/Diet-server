@@ -3,9 +3,6 @@ package io.github.oliviercailloux.diet.entity;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.utils.Utils;
@@ -14,6 +11,8 @@ import java.text.NumberFormat;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
+import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,8 +31,8 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "starters", query = "SELECT v FROM Video v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
 @NamedQuery(name = "all", query = "SELECT v FROM Video v LEFT JOIN FETCH v.counters ORDER BY v.fileId")
-@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
-@JsonPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
+//@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
+@JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class Video {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Video.class);
@@ -47,7 +46,7 @@ public class Video {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonIgnore
+	@JsonbTransient
 	private int id;
 
 	@NotNull
@@ -59,11 +58,11 @@ public class Video {
 	private String description;
 
 	@OneToMany(mappedBy = "video", fetch = FetchType.EAGER)
-	@JsonIgnore
+	@JsonbTransient
 	private Set<ArguerAttack> counters;
 
 	@OneToMany(mappedBy = "counters")
-	@JsonIgnore
+	@JsonbTransient
 	private Set<ArguerAttack> counteredBy;
 
 	private Side side;

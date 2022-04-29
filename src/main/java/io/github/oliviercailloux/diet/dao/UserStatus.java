@@ -2,15 +2,15 @@ package io.github.oliviercailloux.diet.dao;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.entity.Event;
 import io.github.oliviercailloux.diet.entity.User;
 import io.github.oliviercailloux.diet.entity.Video;
 import java.util.List;
+import javax.json.bind.annotation.JsonbPropertyOrder;
 
-@JsonPropertyOrder({ "username", "events", "seen", "toSee" })
+@JsonbPropertyOrder({ "username", "events", "seen", "toSee" })
 public class UserStatus {
 	private final User user;
 

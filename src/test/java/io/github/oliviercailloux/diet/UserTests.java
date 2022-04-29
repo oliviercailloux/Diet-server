@@ -100,6 +100,7 @@ public class UserTests {
 				.invoke()) {
 			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
 			final String obtained = response.readEntity(String.class);
+//			final UserStatus obtained = response.readEntity(UserStatus.class);
 			assertEquals(expected, obtained);
 		}
 	}

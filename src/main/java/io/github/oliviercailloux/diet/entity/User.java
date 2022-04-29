@@ -3,8 +3,6 @@ package io.github.oliviercailloux.diet.entity;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.dao.Login;
@@ -15,6 +13,9 @@ import io.quarkus.security.jpa.UserDefinition;
 import io.quarkus.security.jpa.Username;
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 @Entity
 @UserDefinition
-@JsonDeserialize(using = UserDeserializer.class)
 @NamedQuery(name = "getUserWithoutEvents", query = "SELECT u FROM User u WHERE u.username = :username")
 @NamedQuery(name = "getUser", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.username = :username")
 public class User {
@@ -37,21 +37,21 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonIgnore
+	@JsonbTransient
 	private int id;
 
 	@Username
 	@NotNull
 	@Column(unique = true)
-	@JsonIgnore
+	@JsonbTransient
 	String username;
 	@Password
 	@NotNull
-	@JsonIgnore
+	@JsonbTransient
 	String password;
 	@Roles
 	@NotNull
-	@JsonIgnore
+	@JsonbTransient
 	String role;
 
 	@OneToMany(mappedBy = "user")
@@ -62,7 +62,8 @@ public class User {
 		events = new ArrayList<>();
 	}
 
-	public User(Login login, String role) {
+	@JsonbCreator
+	public User(@JsonbProperty("login") Login login, @JsonbProperty("role") String role) {
 		this();
 		this.username = login.getUsername();
 		this.password = BcryptUtil.bcryptHash(login.getPassword());
