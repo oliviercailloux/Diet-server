@@ -1,7 +1,6 @@
 package io.github.oliviercailloux.diet;
 
 import com.google.common.base.Stopwatch;
-import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.entity.User;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -46,7 +45,7 @@ public class TestResource {
 		LOGGER.info("Getting perf.");
 
 		final Stopwatch stopwatch = Stopwatch.createStarted();
-		userService.getWithoutEvents(Base64String.from("user0"));
+		userService.getWithoutEvents("user0");
 		stopwatch.stop();
 		LOGGER.warn("Time for one simple query: {} ms.", stopwatch.elapsed().toMillis());
 
@@ -64,7 +63,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.getWithoutEvents(Base64String.from("user0"));
+				userService.getWithoutEvents("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} simple " + queries + ": {} ms.", nbIterations,
@@ -84,7 +83,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.getWithoutEvents(Base64String.from("user0"));
+				userService.getWithoutEvents("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} simple " + queries + ": {} ms.", nbIterations,
@@ -93,7 +92,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.get(Base64String.from("user0"));
+				userService.get("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} complex " + queries + ": {} ms.", nbIterations,
@@ -102,7 +101,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.getWithoutEvents(Base64String.from("user0"));
+				userService.getWithoutEvents("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} simple " + queries + ": {} ms.", nbIterations,

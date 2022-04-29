@@ -2,7 +2,6 @@ package io.github.oliviercailloux.diet;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.dao.Login;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.Event;
@@ -58,23 +57,16 @@ public class UserService {
 		return user;
 	}
 
-	@Transactional
-	public User get(String unencodedUsername) {
-		final Base64String base64 = Base64String.from(unencodedUsername);
-		LOGGER.info("Searching for unencoded {}, thus encoded {}.", unencodedUsername, base64);
-		return get(base64);
-	}
-
-	public User get(Base64String base64Username) {
-		final TypedQuery<User> q = em.createNamedQuery("getBase64User", User.class);
-		q.setParameter("username", base64Username.getRawBase64String());
+	public User get(String username) {
+		final TypedQuery<User> q = em.createNamedQuery("getUser", User.class);
+		q.setParameter("username", username);
 		final User user = q.getSingleResult();
 		return user;
 	}
 
-	public User getWithoutEvents(Base64String base64Username) {
-		final TypedQuery<User> q = em.createNamedQuery("getBase64UserWithoutEvents", User.class);
-		q.setParameter("username", base64Username.getRawBase64String());
+	public User getWithoutEvents(String username) {
+		final TypedQuery<User> q = em.createNamedQuery("getUserWithoutEvents", User.class);
+		q.setParameter("username", username);
 		return q.getSingleResult();
 	}
 

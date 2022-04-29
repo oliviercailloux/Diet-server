@@ -101,6 +101,7 @@ public class Startup {
 		 * 'dXNlcjA=:dXNlcg=='.
 		 */
 		userService.addUser(new Login("user0", "user"));
+		userService.addUser(new Login("élevé", "user"));
 		{
 			final User userAccepted = userService.addUser(new Login("accepted", "user"));
 			userService.addSimpleEvent(new EventAccepted(userAccepted, Instant.now()));

@@ -6,18 +6,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
-import io.github.oliviercailloux.diet.dao.Base64String;
 import io.github.oliviercailloux.diet.dao.StaticUserStatus;
 import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.User;
 import io.github.oliviercailloux.diet.entity.Video;
+import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.specification.RequestSpecification;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +29,11 @@ import org.slf4j.LoggerFactory;
 public class UserTests {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserTests.class);
+
+	@TestHTTPResource
+	URI serverUri;
+	@Inject
+	Client client;
 
 	@Inject
 	UserService service;
@@ -51,8 +59,7 @@ public class UserTests {
 	@Test
 	@Transactional
 	public void testLogIn() throws Exception {
-		final RequestSpecification basic = given().auth().basic(Base64String.from("user0").getRawBase64String(),
-				Base64String.from("user").getRawBase64String());
+		final RequestSpecification basic = given().auth().basic("user0", "user");
 		LOGGER.info("Sending basic to user0.");
 		final io.restassured.response.Response response = basic.get("/v0/me/status");
 //		LOGGER.info("Log in yielded: {}.", response.asPrettyString());
@@ -76,12 +83,25 @@ public class UserTests {
 	@Transactional
 	public void testStatusUser0() throws Exception {
 		final String expected = Resources.toString(getClass().getResource("user0.json"), StandardCharsets.UTF_8);
-		final io.restassured.response.Response response = given().auth()
-				.basic(Base64String.from("user0").getRawBase64String(), Base64String.from("user").getRawBase64String())
-				.get("/v0/me/status");
+		final io.restassured.response.Response response = given().auth().basic("user0", "user").get("/v0/me/status");
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
 		final String obtained = response.body().asPrettyString();
 		assertEquals(expected, obtained);
+	}
+
+	@Test
+	@Transactional
+	public void testStatusUserÉlevé() throws Exception {
+		final String expected = Resources.toString(getClass().getResource("élevé.json"), StandardCharsets.UTF_8);
+
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
+
+		try (Response response = client.target(target).register(new Authenticator("élevé", "user")).request().buildGet()
+				.invoke()) {
+			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+			final String obtained = response.readEntity(String.class);
+			assertEquals(expected, obtained);
+		}
 	}
 
 	@Test
@@ -101,8 +121,7 @@ public class UserTests {
 	@Test
 	@Transactional
 	public void testJudge() throws Exception {
-		final io.restassured.response.Response response = given().auth()
-				.basic(Base64String.from("accepted").getRawBase64String(), Base64String.from("user").getRawBase64String())
+		final io.restassured.response.Response response = given().auth().basic("accepted", "user")
 				.contentType(MediaType.APPLICATION_JSON).body("{ \"daysVegan\": 1,\"daysMeat\": 2}")
 				.post("/v0/me/judgment");
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
