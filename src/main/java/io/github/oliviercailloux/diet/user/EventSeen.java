@@ -1,10 +1,10 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import io.github.oliviercailloux.diet.video.Video;
 import java.time.Instant;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,36 +12,35 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class EventJudgment extends Event {
+public class EventSeen extends Event {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@NotNull
-	private Judgment judgment;
+	private Video video;
 
-	EventJudgment() {
+	EventSeen() {
 		/* For JPA. */
 	}
 
-	EventJudgment(Instant creation, Judgment judgment) {
+	public EventSeen(Instant creation, Video video) {
 		super(creation);
-		this.judgment = checkNotNull(judgment);
+		this.video = checkNotNull(video);
 	}
 
-	public EventJudgment(User user, Instant creation, Judgment judgment) {
+	public EventSeen(User user, Instant creation, Video video) {
 		super(user, creation);
-		this.judgment = checkNotNull(judgment);
+		this.video = checkNotNull(video);
 	}
 
-	public Judgment getJudgment() {
-		verify(judgment != null);
-		return judgment;
+	public Video getVideo() {
+		return video;
 	}
 
 	@Override
 	public String toString() {
 		final ToStringHelper stringHelper = MoreObjects.toStringHelper(this);
 		populate(stringHelper);
-		return stringHelper.add("Judgment", judgment).toString();
+		return stringHelper.add("Video", video).toString();
 	}
 
 }

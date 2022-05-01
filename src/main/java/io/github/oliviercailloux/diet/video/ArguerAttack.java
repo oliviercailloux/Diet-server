@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.video;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;

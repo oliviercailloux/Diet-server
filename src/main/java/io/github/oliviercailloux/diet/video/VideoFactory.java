@@ -1,9 +1,8 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.video;
 
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.diet.entity.Video;
 import java.util.List;
 import java.util.Set;
 import javax.enterprise.context.RequestScoped;
@@ -15,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RequestScoped
-public class VideoService {
+public class VideoFactory {
 	@SuppressWarnings("unused")
-	private static final Logger LOGGER = LoggerFactory.getLogger(VideoService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VideoFactory.class);
 
 	@Inject
 	EntityManager em;

@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;

@@ -2,8 +2,8 @@ package io.github.oliviercailloux.diet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.github.oliviercailloux.diet.entity.ReadEvent;
-import io.github.oliviercailloux.diet.entity.UserStatus;
+import io.github.oliviercailloux.diet.user.ReadEvent;
+import io.github.oliviercailloux.diet.user.UserStatus;
 import io.quarkus.test.junit.QuarkusTest;
 import java.time.Instant;
 import javax.inject.Inject;

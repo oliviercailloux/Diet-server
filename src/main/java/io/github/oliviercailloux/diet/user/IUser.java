@@ -1,12 +1,13 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import io.github.oliviercailloux.diet.video.Video;
 
 /**
  * A user with role User, thus, whose events start with an accepted event.
  */
-interface IUser {
+interface IUser extends RawUser {
 	public String username();
 
 	/**

@@ -3,8 +3,8 @@ package io.github.oliviercailloux.diet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.diet.VideoService;
-import io.github.oliviercailloux.diet.entity.Video;
+import io.github.oliviercailloux.diet.video.Video;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URI;
 import javax.inject.Inject;
@@ -22,7 +22,7 @@ public class VideoTests {
 	private static final Logger LOGGER = LoggerFactory.getLogger(VideoTests.class);
 
 	@Inject
-	VideoService videoService;
+	VideoFactory videoService;
 
 	@Test
 	@Transactional

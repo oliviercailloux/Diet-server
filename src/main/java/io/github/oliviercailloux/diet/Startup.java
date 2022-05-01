@@ -2,16 +2,16 @@ package io.github.oliviercailloux.diet;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import io.github.oliviercailloux.diet.dao.Login;
-import io.github.oliviercailloux.diet.entity.EventAccepted;
-import io.github.oliviercailloux.diet.entity.EventJudgment;
-import io.github.oliviercailloux.diet.entity.EventSeen;
-import io.github.oliviercailloux.diet.entity.Judgment;
-import io.github.oliviercailloux.diet.entity.Side;
-import io.github.oliviercailloux.diet.entity.User;
-import io.github.oliviercailloux.diet.entity.Video;
+import io.github.oliviercailloux.diet.user.Judgment;
+import io.github.oliviercailloux.diet.user.Login;
+import io.github.oliviercailloux.diet.user.ReadEventJudgment;
+import io.github.oliviercailloux.diet.user.ReadEventSeen;
+import io.github.oliviercailloux.diet.user.UserAppendable;
+import io.github.oliviercailloux.diet.user.UserFactory;
+import io.github.oliviercailloux.diet.video.Side;
+import io.github.oliviercailloux.diet.video.Video;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import io.quarkus.runtime.StartupEvent;
-import java.time.Instant;
 import java.util.Optional;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -31,10 +31,10 @@ public class Startup {
 	EntityManager em;
 
 	@Inject
-	VideoService videoService;
+	VideoFactory videoFactory;
 
 	@Inject
-	UserService userService;
+	UserFactory userFactory;
 
 	@Transactional
 	public void loadAtStartup(@Observes StartupEvent evt) {
@@ -95,29 +95,26 @@ public class Startup {
 
 	@Transactional
 	public void loadUsers() {
-		userService.addAdmin(new Login("admin", "admin"));
+		userFactory.addAdmin(new Login("admin", "admin"));
 		/*
 		 * For the utf8-base64 equivalent to 'user0:user' for curl, use
 		 * 'dXNlcjA=:dXNlcg=='.
 		 */
-		userService.addUser(new Login("user0", "user"));
-		userService.addUser(new Login("élevé", "user"));
+		userFactory.addUser(new Login("user0", "user"));
+		userFactory.addUser(new Login("élevé", "user"));
 		{
-			final User userAccepted = userService.addUser(new Login("accepted", "user"));
-			userService.addSimpleEvent(new EventAccepted(userAccepted, Instant.now()));
+			final UserAppendable user = userFactory.addUser(new Login("inited", "user"));
+			final Judgment judgment = new Judgment(1, 2);
+			LOGGER.info("Adding {}.", judgment);
+			em.persist(judgment);
+			user.persistEvent(ReadEventJudgment.now(judgment));
 		}
 		{
-			final User user = userService.addUser(new Login("inited", "user"));
-			userService.addSimpleEvent(new EventAccepted(user, Instant.now()));
-			final EventJudgment je = new EventJudgment(user, Instant.now(), new Judgment(1, 2));
-			LOGGER.info("Adding {}.", je);
-			userService.addEvent(je);
-		}
-		{
-			final User user = userService.addUser(new Login("seen", "user"));
-			userService.addSimpleEvent(new EventAccepted(user, Instant.now()));
-			userService.addEvent(new EventJudgment(user, Instant.now(), new Judgment(3, 1)));
-			userService.addSimpleEvent(new EventSeen(user, Instant.now(), videoService.getVideo(3)));
+			final UserAppendable user = userFactory.addUser(new Login("seen", "user"));
+			final Judgment judgment = new Judgment(3, 1);
+			em.persist(judgment);
+			user.persistEvent(ReadEventJudgment.now(judgment));
+			user.persistEvent(ReadEventSeen.now(videoFactory.getVideo(3)));
 		}
 	}
 }

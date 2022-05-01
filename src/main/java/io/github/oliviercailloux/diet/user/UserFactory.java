@@ -1,7 +1,6 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
-import io.github.oliviercailloux.diet.VideoService;
-import io.github.oliviercailloux.diet.dao.Login;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import java.time.Instant;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -20,7 +19,7 @@ public class UserFactory {
 	EntityManager em;
 
 	@Inject
-	VideoService videoService;
+	VideoFactory videoService;
 
 	private User get(String username) {
 		final TypedQuery<User> q = em.createNamedQuery("getUser", User.class);
@@ -47,18 +46,29 @@ public class UserFactory {
 	 * @param login with the unencrypted password (it will be encrypted with bcrypt)
 	 */
 	@Transactional
-	public UserStatus addUser(Login login) {
+	public void addAdmin(Login login) {
+		final User user = new User(login, "admin");
+		em.persist(user);
+	}
+
+	/**
+	 * Adds a new user in the database with role user
+	 *
+	 * @param login with the unencrypted password (it will be encrypted with bcrypt)
+	 */
+	@Transactional
+	public UserAppendable addUser(Login login) {
 		final User user = new User(login, "user");
 		final EventAccepted event = new EventAccepted(user, Instant.now());
 		user.events().add(event);
 		em.persist(user);
 		em.persist(event);
-		return UserStatus.fromExistingUser(user, videoService);
+		return UserAppendable.fromExistingWithEvents(em, videoService, user);
 	}
 
 	public UserAppendable getAppendable(String username) {
 		final User user = get(username);
-		return UserAppendable.fromExistingWithEvents(em, user);
+		return UserAppendable.fromExistingWithEvents(em, videoService, user);
 	}
 
 }

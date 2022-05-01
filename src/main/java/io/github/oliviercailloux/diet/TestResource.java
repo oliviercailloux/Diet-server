@@ -1,7 +1,9 @@
 package io.github.oliviercailloux.diet;
 
 import com.google.common.base.Stopwatch;
-import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.user.User;
+import io.github.oliviercailloux.diet.user.UserFactory;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -23,9 +25,9 @@ public class TestResource {
 	@Context
 	SecurityContext securityContext;
 	@Inject
-	UserService userService;
+	UserFactory userFactory;
 	@Inject
-	VideoService videoService;
+	VideoFactory videoFactory;
 
 	@GET
 	@PermitAll
@@ -45,7 +47,7 @@ public class TestResource {
 		LOGGER.info("Getting perf.");
 
 		final Stopwatch stopwatch = Stopwatch.createStarted();
-		userService.getWithoutEvents("user0");
+		userFactory.getWithoutEvents("user0");
 		stopwatch.stop();
 		LOGGER.warn("Time for one simple query: {} ms.", stopwatch.elapsed().toMillis());
 

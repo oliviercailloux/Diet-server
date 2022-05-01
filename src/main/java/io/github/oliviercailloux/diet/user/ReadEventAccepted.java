@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
 import java.time.Instant;
 

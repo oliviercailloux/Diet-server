@@ -1,9 +1,10 @@
 package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.diet.entity.EventSeen;
-import io.github.oliviercailloux.diet.entity.User;
-import io.github.oliviercailloux.diet.entity.UserStatus;
-import java.time.Instant;
+import io.github.oliviercailloux.diet.user.ReadEventSeen;
+import io.github.oliviercailloux.diet.user.UserAppendable;
+import io.github.oliviercailloux.diet.user.UserFactory;
+import io.github.oliviercailloux.diet.user.UserStatus;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -14,7 +15,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 @Path("/video")
@@ -24,16 +24,12 @@ public class VideoResource {
 	SecurityContext securityContext;
 
 	@Inject
-	UserService userService;
+	UserFactory userFactory;
 	@Inject
-	VideoService videoService;
+	VideoFactory videoFactory;
 
 	private String getCurrentUsername() {
 		return securityContext.getUserPrincipal().getName();
-	}
-
-	private User getCurrentUser() {
-		return userService.get(getCurrentUsername());
 	}
 
 	@PUT
@@ -42,13 +38,8 @@ public class VideoResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserStatus putSeen(@PathParam("fileId") int fileId) throws WebApplicationException {
-		final User user = getCurrentUser();
-		if (user.getEvents().isEmpty()) {
-			throw new WebApplicationException(Response.Status.CONFLICT);
-		}
-
-		final EventSeen event = new EventSeen(user, Instant.now(), videoService.getVideo(fileId));
-		userService.addSimpleEvent(event);
-		return userService.getStatus(user);
+		final UserAppendable user = userFactory.getAppendable(getCurrentUsername());
+		user.persistEvent(ReadEventSeen.now(videoFactory.getVideo(fileId)));
+		return user.status();
 	}
 }

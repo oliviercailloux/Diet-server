@@ -1,10 +1,9 @@
-package io.github.oliviercailloux.diet.dao;
+package io.github.oliviercailloux.diet.user;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.diet.entity.Event;
-import io.github.oliviercailloux.diet.entity.Video;
+import io.github.oliviercailloux.diet.video.Video;
 import java.util.Set;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;

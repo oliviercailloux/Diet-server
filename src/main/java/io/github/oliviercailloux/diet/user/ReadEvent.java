@@ -1,8 +1,9 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.VerifyException;
+import io.github.oliviercailloux.diet.video.Video;
 import java.time.Instant;
 
 public class ReadEvent {

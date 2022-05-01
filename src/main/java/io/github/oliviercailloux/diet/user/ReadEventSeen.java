@@ -1,5 +1,6 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
+import io.github.oliviercailloux.diet.video.Video;
 import java.time.Instant;
 
 public class ReadEventSeen extends ReadEvent {

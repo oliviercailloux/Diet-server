@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet.entity;
+package io.github.oliviercailloux.diet.user;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -6,7 +6,6 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSortedSet;
-import io.github.oliviercailloux.diet.dao.Login;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;

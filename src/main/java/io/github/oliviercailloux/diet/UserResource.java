@@ -1,11 +1,12 @@
 package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.diet.dao.Login;
-import io.github.oliviercailloux.diet.entity.Judgment;
-import io.github.oliviercailloux.diet.entity.ReadEventJudgment;
-import io.github.oliviercailloux.diet.entity.UserAppendable;
-import io.github.oliviercailloux.diet.entity.UserFactory;
-import io.github.oliviercailloux.diet.entity.UserStatus;
+import io.github.oliviercailloux.diet.user.Judgment;
+import io.github.oliviercailloux.diet.user.Login;
+import io.github.oliviercailloux.diet.user.ReadEventJudgment;
+import io.github.oliviercailloux.diet.user.UserAppendable;
+import io.github.oliviercailloux.diet.user.UserFactory;
+import io.github.oliviercailloux.diet.user.UserStatus;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -35,10 +36,7 @@ public class UserResource {
 	UserFactory userFactory;
 
 	@Inject
-	UserService userService;
-
-	@Inject
-	VideoService videoService;
+	VideoFactory videoService;
 
 	@Inject
 	EntityManager em;
@@ -70,7 +68,7 @@ public class UserResource {
 	@Transactional
 	public UserStatus createAcceptingUser(Login login) {
 		LOGGER.info("Creating {}.", login);
-		return userFactory.addUser(login);
+		return userFactory.addUser(login).status();
 	}
 
 	@POST
@@ -84,6 +82,6 @@ public class UserResource {
 		final ReadEventJudgment event = ReadEventJudgment.now(judgment);
 		em.persist(judgment);
 		user.persistEvent(event);
-		return user.status(videoService);
+		return user.status();
 	}
 }
