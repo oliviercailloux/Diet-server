@@ -17,7 +17,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
@@ -80,7 +79,7 @@ public class UserResource {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserStatus postJudgment(Judgment judgment) throws WebApplicationException {
+	public UserStatus postJudgment(Judgment judgment) {
 		final UserAppendable user = userFactory.getAppendable(getCurrentUsername());
 		final ReadEventJudgment event = ReadEventJudgment.now(judgment);
 		em.persist(judgment);

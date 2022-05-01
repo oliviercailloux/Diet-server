@@ -32,6 +32,6 @@ public class UserAppendable {
 	}
 
 	public UserStatus status(VideoService v) {
-		return UserStatus.fromExistingUser(user);
+		return UserStatus.fromExistingUser(user, v);
 	}
 }

@@ -1,7 +1,5 @@
 package io.github.oliviercailloux.diet.entity;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.VideoService;
 import io.github.oliviercailloux.diet.dao.Login;
 import java.time.Instant;
@@ -30,26 +28,17 @@ public class UserFactory {
 		return q.getSingleResult();
 	}
 
+	@SuppressWarnings("unused")
 	private User getWithoutEvents(String username) {
 		final TypedQuery<User> q = em.createNamedQuery("getUserWithoutEvents", User.class);
 		q.setParameter("username", username);
 		return q.getSingleResult();
 	}
 
-	private UserStatus status(User user) {
-		final IUser iuser = UserPersistentWithEvents.persistent(user);
-		final ImmutableSet<Video> seen = ImmutableSet.copyOf(iuser.readSeen());
-		final ImmutableSet<Video> all = videoService.getAll();
-		final ImmutableSet<Video> toSee = Sets.difference(all, seen).immutableCopy();
-		final UserStatus userStatus = UserStatus.fromIUser(iuser, toSee);
-		LOGGER.info("Returning for user {} the status {}.", iuser, userStatus);
-		return userStatus;
-	}
-
 	@Transactional
 	public UserStatus getStatus(String username) {
 		final User user = get(username);
-		return status(user);
+		return UserStatus.fromExistingUser(user, videoService);
 	}
 
 	/**
@@ -64,7 +53,7 @@ public class UserFactory {
 		user.events().add(event);
 		em.persist(user);
 		em.persist(event);
-		return status(user);
+		return UserStatus.fromExistingUser(user, videoService);
 	}
 
 	public UserAppendable getAppendable(String username) {

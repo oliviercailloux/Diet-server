@@ -6,6 +6,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.Sets;
+import io.github.oliviercailloux.diet.VideoService;
 import java.util.Set;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
@@ -20,28 +22,28 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 public class UserStatus {
 	private final IUser user;
 
-	private final ImmutableSet<Video> toSee;
+	private final VideoService v;
 
 	/**
 	 * @param user must be persistent; the reference should not be used otherwise
 	 *             (to guarantee immutability of the returned object).
 	 */
-	static UserStatus fromExistingUser(User user, Set<Video> toSee) {
+	static UserStatus fromExistingUser(User user, VideoService v) {
 		checkArgument(user.isPersistent());
-		return new UserStatus(UserPersistentWithEvents.persistent(user), toSee);
+		return new UserStatus(UserPersistentWithEvents.persistent(user), v);
 	}
 
-	static UserStatus fromFictitious(String username, Set<ReadEvent> events, Set<Video> toSee) {
-		return new UserStatus(UserFictitious.fictitious(username, events), toSee);
+	static UserStatus fromFictitious(String username, Set<ReadEvent> events, VideoService v) {
+		return new UserStatus(UserFictitious.fictitious(username, events), v);
 	}
 
-	static UserStatus fromIUser(IUser user, Set<Video> toSee) {
-		return new UserStatus(user, toSee);
+	static UserStatus fromIUser(IUser user, VideoService v) {
+		return new UserStatus(user, v);
 	}
 
-	private UserStatus(IUser user, Set<Video> toSee) {
+	private UserStatus(IUser user, VideoService v) {
 		this.user = checkNotNull(user);
-		this.toSee = ImmutableSet.copyOf(toSee);
+		this.v = checkNotNull(v);
 	}
 
 	public String getUsername() {
@@ -57,6 +59,9 @@ public class UserStatus {
 	}
 
 	public ImmutableSet<Video> getToSee() {
+		final ImmutableSet<Video> seen = ImmutableSet.copyOf(user.readSeen());
+		final ImmutableSet<Video> all = v.getAll();
+		final ImmutableSet<Video> toSee = Sets.difference(all, seen).immutableCopy();
 		return toSee;
 	}
 }
