@@ -1,8 +1,8 @@
 package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.EventSeen;
 import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.entity.UserStatus;
 import java.time.Instant;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

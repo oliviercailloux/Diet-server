@@ -1,15 +1,15 @@
 package io.github.oliviercailloux.diet;
 
 import io.github.oliviercailloux.diet.dao.Login;
-import io.github.oliviercailloux.diet.dao.UserStatus;
-import io.github.oliviercailloux.diet.entity.EventAccepted;
-import io.github.oliviercailloux.diet.entity.EventJudgment;
 import io.github.oliviercailloux.diet.entity.Judgment;
-import io.github.oliviercailloux.diet.entity.User;
-import java.time.Instant;
+import io.github.oliviercailloux.diet.entity.ReadEventJudgment;
+import io.github.oliviercailloux.diet.entity.UserAppendable;
+import io.github.oliviercailloux.diet.entity.UserFactory;
+import io.github.oliviercailloux.diet.entity.UserStatus;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,7 +20,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +33,19 @@ public class UserResource {
 	SecurityContext securityContext;
 
 	@Inject
+	UserFactory userFactory;
+
+	@Inject
 	UserService userService;
+
+	@Inject
+	VideoService videoService;
+
+	@Inject
+	EntityManager em;
 
 	private String getCurrentUsername() {
 		return securityContext.getUserPrincipal().getName();
-	}
-
-	private User getCurrentUser() {
-		return userService.get(getCurrentUsername());
 	}
 
 	@GET
@@ -50,8 +54,7 @@ public class UserResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserStatus status() {
-		final User user = getCurrentUser();
-		return userService.getStatus(user);
+		return userFactory.getStatus(getCurrentUsername());
 	}
 
 	/**
@@ -68,26 +71,7 @@ public class UserResource {
 	@Transactional
 	public UserStatus createAcceptingUser(Login login) {
 		LOGGER.info("Creating {}.", login);
-		final User user = userService.addUser(login);
-		final EventAccepted event = new EventAccepted(user, Instant.now());
-		userService.addSimpleEvent(event);
-		return userService.getStatus(user);
-	}
-
-	@PUT
-	@RolesAllowed("user")
-	@Path("/accept")
-	@Produces({ MediaType.APPLICATION_JSON })
-	@Transactional
-	public UserStatus putAccept() throws WebApplicationException {
-		final User user = getCurrentUser();
-		if (!user.getEvents().isEmpty()) {
-			throw new WebApplicationException(Response.Status.CONFLICT);
-		}
-
-		final EventAccepted event = new EventAccepted(user, Instant.now());
-		userService.addSimpleEvent(event);
-		return userService.getStatus(user);
+		return userFactory.addUser(login);
 	}
 
 	@POST
@@ -97,13 +81,10 @@ public class UserResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserStatus postJudgment(Judgment judgment) throws WebApplicationException {
-		final User user = getCurrentUser();
-		if (user.getEvents().isEmpty()) {
-			throw new WebApplicationException(Response.Status.CONFLICT);
-		}
-
-		final EventJudgment event = new EventJudgment(user, Instant.now(), judgment);
-		userService.addEvent(event);
-		return userService.getStatus(user);
+		final UserAppendable user = userFactory.getAppendable(getCurrentUsername());
+		final ReadEventJudgment event = ReadEventJudgment.now(judgment);
+		em.persist(judgment);
+		user.persistEvent(event);
+		return user.status(videoService);
 	}
 }

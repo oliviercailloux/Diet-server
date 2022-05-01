@@ -21,6 +21,8 @@ import javax.validation.constraints.NotNull;
  * Deserializing with the default Jackson strategy will create an event with a
  * null user, which we do not want. We should deserialize only in the context of
  * a User.
+ * <p>
+ * It is permitted to create an event with a null user (required to bootstrap).
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -39,6 +41,11 @@ public class Event {
 
 	Event() {
 		/* For JPA. */
+	}
+
+	public Event(Instant creation) {
+		this.user = null;
+		this.creation = checkNotNull(creation);
 	}
 
 	@JsonbCreator

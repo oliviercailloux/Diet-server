@@ -21,6 +21,11 @@ public class EventSeen extends Event {
 		/* For JPA. */
 	}
 
+	public EventSeen(Instant creation, Video video) {
+		super(creation);
+		this.video = checkNotNull(video);
+	}
+
 	public EventSeen(User user, Instant creation, Video video) {
 		super(user, creation);
 		this.video = checkNotNull(video);

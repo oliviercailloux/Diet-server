@@ -12,6 +12,10 @@ public class EventAccepted extends Event {
 		/* For JPA. */
 	}
 
+	public EventAccepted(Instant creation) {
+		super(creation);
+	}
+
 	public EventAccepted(User user, Instant creation) {
 		super(user, creation);
 	}

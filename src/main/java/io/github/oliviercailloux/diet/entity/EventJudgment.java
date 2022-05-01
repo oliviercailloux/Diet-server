@@ -22,6 +22,11 @@ public class EventJudgment extends Event {
 		/* For JPA. */
 	}
 
+	EventJudgment(Instant creation, Judgment judgment) {
+		super(creation);
+		this.judgment = checkNotNull(judgment);
+	}
+
 	public EventJudgment(User user, Instant creation, Judgment judgment) {
 		super(user, creation);
 		this.judgment = checkNotNull(judgment);

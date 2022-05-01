@@ -1,20 +1,20 @@
 package io.github.oliviercailloux.diet.entity;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import io.github.oliviercailloux.diet.dao.Login;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
 import io.quarkus.security.jpa.Username;
-import java.util.ArrayList;
-import java.util.List;
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbProperty;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,14 +23,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Events are empty in DB iff role is Admin. Events contain at least an Accepted
+ * iff role is User, in which case, events start with Accepted in creation
+ * order.
+ */
 @Entity
 @UserDefinition
 @NamedQuery(name = "getUserWithoutEvents", query = "SELECT u FROM User u WHERE u.username = :username")
-@NamedQuery(name = "getUser", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.username = :username")
+@NamedQuery(name = "getUserWithEvents", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.username = :username")
 public class User {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
@@ -43,67 +49,95 @@ public class User {
 	@Username
 	@NotNull
 	@Column(unique = true)
-	@JsonbTransient
-	String username;
+	private String username;
+
 	@Password
 	@NotNull
-	@JsonbTransient
-	String password;
+	private String password;
+
 	@Roles
 	@NotNull
-	@JsonbTransient
-	String role;
+	private String role;
 
 	@OneToMany(mappedBy = "user")
 	@NotNull
-	List<Event> events;
+	@OrderBy("creation")
+	private Set<Event> events;
 
-	public User() {
-		events = new ArrayList<>();
+	protected User() {
+		id = 0;
+		username = "should be set";
+		password = "should be set";
+		role = "should be set";
+		events = null;
 	}
 
-	@JsonbCreator
-	public User(@JsonbProperty("login") Login login, @JsonbProperty("role") String role) {
+	User(Login login, String role) {
 		this();
 		this.username = login.getUsername();
 		this.password = BcryptUtil.bcryptHash(login.getPassword());
 		this.role = checkNotNull(role);
+		this.events = new LinkedHashSet<>();
 	}
 
-	void rectifyEvents() {
-		events.forEach(e -> e.user = this);
+	boolean isPersistent() {
+		return id != 0;
 	}
 
-	public String getUsername() {
+	String getUsername() {
 		return username;
 	}
 
-	public String getRole() {
-		return role;
-	}
-
-	public ImmutableSet<Event> getEvents() {
-		return ImmutableSet.copyOf(events);
-	}
-
-	public void addEvent(Event event) {
-		checkNotNull(event);
-		checkArgument(event.getUser().equals(this));
-		final boolean isAccepted = event instanceof EventAccepted;
-		checkArgument(isAccepted == events.isEmpty());
-		events.add(event);
+	/**
+	 * Returns {@code true} iff this user has at least one event, equivalently, iff
+	 * its events have been initialized.
+	 *
+	 * @return {@code false} iff this user has no events, meaning, its events have
+	 *         not been initialized.
+	 */
+	boolean hasEvents() {
+		if (events != null) {
+			verify(!events.isEmpty());
+		}
+		return events != null;
 	}
 
 	/**
-	 * @return in order seen
+	 * Returns the events, if {@link #hasEvents()}.
+	 *
+	 * @return the events, ordered by creation
+	 * @throws IllegalStateException iff {@link #hasEvents()} is {@code false}
 	 */
-	public ImmutableSet<Video> getSeen() {
-		return events.stream().filter(e -> e instanceof EventSeen).map(e -> (EventSeen) e).map(EventSeen::getVideo)
-				.collect(ImmutableSet.toImmutableSet());
+	private ImmutableSortedSet<Event> readEvents() {
+		checkState(hasEvents());
+		return ImmutableSortedSet.copyOf(Comparator.comparing(Event::getCreation), events);
+	}
+
+	/**
+	 * Returns the events for writing, not necessarily ordered, if this user is
+	 * persistent and has events.
+	 *
+	 * @return the events
+	 * @throws IllegalStateException iff this instance is not persistent or
+	 *                               {@link #hasEvents()} is {@code false}
+	 */
+	Set<Event> events() {
+		checkState(isPersistent());
+		checkState(hasEvents());
+		return events;
+	}
+
+	private void rectifyEvents() {
+		events.forEach(e -> e.user = this);
+	}
+
+	private String getRole() {
+		return role;
 	}
 
 	@Override
 	public String toString() {
-		return MoreObjects.toStringHelper(this).add("id", id).add("username", username).add("role", role).toString();
+		return MoreObjects.toStringHelper(this).add("id", id).add("username", username).add("role", role)
+				.add("nb events", events == null ? 0 : events.size()).toString();
 	}
 }

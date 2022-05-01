@@ -3,11 +3,11 @@ package io.github.oliviercailloux.diet;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.dao.Login;
-import io.github.oliviercailloux.diet.dao.UserStatus;
 import io.github.oliviercailloux.diet.entity.Event;
 import io.github.oliviercailloux.diet.entity.EventJudgment;
 import io.github.oliviercailloux.diet.entity.Judgment;
 import io.github.oliviercailloux.diet.entity.User;
+import io.github.oliviercailloux.diet.entity.UserStatus;
 import io.github.oliviercailloux.diet.entity.Video;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -62,12 +62,6 @@ public class UserService {
 		q.setParameter("username", username);
 		final User user = q.getSingleResult();
 		return user;
-	}
-
-	public User getWithoutEvents(String username) {
-		final TypedQuery<User> q = em.createNamedQuery("getUserWithoutEvents", User.class);
-		q.setParameter("username", username);
-		return q.getSingleResult();
 	}
 
 	public void addSimpleEvent(Event event) {
