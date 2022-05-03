@@ -3,7 +3,7 @@ package io.github.oliviercailloux.diet.user;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.diet.video.Video;
+import io.github.oliviercailloux.diet.video.VideoEntity;
 import java.util.Set;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
@@ -13,12 +13,12 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 public class StaticUserStatus {
 	private final String username;
 	private final ImmutableSet<Event> events;
-	private final ImmutableSet<Video> seen;
-	private final ImmutableSet<Video> toSee;
+	private final ImmutableSet<VideoEntity> seen;
+	private final ImmutableSet<VideoEntity> toSee;
 
 	@JsonbCreator
 	public StaticUserStatus(@JsonbProperty("username") String username, @JsonbProperty("events") Set<Event> events,
-			@JsonbProperty("seen") Set<Video> seen, @JsonbProperty("toSee") Set<Video> toSee) {
+			@JsonbProperty("seen") Set<VideoEntity> seen, @JsonbProperty("toSee") Set<VideoEntity> toSee) {
 		this.username = checkNotNull(username);
 		this.events = ImmutableSet.copyOf(events);
 		this.seen = ImmutableSet.copyOf(seen);
@@ -33,11 +33,11 @@ public class StaticUserStatus {
 		return events;
 	}
 
-	public ImmutableSet<Video> getSeen() {
+	public ImmutableSet<VideoEntity> getSeen() {
 		return seen;
 	}
 
-	public ImmutableSet<Video> getToSee() {
+	public ImmutableSet<VideoEntity> getToSee() {
 		return toSee;
 	}
 }

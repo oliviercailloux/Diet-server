@@ -23,21 +23,25 @@ public class VideoFactory {
 	EntityManager em;
 
 	@Transactional
-	public VideoAppendable getVideo(int fileId) {
-		final TypedQuery<Video> q = em.createNamedQuery("get", Video.class);
+	public Video getVideo(int fileId) {
+		final TypedQuery<VideoEntity> q = em.createNamedQuery("get", VideoEntity.class);
 		q.setParameter("fileId", fileId);
-		return VideoAppendable.fromPersistent(em, q.getSingleResult());
+		return Video.fromPersistent(q.getSingleResult());
 	}
 
-	private ImmutableSet<VideoAppendable> toAppendables(Collection<Video> result) {
-		return result.stream().map(v -> VideoAppendable.fromPersistent(em, v)).collect(ImmutableSet.toImmutableSet());
+	private ImmutableSet<Video> toVideos(Collection<VideoEntity> result) {
+		return result.stream().map(v -> Video.fromPersistent(v)).collect(ImmutableSet.toImmutableSet());
+	}
+
+	private ImmutableSet<VideoWithCounters> toAppendables(Collection<VideoEntity> result) {
+		return result.stream().map(v -> VideoWithCounters.fromPersistent(em, v)).collect(ImmutableSet.toImmutableSet());
 	}
 
 	@Transactional
-	public ImmutableSet<VideoAppendable> getAll() {
-		final TypedQuery<Video> q = em.createNamedQuery("all", Video.class);
+	public ImmutableSet<VideoWithCounters> getAll() {
+		final TypedQuery<VideoEntity> q = em.createNamedQuery("all", VideoEntity.class);
 		LOGGER.info("Querying for videos.");
-		final List<Video> result = q.getResultList();
+		final List<VideoEntity> result = q.getResultList();
 		LOGGER.info("Obtained result.");
 		verify(!result.isEmpty());
 		LOGGER.info("Result size {}.", result.size());
@@ -45,19 +49,30 @@ public class VideoFactory {
 	}
 
 	@Transactional
-	public ImmutableSet<VideoAppendable> getStarters() {
-		final TypedQuery<Video> q = em.createNamedQuery("starters", Video.class);
-		final List<Video> starters = q.getResultList();
-		verify(!starters.isEmpty());
-		return toAppendables(starters);
+	public ImmutableSet<Video> getAllSimple() {
+		final TypedQuery<VideoEntity> q = em.createNamedQuery("all", VideoEntity.class);
+		LOGGER.info("Querying for videos.");
+		final List<VideoEntity> result = q.getResultList();
+		LOGGER.info("Obtained result.");
+		verify(!result.isEmpty());
+		LOGGER.info("Result size {}.", result.size());
+		return toVideos(result);
 	}
 
 	@Transactional
-	public ImmutableSet<VideoAppendable> getReplies(Set<VideoAppendable> videos) {
-		final TypedQuery<Video> q = em.createNamedQuery("replies", Video.class);
-		q.setParameter("videos", videos.stream().map(VideoAppendable::video).collect(ImmutableSet.toImmutableSet()));
-		final List<Video> replies = q.getResultList();
-		return toAppendables(replies);
+	public ImmutableSet<Video> getStarters() {
+		final TypedQuery<VideoEntity> q = em.createNamedQuery("starters", VideoEntity.class);
+		final List<VideoEntity> starters = q.getResultList();
+		verify(!starters.isEmpty());
+		return toVideos(starters);
+	}
+
+	@Transactional
+	public ImmutableSet<Video> getReplies(Set<Video> videos) {
+		final TypedQuery<VideoEntity> q = em.createNamedQuery("replies", VideoEntity.class);
+		q.setParameter("videos", videos.stream().map(Video::video).collect(ImmutableSet.toImmutableSet()));
+		final List<VideoEntity> replies = q.getResultList();
+		return toVideos(replies);
 	}
 
 }

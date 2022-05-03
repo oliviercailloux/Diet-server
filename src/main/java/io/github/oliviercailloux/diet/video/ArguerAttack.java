@@ -20,27 +20,27 @@ public class ArguerAttack {
 
 	@NotNull
 	@ManyToOne
-	private Video video;
+	private VideoEntity video;
 
 	@NotNull
 	@ManyToOne
-	private Video counters;
+	private VideoEntity counters;
 
 	ArguerAttack() {
 		/* For JPA. */
 	}
 
-	public ArguerAttack(Video video, Video counters) {
+	public ArguerAttack(VideoEntity video, VideoEntity counters) {
 		checkArgument(!video.equals(counters));
 		this.video = checkNotNull(video);
 		this.counters = checkNotNull(counters);
 	}
 
-	public Video getVideo() {
+	public VideoEntity getVideo() {
 		return video;
 	}
 
-	public Video getCounters() {
+	public VideoEntity getCounters() {
 		return counters;
 	}
 

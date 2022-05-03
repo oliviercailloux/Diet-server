@@ -11,7 +11,6 @@ import java.time.Instant;
 import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.json.bind.serializer.SerializationContext;
 import javax.json.stream.JsonGenerator;
-import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +27,11 @@ public class ReadEventSeen extends ReadEvent {
 		}
 	}
 
-	public static ReadEventSeen now(VideoAppendable video) {
+	public static ReadEventSeen now(Video video) {
 		return at(Instant.now(), video);
 	}
 
-	public static ReadEventSeen at(Instant creation, VideoAppendable video) {
+	public static ReadEventSeen at(Instant creation, Video video) {
 		return new ReadEventSeen(new EventSeen(creation, video.video()), video);
 	}
 
@@ -40,25 +39,25 @@ public class ReadEventSeen extends ReadEvent {
 		return event instanceof EventSeen;
 	}
 
-	public static ReadEvent fromEventSeen(EntityManager em, Event event) {
+	public static ReadEvent fromEventSeen(Event event) {
 		checkArgument(accept(event));
 		final EventSeen eventSeen = (EventSeen) event;
-		return fromEventSeenInternal(em, eventSeen);
+		return fromEventSeenInternal(eventSeen);
 	}
 
-	static ReadEvent fromEventSeenInternal(EntityManager em, EventSeen event) {
-		return new ReadEventSeen(event, VideoAppendable.fromPersistent(em, event.getVideo()));
+	static ReadEvent fromEventSeenInternal(EventSeen event) {
+		return new ReadEventSeen(event, Video.fromPersistent(event.getVideo()));
 	}
 
-	private final VideoAppendable video;
+	private final Video video;
 
-	private ReadEventSeen(EventSeen event, VideoAppendable video) {
+	private ReadEventSeen(EventSeen event, Video video) {
 		super(event);
 		this.video = checkNotNull(video);
 		checkArgument(event.getVideo().equals(video.video()));
 	}
 
-	public VideoAppendable video() {
+	public Video video() {
 		return video;
 	}
 }

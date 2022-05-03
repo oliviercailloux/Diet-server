@@ -16,7 +16,7 @@ public class EventAccepted extends Event {
 		super(creation);
 	}
 
-	public EventAccepted(User user, Instant creation) {
+	public EventAccepted(UserEntity user, Instant creation) {
 		super(user, creation);
 	}
 

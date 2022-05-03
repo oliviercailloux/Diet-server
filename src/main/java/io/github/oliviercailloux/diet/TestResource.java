@@ -2,7 +2,7 @@ package io.github.oliviercailloux.diet;
 
 import com.google.common.base.Stopwatch;
 import io.github.oliviercailloux.diet.user.UserFactory;
-import io.github.oliviercailloux.diet.user.UserPersistentWithEvents;
+import io.github.oliviercailloux.diet.user.UserWithEvents;
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -135,7 +135,7 @@ public class TestResource {
 	@Path("/user0")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserPersistentWithEvents getUser0() {
+	public UserWithEvents getUser0() {
 		LOGGER.info("Getting user0.");
 		return userFactory.getAppendable("user0");
 	}

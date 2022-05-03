@@ -4,7 +4,7 @@ import io.github.oliviercailloux.diet.user.Judgment;
 import io.github.oliviercailloux.diet.user.Login;
 import io.github.oliviercailloux.diet.user.ReadEventJudgment;
 import io.github.oliviercailloux.diet.user.UserFactory;
-import io.github.oliviercailloux.diet.user.UserPersistentWithEvents;
+import io.github.oliviercailloux.diet.user.UserWithEvents;
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -49,7 +49,7 @@ public class UserResource {
 	@Path("/status")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserPersistentWithEvents status() {
+	public UserWithEvents status() {
 		return userFactory.getAppendable(getCurrentUsername());
 	}
 
@@ -65,7 +65,7 @@ public class UserResource {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserPersistentWithEvents createAcceptingUser(Login login) {
+	public UserWithEvents createAcceptingUser(Login login) {
 		LOGGER.info("Creating {}.", login);
 		return userFactory.addUser(login);
 	}
@@ -76,8 +76,8 @@ public class UserResource {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserPersistentWithEvents postJudgment(Judgment judgment) {
-		final UserPersistentWithEvents user = userFactory.getAppendable(getCurrentUsername());
+	public UserWithEvents postJudgment(Judgment judgment) {
+		final UserWithEvents user = userFactory.getAppendable(getCurrentUsername());
 		final ReadEventJudgment event = ReadEventJudgment.now(judgment);
 		em.persist(judgment);
 		user.persistEvent(event);

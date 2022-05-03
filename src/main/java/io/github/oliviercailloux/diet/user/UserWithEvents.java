@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
-import io.github.oliviercailloux.diet.video.VideoAppendable;
+import io.github.oliviercailloux.diet.video.Video;
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import java.util.stream.Stream;
 import javax.json.bind.annotation.JsonbPropertyOrder;
@@ -18,22 +18,22 @@ import javax.persistence.EntityManager;
  * A user with role User, thus, whose events start with an accepted event.
  */
 @JsonbPropertyOrder({ "username", "events", "seen", "toSee" })
-public class UserPersistentWithEvents implements RawUser {
-	public static UserPersistentWithEvents fromExistingWithEvents(EntityManager em, VideoFactory v, User user) {
-		return new UserPersistentWithEvents(em, v, user);
+public class UserWithEvents implements RawUser {
+	public static UserWithEvents fromExistingWithEvents(EntityManager em, VideoFactory v, UserEntity user) {
+		return new UserWithEvents(em, v, user);
 	}
 
 	private final EntityManager em;
 	private final VideoFactory videoFactory;
-	private final User user;
+	private final UserEntity user;
 
-	private UserPersistentWithEvents(EntityManager em, VideoFactory videoFactory, User user) {
+	private UserWithEvents(EntityManager em, VideoFactory videoFactory, UserEntity user) {
 		this.em = checkNotNull(em);
 		this.videoFactory = checkNotNull(videoFactory);
 		this.user = checkNotNull(user);
 		checkArgument(user.isPersistent());
 		checkArgument(user.hasEvents());
-		checkArgument(user.role().equals(User.USER_ROLE));
+		checkArgument(user.role().equals(UserEntity.USER_ROLE));
 	}
 
 	@Override
@@ -42,22 +42,22 @@ public class UserPersistentWithEvents implements RawUser {
 	}
 
 	/**
-	 * @return {@link User#USER_ROLE}
+	 * @return {@link UserEntity#USER_ROLE}
 	 */
 	@Override
 	public String role() {
-		return User.USER_ROLE;
+		return UserEntity.USER_ROLE;
 	}
 
 	/**
 	 * @return with at least one accepted event, in order of creation
 	 */
 	public ImmutableSortedSet<ReadEvent> readEvents() {
-		return user.events().stream().map(e -> ReadEvent.fromEvent(em, e))
+		return user.events().stream().map(ReadEvent::fromEvent)
 				.collect(ImmutableSortedSet.toImmutableSortedSet(ReadEvent.COMPARATOR));
 	}
 
-	private Stream<VideoAppendable> seenStream() {
+	private Stream<Video> seenStream() {
 		return readEvents().stream().filter(e -> e instanceof ReadEventSeen).map(e -> (ReadEventSeen) e)
 				.map(ReadEventSeen::video);
 	}
@@ -67,7 +67,7 @@ public class UserPersistentWithEvents implements RawUser {
 	 *
 	 * @return the videos seen, in order seen
 	 */
-	public ImmutableList<VideoAppendable> readSeen() {
+	public ImmutableList<Video> readSeen() {
 		return seenStream().collect(ImmutableList.toImmutableList());
 	}
 
@@ -77,7 +77,7 @@ public class UserPersistentWithEvents implements RawUser {
 	 * @return the video file ids seen, in order seen
 	 */
 	public ImmutableList<Integer> readSeenIds() {
-		return seenStream().map(VideoAppendable::getFileId).collect(ImmutableList.toImmutableList());
+		return seenStream().map(Video::getFileId).collect(ImmutableList.toImmutableList());
 	}
 
 	public void persistEvent(ReadEvent event) {
@@ -97,24 +97,24 @@ public class UserPersistentWithEvents implements RawUser {
 		return readEvents();
 	}
 
-	public ImmutableList<VideoAppendable> getSeen() {
+	public ImmutableList<Video> getSeen() {
 		return readSeen();
 	}
 
-	public ImmutableSet<VideoAppendable> getToSee() {
+	public ImmutableSet<Video> getToSee() {
 		final ImmutableSet<Integer> seenIds = ImmutableSet.copyOf(readSeenIds());
-		final ImmutableSet<VideoAppendable> all = videoFactory.getAll();
-		final ImmutableSet<VideoAppendable> toSee = all.stream().filter(vi -> !seenIds.contains(vi.getFileId()))
+		final ImmutableSet<Video> all = videoFactory.getAllSimple();
+		final ImmutableSet<Video> toSee = all.stream().filter(vi -> !seenIds.contains(vi.getFileId()))
 				.collect(ImmutableSet.toImmutableSet());
 		return toSee;
 	}
 
 	@SuppressWarnings("unused")
-	private ImmutableSet<VideoAppendable> getToSeeWithImmediateRepliesOnly() {
-		final ImmutableSet<VideoAppendable> seen = ImmutableSet.copyOf(readSeen());
-		final ImmutableSet<VideoAppendable> replies = videoFactory.getReplies(seen);
-		final ImmutableSet<VideoAppendable> toSee = Sets
-				.difference(Sets.union(videoFactory.getStarters(), replies), seen).immutableCopy();
+	private ImmutableSet<Video> getToSeeWithImmediateRepliesOnly() {
+		final ImmutableSet<Video> seen = ImmutableSet.copyOf(readSeen());
+		final ImmutableSet<Video> replies = videoFactory.getReplies(seen);
+		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(videoFactory.getStarters(), replies), seen)
+				.immutableCopy();
 		return toSee;
 	}
 }

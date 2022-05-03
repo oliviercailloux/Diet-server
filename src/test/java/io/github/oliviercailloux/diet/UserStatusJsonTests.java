@@ -10,7 +10,7 @@ import io.github.oliviercailloux.diet.user.UserFactory;
 import io.github.oliviercailloux.diet.user.UserStatus;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.Side;
-import io.github.oliviercailloux.diet.video.Video;
+import io.github.oliviercailloux.diet.video.VideoEntity;
 import io.quarkus.test.junit.QuarkusTest;
 import java.time.Instant;
 import javax.inject.Inject;
@@ -33,7 +33,7 @@ class UserStatusJsonTests {
 		final Instant e3 = e2.plusSeconds(1);
 		final ImmutableSet<ReadEvent> events = ImmutableSet.of(ReadEventAccepted.at(e1),
 				ReadEventJudgment.at(e2, new Judgment(3, 0)),
-				ReadEventSeen.at(e3, new Video(6, "Effort écologique", Side.VEGAN)));
+				ReadEventSeen.at(e3, new VideoEntity(6, "Effort écologique", Side.VEGAN)));
 		final UserStatus statusObj = userFactory.fictitious("u", events);
 		final String statusJson = jsonb.toJson(statusObj);
 		final String expected = """

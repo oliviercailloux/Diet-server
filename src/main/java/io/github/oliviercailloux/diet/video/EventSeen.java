@@ -16,18 +16,18 @@ class EventSeen extends Event {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@NotNull
-	private Video video;
+	private VideoEntity video;
 
 	EventSeen() {
 		/* For JPA. */
 	}
 
-	public EventSeen(Instant creation, Video video) {
+	public EventSeen(Instant creation, VideoEntity video) {
 		super(creation);
 		this.video = checkNotNull(video);
 	}
 
-	public Video getVideo() {
+	public VideoEntity getVideo() {
 		return video;
 	}
 

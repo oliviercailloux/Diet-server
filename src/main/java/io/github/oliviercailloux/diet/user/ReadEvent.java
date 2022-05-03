@@ -6,7 +6,6 @@ import com.google.common.base.VerifyException;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import java.time.Instant;
 import java.util.Comparator;
-import javax.persistence.EntityManager;
 
 public class ReadEvent {
 	public static final Comparator<ReadEvent> COMPARATOR = Comparator.comparing(ReadEvent::creation)
@@ -14,7 +13,7 @@ public class ReadEvent {
 
 	private final Event event;
 
-	public static ReadEvent fromEvent(EntityManager em, Event event) {
+	public static ReadEvent fromEvent(Event event) {
 		if (event instanceof EventAccepted e) {
 			return ReadEventAccepted.fromEvent(e);
 		}
@@ -22,7 +21,7 @@ public class ReadEvent {
 			return ReadEventJudgment.fromEvent(e);
 		}
 		if (ReadEventSeen.accept(event)) {
-			return ReadEventSeen.fromEventSeen(em, event);
+			return ReadEventSeen.fromEventSeen(event);
 		}
 		throw new VerifyException();
 	}

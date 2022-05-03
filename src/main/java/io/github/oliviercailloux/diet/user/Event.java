@@ -34,7 +34,7 @@ public class Event {
 	@ManyToOne
 	@NotNull
 	@JsonbTransient
-	User user;
+	UserEntity user;
 
 	@NotNull
 	Instant creation;
@@ -49,14 +49,14 @@ public class Event {
 	}
 
 	@JsonbCreator
-	public Event(@JsonbProperty("user") User user, @JsonbProperty("creation") Instant creation) {
+	public Event(@JsonbProperty("user") UserEntity user, @JsonbProperty("creation") Instant creation) {
 		checkNotNull(user);
 		checkNotNull(creation);
 		this.user = user;
 		this.creation = creation;
 	}
 
-	public User getUser() {
+	public UserEntity getUser() {
 		return user;
 	}
 

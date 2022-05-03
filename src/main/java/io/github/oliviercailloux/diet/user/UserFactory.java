@@ -20,27 +20,27 @@ public class UserFactory {
 	@Inject
 	VideoFactory videoFactory;
 
-	private User getUser(String username) {
-		final TypedQuery<User> q = em.createNamedQuery("getUser", User.class);
+	private UserEntity getUser(String username) {
+		final TypedQuery<UserEntity> q = em.createNamedQuery("getUser", UserEntity.class);
 		q.setParameter("username", username);
 		return q.getSingleResult();
 	}
 
-	private User getUserWithoutEvents(String username) {
-		final TypedQuery<User> q = em.createNamedQuery("getUserWithoutEvents", User.class);
+	private UserEntity getUserWithoutEvents(String username) {
+		final TypedQuery<UserEntity> q = em.createNamedQuery("getUserWithoutEvents", UserEntity.class);
 		q.setParameter("username", username);
 		return q.getSingleResult();
 	}
 
 	@Transactional
-	private UserPersistentWithEvents getOld(String username) {
-		final User user = getUser(username);
-		return UserPersistentWithEvents.fromExistingWithEvents(em, videoFactory, user);
+	private UserWithEvents getOld(String username) {
+		final UserEntity user = getUser(username);
+		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 	public RawUser getWithoutEvents(String username) {
-		final User user = getUserWithoutEvents(username);
-		return UserPersistent.persistent(user);
+		final UserEntity user = getUserWithoutEvents(username);
+		return User.persistent(user);
 	}
 
 	/**
@@ -50,9 +50,9 @@ public class UserFactory {
 	 */
 	@Transactional
 	public RawUser addAdmin(Login login) {
-		final User user = new User(login, "admin");
+		final UserEntity user = new UserEntity(login, "admin");
 		em.persist(user);
-		return UserPersistent.persistent(user);
+		return User.persistent(user);
 	}
 
 	/**
@@ -61,17 +61,17 @@ public class UserFactory {
 	 * @param login with the unencrypted password (it will be encrypted with bcrypt)
 	 */
 	@Transactional
-	public UserPersistentWithEvents addUser(Login login) {
-		final User user = new User(login, "user");
+	public UserWithEvents addUser(Login login) {
+		final UserEntity user = new UserEntity(login, "user");
 		final EventAccepted event = user.setAccepted();
 		em.persist(user);
 		em.persist(event);
-		return UserPersistentWithEvents.fromExistingWithEvents(em, videoFactory, user);
+		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
-	public UserPersistentWithEvents getAppendable(String username) {
-		final User user = getUser(username);
-		return UserPersistentWithEvents.fromExistingWithEvents(em, videoFactory, user);
+	public UserWithEvents getAppendable(String username) {
+		final UserEntity user = getUser(username);
+		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 }
