@@ -3,26 +3,28 @@ package io.github.oliviercailloux.diet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.github.oliviercailloux.diet.user.Judgment;
-import io.github.oliviercailloux.diet.user.ReadEvent;
-import io.github.oliviercailloux.diet.user.ReadEventAccepted;
+import io.github.oliviercailloux.diet.user.Login;
 import io.github.oliviercailloux.diet.user.ReadEventJudgment;
 import io.github.oliviercailloux.diet.user.UserFactory;
-import io.github.oliviercailloux.diet.user.UserStatus;
+import io.github.oliviercailloux.diet.user.UserWithEvents;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
-import io.github.oliviercailloux.diet.video.Side;
-import io.github.oliviercailloux.diet.video.VideoEntity;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import java.time.Instant;
 import javax.inject.Inject;
 import javax.json.bind.Jsonb;
-import org.gradle.internal.impldep.com.google.common.collect.ImmutableSet;
+import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
 class UserStatusJsonTests {
 
 	@Inject
+	EntityManager em;
+	@Inject
 	Jsonb jsonb;
+	@Inject
+	VideoFactory videoFactory;
 	@Inject
 	UserFactory userFactory;
 
@@ -31,10 +33,19 @@ class UserStatusJsonTests {
 		final Instant e1 = Instant.parse("2000-01-20T10:10:10.000000000Z");
 		final Instant e2 = e1.plusSeconds(1);
 		final Instant e3 = e2.plusSeconds(1);
-		final ImmutableSet<ReadEvent> events = ImmutableSet.of(ReadEventAccepted.at(e1),
-				ReadEventJudgment.at(e2, new Judgment(3, 0)),
-				ReadEventSeen.at(e3, new VideoEntity(6, "Effort écologique", Side.VEGAN)));
-		final UserStatus statusObj = userFactory.fictitious("u", events);
+		final UserWithEvents statusObj;
+		{
+			final String username = "testWithEvents " + Instant.now().toString();
+			statusObj = userFactory.addUser(new Login(username, "user"));
+			final Judgment judgment = new Judgment(3, 0);
+			em.persist(judgment);
+			statusObj.persistEvent(ReadEventJudgment.at(e2, judgment));
+			statusObj.persistEvent(ReadEventSeen.at(e3, videoFactory.getVideo(3)));
+		}
+//		final ImmutableSet<ReadEvent> events = ImmutableSet.of(ReadEventAccepted.at(e1),
+//				ReadEventJudgment.at(e2, new Judgment(3, 0)),
+//				ReadEventSeen.at(e3, new VideoEntity(6, "Effort écologique", Side.VEGAN)));
+//		final UserStatus statusObj = userFactory.fictitious("u", events);
 		final String statusJson = jsonb.toJson(statusObj);
 		final String expected = """
 
@@ -65,8 +76,6 @@ class UserStatusJsonTests {
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/006.mp4",
 				            "description": "Effort écologique",
 				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
 				        }
 				    ],
 				    "toSee": [
@@ -75,8 +84,6 @@ class UserStatusJsonTests {
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/001.mp4",
 				            "description": "Climat et biodiversité",
 				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
 				        },
 				        {
 				            "fileId": 2,

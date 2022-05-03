@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.diet.user;
 
 import io.github.oliviercailloux.diet.video.VideoFactory;
+import java.time.Instant;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -62,8 +63,18 @@ public class UserFactory {
 	 */
 	@Transactional
 	public UserWithEvents addUser(Login login) {
+		return addUser(login, Instant.now());
+	}
+
+	/**
+	 * Adds a new user in the database with role user
+	 *
+	 * @param login with the unencrypted password (it will be encrypted with bcrypt)
+	 */
+	@Transactional
+	public UserWithEvents addUser(Login login, Instant acceptationTime) {
 		final UserEntity user = new UserEntity(login, "user");
-		final EventAccepted event = user.setAccepted();
+		final EventAccepted event = user.setAccepted(acceptationTime);
 		em.persist(user);
 		em.persist(event);
 		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);

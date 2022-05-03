@@ -80,11 +80,11 @@ class UserEntity {
 		this.events = null;
 	}
 
-	EventAccepted setAccepted() {
+	EventAccepted setAccepted(Instant acceptationTime) {
 		checkState(events == null);
 		checkState(!isPersistent());
 		this.events = new LinkedHashSet<>();
-		final EventAccepted e = new EventAccepted(this, Instant.now());
+		final EventAccepted e = new EventAccepted(this, acceptationTime);
 		this.events.add(e);
 		return e;
 	}
