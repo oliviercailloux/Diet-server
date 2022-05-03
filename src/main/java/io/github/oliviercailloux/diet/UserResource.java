@@ -89,14 +89,4 @@ public class UserResource {
 		return user;
 	}
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public String create(@Valid CreateUserRequest request) {
-		return "ok";
-	}
-
-	public Optional<String> findByUsername(@Size(min = 4, max = 15) String username) {
-		return Optional.of("ok");
-	}
-
 }
