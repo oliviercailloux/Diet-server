@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.quarkus;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;

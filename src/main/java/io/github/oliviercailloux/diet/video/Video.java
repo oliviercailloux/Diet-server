@@ -2,13 +2,13 @@ package io.github.oliviercailloux.diet.video;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.utils.Utils;
 import java.net.URI;
 import java.text.NumberFormat;
-import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 import javax.json.bind.annotation.JsonbPropertyOrder;
@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "all", query = "SELECT v FROM Video v LEFT JOIN FETCH v.counters ORDER BY v.fileId")
 //@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 @JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
-public class Video {
+class Video {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Video.class);
 
@@ -68,8 +68,9 @@ public class Video {
 	private Side side;
 
 	Video() {
-		counters = new LinkedHashSet<>();
-		counteredBy = new LinkedHashSet<>();
+		id = -1;
+		counters = null;
+		counteredBy = null;
 	}
 
 	public Video(int fileId, String description, Side side) {
@@ -77,6 +78,10 @@ public class Video {
 		this.fileId = fileId;
 		this.description = checkNotNull(description);
 		this.side = checkNotNull(side);
+	}
+
+	boolean isPersistent() {
+		return id != -1;
 	}
 
 	public int getFileId() {
@@ -95,15 +100,36 @@ public class Video {
 		return side;
 	}
 
-	public ImmutableSet<Video> getCounters() {
+	boolean hasCounters() {
+		return counters != null;
+	}
+
+	Set<ArguerAttack> counters() {
+		checkState(hasCounters());
+		return counters;
+	}
+
+	boolean hasCounteredBy() {
+		return counteredBy != null;
+	}
+
+	Set<ArguerAttack> counteredBy() {
+		checkState(hasCounteredBy());
+		return counteredBy;
+	}
+
+	public ImmutableSet<Video> getCounteredVideos() {
+		checkState(counters != null);
 		return counters.stream().map(ArguerAttack::getCounters).collect(ImmutableSet.toImmutableSet());
 	}
 
-	public ImmutableSet<Integer> getCountersFileIds() {
-		return getCounters().stream().map(Video::getFileId).sorted().collect(ImmutableSet.toImmutableSet());
+	public ImmutableSet<Integer> getCounteredFileIds() {
+		checkState(counters != null);
+		return getCounteredVideos().stream().map(Video::getFileId).sorted().collect(ImmutableSet.toImmutableSet());
 	}
 
 	public ImmutableSet<Video> getCounteredBy() {
+		checkState(counters != null);
 		return counters.stream().map(ArguerAttack::getVideo).collect(ImmutableSet.toImmutableSet());
 	}
 

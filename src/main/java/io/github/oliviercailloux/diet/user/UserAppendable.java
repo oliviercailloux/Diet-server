@@ -26,11 +26,11 @@ public class UserAppendable {
 
 	public void persistEvent(ReadEvent event) {
 		checkNotNull(event);
-		checkArgument(!event.isAccepted());
+		checkArgument(!(event instanceof ReadEventAccepted));
 		final Event underlyingEvent = event.underlyingEvent();
 		underlyingEvent.user = user;
 		user.events().add(underlyingEvent);
-		em.persist(event);
+		em.persist(underlyingEvent);
 	}
 
 	public UserStatus status() {

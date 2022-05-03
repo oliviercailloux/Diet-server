@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.quarkus;
 
 import io.github.oliviercailloux.jaris.collections.ImmutableCompleteMap;
 import io.github.oliviercailloux.jaris.credentials.CredentialsReader;

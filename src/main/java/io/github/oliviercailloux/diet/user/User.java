@@ -5,13 +5,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableSortedSet;
 import io.quarkus.elytron.security.common.BcryptUtil;
 import io.quarkus.security.jpa.Password;
 import io.quarkus.security.jpa.Roles;
 import io.quarkus.security.jpa.UserDefinition;
 import io.quarkus.security.jpa.Username;
-import java.util.Comparator;
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.json.bind.annotation.JsonbTransient;
@@ -36,7 +35,9 @@ import org.slf4j.LoggerFactory;
 @UserDefinition
 @NamedQuery(name = "getUserWithoutEvents", query = "SELECT u FROM User u WHERE u.username = :username")
 @NamedQuery(name = "getUserWithEvents", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.username = :username")
-public class User {
+class User {
+	public static final String USER_ROLE = "user";
+
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(User.class);
 
@@ -76,7 +77,16 @@ public class User {
 		this.username = login.getUsername();
 		this.password = BcryptUtil.bcryptHash(login.getPassword());
 		this.role = checkNotNull(role);
+		this.events = null;
+	}
+
+	EventAccepted setAccepted() {
+		checkState(events == null);
+		checkState(!isPersistent());
 		this.events = new LinkedHashSet<>();
+		final EventAccepted e = new EventAccepted(this, Instant.now());
+		this.events.add(e);
+		return e;
 	}
 
 	boolean isPersistent() {
@@ -85,6 +95,10 @@ public class User {
 
 	String getUsername() {
 		return username;
+	}
+
+	String role() {
+		return role;
 	}
 
 	/**
@@ -102,36 +116,15 @@ public class User {
 	}
 
 	/**
-	 * Returns the events, if {@link #hasEvents()}.
-	 *
-	 * @return the events, ordered by creation
-	 * @throws IllegalStateException iff {@link #hasEvents()} is {@code false}
-	 */
-	private ImmutableSortedSet<Event> readEvents() {
-		checkState(hasEvents());
-		return ImmutableSortedSet.copyOf(Comparator.comparing(Event::getCreation), events);
-	}
-
-	/**
-	 * Returns the events for writing, not necessarily ordered, if this user is
-	 * persistent and has events.
+	 * Returns the events for writing, not necessarily ordered, if this user has
+	 * events.
 	 *
 	 * @return the events
-	 * @throws IllegalStateException iff this instance is not persistent or
-	 *                               {@link #hasEvents()} is {@code false}
+	 * @throws IllegalStateException iff {@link #hasEvents()} is {@code false}
 	 */
 	Set<Event> events() {
-		checkState(isPersistent());
 		checkState(hasEvents());
 		return events;
-	}
-
-	private void rectifyEvents() {
-		events.forEach(e -> e.user = this);
-	}
-
-	private String getRole() {
-		return role;
 	}
 
 	@Override

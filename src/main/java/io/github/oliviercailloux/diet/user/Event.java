@@ -39,11 +39,11 @@ public class Event {
 	@NotNull
 	Instant creation;
 
-	Event() {
+	protected Event() {
 		/* For JPA. */
 	}
 
-	public Event(Instant creation) {
+	protected Event(Instant creation) {
 		this.user = null;
 		this.creation = checkNotNull(creation);
 	}

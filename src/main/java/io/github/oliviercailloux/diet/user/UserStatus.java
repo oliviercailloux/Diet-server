@@ -23,7 +23,7 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 public class UserStatus {
 	private final IUser user;
 
-	private final VideoFactory v;
+	private final VideoFactory videoFactory;
 
 	/**
 	 * @param user must be persistent; the reference should not be used otherwise
@@ -35,7 +35,7 @@ public class UserStatus {
 	}
 
 	static UserStatus fromFictitious(String username, Set<ReadEvent> events, VideoFactory v) {
-		return new UserStatus(UserFictitious.fictitious(username, events), v);
+		return new UserStatus(UserFictitiousWithEvents.fictitious(username, events), v);
 	}
 
 	static UserStatus fromIUser(IUser user, VideoFactory v) {
@@ -44,7 +44,7 @@ public class UserStatus {
 
 	private UserStatus(IUser user, VideoFactory v) {
 		this.user = checkNotNull(user);
-		this.v = checkNotNull(v);
+		this.videoFactory = checkNotNull(v);
 	}
 
 	public String getUsername() {
@@ -60,17 +60,18 @@ public class UserStatus {
 	}
 
 	public ImmutableSet<Video> getToSee() {
-		final ImmutableSet<Video> seen = ImmutableSet.copyOf(user.readSeen());
-		final ImmutableSet<Video> all = v.getAll();
-		final ImmutableSet<Video> toSee = Sets.difference(all, seen).immutableCopy();
+		final ImmutableSet<Integer> seenIds = ImmutableSet.copyOf(user.readSeenIds());
+		final ImmutableSet<Video> all = videoFactory.getAll();
+		final ImmutableSet<Video> toSee = all.stream().filter(vi -> !seenIds.contains(vi.getFileId()))
+				.collect(ImmutableSet.toImmutableSet());
 		return toSee;
 	}
 
 	@SuppressWarnings("unused")
 	private ImmutableSet<Video> getToSeeWithImmediateRepliesOnly() {
 		final ImmutableSet<Video> seen = ImmutableSet.copyOf(user.readSeen());
-		final ImmutableSet<Video> replies = v.getReplies(seen);
-		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(v.getStarters(), replies), seen).immutableCopy();
+		final ImmutableSet<Video> replies = videoFactory.getReplies(seen);
+		final ImmutableSet<Video> toSee = Sets.difference(Sets.union(videoFactory.getStarters(), replies), seen).immutableCopy();
 		return toSee;
 	}
 }

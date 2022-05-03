@@ -2,18 +2,29 @@ package io.github.oliviercailloux.diet.user;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
+import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.Video;
+import java.util.stream.Stream;
 
 /**
  * A user with role User, thus, whose events start with an accepted event.
  */
 interface IUser extends RawUser {
-	public String username();
+	/**
+	 * @return {@link User#USER_ROLE}
+	 */
+	@Override
+	public String role();
 
 	/**
 	 * @return with at least one accepted event, in order of creation
 	 */
 	public ImmutableSortedSet<ReadEvent> readEvents();
+
+	private Stream<Video> seenStream() {
+		return readEvents().stream().filter(e -> e instanceof ReadEventSeen).map(e -> (ReadEventSeen) e)
+				.map(ReadEventSeen::video);
+	}
 
 	/**
 	 * Returns the videos seen.
@@ -21,8 +32,7 @@ interface IUser extends RawUser {
 	 * @return the videos seen, in order seen
 	 */
 	default ImmutableList<Video> readSeen() {
-		return readEvents().stream().filter(ReadEvent::isSeen).map(ReadEvent::videoSeen)
-				.collect(ImmutableList.toImmutableList());
+		return seenStream().collect(ImmutableList.toImmutableList());
 	}
 
 	/**
@@ -31,7 +41,6 @@ interface IUser extends RawUser {
 	 * @return the video file ids seen, in order seen
 	 */
 	default ImmutableList<Integer> readSeenIds() {
-		return readEvents().stream().filter(ReadEvent::isSeen).map(ReadEvent::videoSeen).map(Video::getFileId)
-				.collect(ImmutableList.toImmutableList());
+		return seenStream().map(Video::getFileId).collect(ImmutableList.toImmutableList());
 	}
 }

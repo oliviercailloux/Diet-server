@@ -1,9 +1,9 @@
 package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.diet.user.ReadEventSeen;
 import io.github.oliviercailloux.diet.user.UserAppendable;
 import io.github.oliviercailloux.diet.user.UserFactory;
 import io.github.oliviercailloux.diet.user.UserStatus;
+import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;

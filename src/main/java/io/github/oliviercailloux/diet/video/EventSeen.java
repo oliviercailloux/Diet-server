@@ -1,10 +1,10 @@
-package io.github.oliviercailloux.diet.user;
+package io.github.oliviercailloux.diet.video;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import io.github.oliviercailloux.diet.video.Video;
+import io.github.oliviercailloux.diet.user.Event;
 import java.time.Instant;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.quarkus;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

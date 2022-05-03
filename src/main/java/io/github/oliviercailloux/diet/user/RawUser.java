@@ -3,6 +3,8 @@ package io.github.oliviercailloux.diet.user;
 /**
  * A user.
  */
-interface RawUser {
+public interface RawUser {
 	public String username();
+
+	public String role();
 }

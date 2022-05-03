@@ -1,7 +1,7 @@
 package io.github.oliviercailloux.diet.user;
 
 import io.github.oliviercailloux.diet.video.VideoFactory;
-import java.time.Instant;
+import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -19,25 +19,33 @@ public class UserFactory {
 	EntityManager em;
 
 	@Inject
-	VideoFactory videoService;
+	VideoFactory videoFactory;
 
-	private User get(String username) {
+	private User getUser(String username) {
 		final TypedQuery<User> q = em.createNamedQuery("getUser", User.class);
 		q.setParameter("username", username);
 		return q.getSingleResult();
 	}
 
-	@SuppressWarnings("unused")
-	private User getWithoutEvents(String username) {
+	private User getUserWithoutEvents(String username) {
 		final TypedQuery<User> q = em.createNamedQuery("getUserWithoutEvents", User.class);
 		q.setParameter("username", username);
 		return q.getSingleResult();
 	}
 
 	@Transactional
-	public UserStatus getStatus(String username) {
-		final User user = get(username);
-		return UserStatus.fromExistingUser(user, videoService);
+	private UserStatus getOld(String username) {
+		final User user = getUser(username);
+		return UserStatus.fromExistingUser(user, videoFactory);
+	}
+
+	public RawUser getWithoutEvents(String username) {
+		final User user = getUserWithoutEvents(username);
+		return UserPersistent.persistent(user);
+	}
+
+	public UserStatus fictitious(String username, Set<ReadEvent> events) {
+		return UserStatus.fromFictitious(username, events, videoFactory);
 	}
 
 	/**
@@ -46,9 +54,10 @@ public class UserFactory {
 	 * @param login with the unencrypted password (it will be encrypted with bcrypt)
 	 */
 	@Transactional
-	public void addAdmin(Login login) {
+	public RawUser addAdmin(Login login) {
 		final User user = new User(login, "admin");
 		em.persist(user);
+		return UserPersistent.persistent(user);
 	}
 
 	/**
@@ -59,16 +68,15 @@ public class UserFactory {
 	@Transactional
 	public UserAppendable addUser(Login login) {
 		final User user = new User(login, "user");
-		final EventAccepted event = new EventAccepted(user, Instant.now());
-		user.events().add(event);
+		final EventAccepted event = user.setAccepted();
 		em.persist(user);
 		em.persist(event);
-		return UserAppendable.fromExistingWithEvents(em, videoService, user);
+		return UserAppendable.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 	public UserAppendable getAppendable(String username) {
-		final User user = get(username);
-		return UserAppendable.fromExistingWithEvents(em, videoService, user);
+		final User user = getUser(username);
+		return UserAppendable.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 }

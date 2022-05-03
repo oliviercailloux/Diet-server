@@ -1,8 +1,8 @@
 package io.github.oliviercailloux.diet;
 
 import com.google.common.base.Stopwatch;
-import io.github.oliviercailloux.diet.user.User;
 import io.github.oliviercailloux.diet.user.UserFactory;
+import io.github.oliviercailloux.diet.user.UserStatus;
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -65,7 +65,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.getWithoutEvents("user0");
+				userFactory.getWithoutEvents("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} simple " + queries + ": {} ms.", nbIterations,
@@ -85,7 +85,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.getWithoutEvents("user0");
+				userFactory.getWithoutEvents("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} simple " + queries + ": {} ms.", nbIterations,
@@ -94,7 +94,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.get("user0");
+				userFactory.getAppendable("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} complex " + queries + ": {} ms.", nbIterations,
@@ -103,7 +103,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userService.getWithoutEvents("user0");
+				userFactory.getWithoutEvents("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} simple " + queries + ": {} ms.", nbIterations,
@@ -112,7 +112,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				videoService.getAll();
+				videoFactory.getAll();
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} complex video " + queries + ": {} ms.", nbIterations,
@@ -135,9 +135,9 @@ public class TestResource {
 	@Path("/user0")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public User getUser0() {
+	public UserStatus getUser0() {
 		LOGGER.info("Getting user0.");
-		return userService.get("user0");
+		return userFactory.getAppendable("user0").status();
 	}
 
 }

@@ -51,7 +51,7 @@ public class UserResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserStatus status() {
-		return userFactory.getStatus(getCurrentUsername());
+		return userFactory.getAppendable(getCurrentUsername()).status();
 	}
 
 	/**

@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableSortedSet;
-import java.util.Comparator;
 
 class UserPersistentWithEvents implements IUser {
 	static IUser persistent(User user) {
@@ -17,6 +16,7 @@ class UserPersistentWithEvents implements IUser {
 		this.user = checkNotNull(user);
 		checkArgument(user.isPersistent());
 		checkArgument(user.hasEvents());
+		checkArgument(user.role().equals(User.USER_ROLE));
 	}
 
 	@Override
@@ -25,8 +25,14 @@ class UserPersistentWithEvents implements IUser {
 	}
 
 	@Override
+	public String role() {
+		return User.USER_ROLE;
+	}
+
+	@Override
 	public ImmutableSortedSet<ReadEvent> readEvents() {
 		return user.events().stream().map(ReadEvent::fromEvent)
-				.collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.comparing(ReadEvent::creation)));
+				.collect(ImmutableSortedSet.toImmutableSortedSet(ReadEvent.COMPARATOR));
 	}
+
 }
