@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class EventSeen extends Event {
+class EventSeen extends Event {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@NotNull

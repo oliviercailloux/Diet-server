@@ -3,8 +3,12 @@ package io.github.oliviercailloux.diet.video;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.collect.ImmutableSet;
+import java.net.URI;
+import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.persistence.EntityManager;
 
+@JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class VideoAppendable {
 	static VideoAppendable fromPersistent(EntityManager em, Video video) {
 		return new VideoAppendable(em, video);
@@ -29,5 +33,25 @@ public class VideoAppendable {
 
 	void addCounteredBy(ArguerAttack attack) {
 		video.counteredBy().add(attack);
+	}
+
+	public int getFileId() {
+		return video.getFileId();
+	}
+
+	public URI getUrl() {
+		return video.getUrl();
+	}
+
+	public String getDescription() {
+		return video.getDescription();
+	}
+
+	public Side getSide() {
+		return video.getSide();
+	}
+
+	public ImmutableSet<Integer> getCountersFileIds() {
+		return video.getCountersFileIds();
 	}
 }

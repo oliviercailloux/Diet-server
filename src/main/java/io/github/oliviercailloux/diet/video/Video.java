@@ -11,7 +11,6 @@ import java.net.URI;
 import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.Set;
-import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +31,6 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "get", query = "SELECT v FROM Video v WHERE v.fileId = :fileId")
 @NamedQuery(name = "all", query = "SELECT v FROM Video v LEFT JOIN FETCH v.counters ORDER BY v.fileId")
 //@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
-@JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class Video {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Video.class);
@@ -118,14 +116,12 @@ public class Video {
 		return counteredBy;
 	}
 
-	public ImmutableSet<Video> getCounteredVideos() {
-		checkState(counters != null);
-		return counters.stream().map(ArguerAttack::getCounters).collect(ImmutableSet.toImmutableSet());
+	public ImmutableSet<Video> getCountersVideos() {
+		return counters().stream().map(ArguerAttack::getCounters).collect(ImmutableSet.toImmutableSet());
 	}
 
-	public ImmutableSet<Integer> getCounteredFileIds() {
-		checkState(counters != null);
-		return getCounteredVideos().stream().map(Video::getFileId).sorted().collect(ImmutableSet.toImmutableSet());
+	public ImmutableSet<Integer> getCountersFileIds() {
+		return getCountersVideos().stream().map(Video::getFileId).sorted().collect(ImmutableSet.toImmutableSet());
 	}
 
 	public ImmutableSet<Video> getCounteredBy() {

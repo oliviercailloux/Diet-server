@@ -3,7 +3,6 @@ package io.github.oliviercailloux.diet.user;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.VerifyException;
-import io.github.oliviercailloux.diet.video.EventSeen;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import java.time.Instant;
 import java.util.Comparator;
@@ -21,8 +20,8 @@ public class ReadEvent {
 		if (event instanceof EventJudgment e) {
 			return ReadEventJudgment.fromEvent(e);
 		}
-		if (event instanceof EventSeen e) {
-			return ReadEventSeen.fromEvent(e);
+		if (ReadEventSeen.accept(event)) {
+			return ReadEventSeen.fromEvent(event);
 		}
 		throw new VerifyException();
 	}

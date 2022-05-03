@@ -1,5 +1,8 @@
 package io.github.oliviercailloux.diet.video;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
+import io.github.oliviercailloux.diet.user.Event;
 import io.github.oliviercailloux.diet.user.ReadEvent;
 import io.github.oliviercailloux.diet.user.ReadEventSerializer;
 import io.github.oliviercailloux.diet.video.ReadEventSeen.ReadEventSeenSerializer;
@@ -31,7 +34,17 @@ public class ReadEventSeen extends ReadEvent {
 		return new ReadEventSeen(new EventSeen(creation, video));
 	}
 
-	public static ReadEvent fromEvent(EventSeen event) {
+	public static boolean accept(Event event) {
+		return event instanceof EventSeen;
+	}
+
+	public static ReadEvent fromEvent(Event event) {
+		checkArgument(accept(event));
+
+		return new ReadEventSeen((EventSeen) event);
+	}
+
+	static ReadEvent fromEventSeen(EventSeen event) {
 		return new ReadEventSeen(event);
 	}
 
