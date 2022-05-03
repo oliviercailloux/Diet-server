@@ -27,11 +27,6 @@ public class EventSeen extends Event {
 		this.video = checkNotNull(video);
 	}
 
-	public EventSeen(User user, Instant creation, Video video) {
-		super(user, creation);
-		this.video = checkNotNull(video);
-	}
-
 	public Video getVideo() {
 		return video;
 	}
