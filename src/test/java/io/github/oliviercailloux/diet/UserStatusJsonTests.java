@@ -13,14 +13,12 @@ import io.quarkus.test.junit.QuarkusTest;
 import java.time.Instant;
 import javax.inject.Inject;
 import javax.json.bind.Jsonb;
-import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
 class UserStatusJsonTests {
 
-	@Inject
-	EntityManager em;
 	@Inject
 	Jsonb jsonb;
 	@Inject
@@ -29,28 +27,24 @@ class UserStatusJsonTests {
 	UserFactory userFactory;
 
 	@Test
+	@Transactional
 	void testWithEvents() {
+		final String username = "testWithEvents " + Instant.now().toString();
 		final Instant e1 = Instant.parse("2000-01-20T10:10:10.000000000Z");
 		final Instant e2 = e1.plusSeconds(1);
 		final Instant e3 = e2.plusSeconds(1);
-		final UserWithEvents statusObj;
+		final UserWithEvents user;
 		{
-			final String username = "testWithEvents " + Instant.now().toString();
-			statusObj = userFactory.addUser(new Login(username, "user"));
+			user = userFactory.addUser(new Login(username, "user"), e1);
 			final Judgment judgment = new Judgment(3, 0);
-			em.persist(judgment);
-			statusObj.persistEvent(ReadEventJudgment.at(e2, judgment));
-			statusObj.persistEvent(ReadEventSeen.at(e3, videoFactory.getVideo(3)));
+			user.persistEvent(ReadEventJudgment.at(e2, judgment));
+			user.persistEvent(ReadEventSeen.at(e3, videoFactory.getVideo(6)));
 		}
-//		final ImmutableSet<ReadEvent> events = ImmutableSet.of(ReadEventAccepted.at(e1),
-//				ReadEventJudgment.at(e2, new Judgment(3, 0)),
-//				ReadEventSeen.at(e3, new VideoEntity(6, "Effort écologique", Side.VEGAN)));
-//		final UserStatus statusObj = userFactory.fictitious("u", events);
-		final String statusJson = jsonb.toJson(statusObj);
+		final String statusJson = jsonb.toJson(user);
 		final String expected = """
 
 				{
-				    "username": "u",
+				    "username": "%s",
 				    "events": [
 				        {
 				            "type": "Accepted",
@@ -75,7 +69,7 @@ class UserStatusJsonTests {
 				            "fileId": 6,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/006.mp4",
 				            "description": "Effort écologique",
-				            "side": "VEGAN",
+				            "side": "VEGAN"
 				        }
 				    ],
 				    "toSee": [
@@ -83,131 +77,95 @@ class UserStatusJsonTests {
 				            "fileId": 1,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/001.mp4",
 				            "description": "Climat et biodiversité",
-				            "side": "VEGAN",
+				            "side": "VEGAN"
 				        },
 				        {
 				            "fileId": 2,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/002.mp4",
 				            "description": "Santé vegan",
-				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
+				            "side": "VEGAN"
 				        },
 				        {
 				            "fileId": 3,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/003.mp4",
 				            "description": "Réduction pour écologie",
-				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
+				            "side": "VEGAN"
 				        },
 				        {
 				            "fileId": 4,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/004.mp4",
 				            "description": "Entente",
-				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
+				            "side": "VEGAN"
 				        },
 				        {
 				            "fileId": 5,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/005.mp4",
 				            "description": "Stratégie",
-				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
+				            "side": "VEGAN"
 				        },
 				        {
 				            "fileId": 7,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/007.mp4",
 				            "description": "Consolidation",
-				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
+				            "side": "VEGAN"
 				        },
 				        {
 				            "fileId": 8,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/008.mp4",
 				            "description": "Durable, éthique et gout",
-				            "side": "VEGAN",
-				            "countersFileIds": [
-				            ]
+				            "side": "VEGAN"
 				        },
 				        {
 				            "fileId": 9,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/009.mp4",
 				            "description": "Élevage moindre mal que transport",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				                1,
-				                3
-				            ]
+				            "side": "MEAT"
 				        },
 				        {
 				            "fileId": 10,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/010.mp4",
 				            "description": "Élevage encourage biodiversité",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				                1
-				            ]
+				            "side": "MEAT"
 				        },
 				        {
 				            "fileId": 11,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/011.mp4",
 				            "description": "Prairies bonnes pour GES",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				                1
-				            ]
+				            "side": "MEAT"
 				        },
 				        {
 				            "fileId": 12,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/012.mp4",
 				            "description": "Santé viande",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				                2
-				            ]
+				            "side": "MEAT"
 				        },
 				        {
 				            "fileId": 13,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/013.mp4",
 				            "description": "Viande pour ados",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				                2
-				            ]
+				            "side": "MEAT"
 				        },
 				        {
 				            "fileId": 14,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/014.mp4",
 				            "description": "Liberté de choix aux enfants",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				                2
-				            ]
+				            "side": "MEAT"
 				        },
 				        {
 				            "fileId": 15,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/015.mp4",
 				            "description": "B12 ou mauvais traitement",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				                2
-				            ]
+				            "side": "MEAT"
 				        },
 				        {
 				            "fileId": 16,
 				            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/016.mp4",
 				            "description": "Imposition de classe",
-				            "side": "MEAT",
-				            "countersFileIds": [
-				            ]
+				            "side": "MEAT"
 				        }
 				    ]
 				}""";
-		assertEquals(expected.formatted(e1, e2, e3), statusJson);
+		assertEquals(expected.formatted(username, e1, e2, e3), statusJson);
 	}
 
 }

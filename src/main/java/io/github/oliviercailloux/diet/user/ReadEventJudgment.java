@@ -5,6 +5,7 @@ import java.time.Instant;
 import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.json.bind.serializer.SerializationContext;
 import javax.json.stream.JsonGenerator;
+import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,5 +39,14 @@ public class ReadEventJudgment extends ReadEvent {
 
 	public Judgment judgment() {
 		return ((EventJudgment) underlyingEvent()).getJudgment();
+	}
+
+	@Override
+	protected void persist(EntityManager em) {
+		final Judgment judgment = judgment();
+		if (!judgment.isPersistent()) {
+			em.persist(judgment);
+		}
+		super.persist(em);
 	}
 }

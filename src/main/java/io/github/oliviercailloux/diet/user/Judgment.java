@@ -25,7 +25,7 @@ public class Judgment {
 	private int daysMeat;
 
 	Judgment() {
-		/* For JPA. */
+		id = 0;
 	}
 
 	@JsonbCreator
@@ -35,6 +35,10 @@ public class Judgment {
 		checkArgument(daysVegan + daysMeat <= 5);
 		this.daysVegan = daysVegan;
 		this.daysMeat = daysMeat;
+	}
+
+	boolean isPersistent() {
+		return id != 0;
 	}
 
 	public int getDaysVegan() {

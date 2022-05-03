@@ -6,6 +6,7 @@ import com.google.common.base.VerifyException;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import java.time.Instant;
 import java.util.Comparator;
+import javax.persistence.EntityManager;
 
 public class ReadEvent {
 	public static final Comparator<ReadEvent> COMPARATOR = Comparator.comparing(ReadEvent::creation)
@@ -32,6 +33,10 @@ public class ReadEvent {
 
 	protected Event underlyingEvent() {
 		return event;
+	}
+
+	protected void persist(EntityManager em) {
+		em.persist(event);
 	}
 
 	public Instant creation() {

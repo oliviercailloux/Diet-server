@@ -86,7 +86,7 @@ public class UserWithEvents implements RawUser {
 		final Event underlyingEvent = event.underlyingEvent();
 		underlyingEvent.user = user;
 		user.events().add(underlyingEvent);
-		em.persist(underlyingEvent);
+		event.persist(em);
 	}
 
 	public String getUsername() {

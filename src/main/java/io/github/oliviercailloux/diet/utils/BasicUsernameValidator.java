@@ -1,0 +1,18 @@
+package io.github.oliviercailloux.diet.utils;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class BasicUsernameValidator implements ConstraintValidator<BasicUsername, String> {
+	@SuppressWarnings("unused")
+	private static final Logger LOGGER = LoggerFactory.getLogger(BasicUsernameValidator.class);
+
+	@Override
+	public boolean isValid(String value, ConstraintValidatorContext context) {
+		LOGGER.info("Validating {}.", value);
+		return !value.contains(":");
+	}
+
+}

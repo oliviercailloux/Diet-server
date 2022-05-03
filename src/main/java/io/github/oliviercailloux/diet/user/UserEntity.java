@@ -1,5 +1,6 @@
 package io.github.oliviercailloux.diet.user;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
@@ -33,8 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 @Entity
 @UserDefinition
-@NamedQuery(name = "getUserWithoutEvents", query = "SELECT u FROM User u WHERE u.username = :username")
-@NamedQuery(name = "getUserWithEvents", query = "SELECT u FROM User u LEFT OUTER JOIN FETCH u.events WHERE u.username = :username")
+@NamedQuery(name = "getUserWithoutEvents", query = "SELECT u FROM UserEntity u WHERE u.username = :username")
+@NamedQuery(name = "getUserWithEvents", query = "SELECT u FROM UserEntity u LEFT OUTER JOIN FETCH u.events WHERE u.username = :username")
 class UserEntity {
 	public static final String USER_ROLE = "user";
 
@@ -44,25 +45,24 @@ class UserEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonbTransient
-	private int id;
+	int id;
 
 	@Username
 	@NotNull
 	@Column(unique = true)
-	private String username;
+	String username;
 
 	@Password
 	@NotNull
-	private String password;
+	String password;
 
 	@Roles
 	@NotNull
-	private String role;
+	String role;
 
 	@OneToMany(mappedBy = "user")
-	@NotNull
 	@OrderBy("creation")
-	private Set<Event> events;
+	Set<Event> events;
 
 	protected UserEntity() {
 		id = 0;
@@ -75,6 +75,7 @@ class UserEntity {
 	UserEntity(Login login, String role) {
 		this();
 		this.username = login.getUsername();
+		checkArgument(!this.username.contains(":"));
 		this.password = BcryptUtil.bcryptHash(login.getPassword());
 		this.role = checkNotNull(role);
 		this.events = null;

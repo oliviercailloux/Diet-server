@@ -23,6 +23,13 @@ public class VideoFactory {
 	EntityManager em;
 
 	@Transactional
+	public VideoWithCounters add(int fileId, String description, Side side) {
+		final VideoEntity v = new VideoEntity(fileId, description, side);
+		em.persist(v);
+		return VideoWithCounters.fromPersistent(em, v);
+	}
+
+	@Transactional
 	public Video getVideo(int fileId) {
 		final TypedQuery<VideoEntity> q = em.createNamedQuery("get", VideoEntity.class);
 		q.setParameter("fileId", fileId);
@@ -73,6 +80,12 @@ public class VideoFactory {
 		q.setParameter("videos", videos.stream().map(Video::video).collect(ImmutableSet.toImmutableSet()));
 		final List<VideoEntity> replies = q.getResultList();
 		return toVideos(replies);
+	}
+
+	public int latestFileId() {
+		final TypedQuery<Integer> q2 = em.createNamedQuery("latest file id", Integer.class);
+		final int newLatest = q2.getSingleResult();
+		return newLatest;
 	}
 
 }

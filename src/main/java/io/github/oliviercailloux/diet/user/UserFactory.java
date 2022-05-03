@@ -21,27 +21,27 @@ public class UserFactory {
 	@Inject
 	VideoFactory videoFactory;
 
-	private UserEntity getUser(String username) {
-		final TypedQuery<UserEntity> q = em.createNamedQuery("getUser", UserEntity.class);
-		q.setParameter("username", username);
-		return q.getSingleResult();
-	}
-
 	private UserEntity getUserWithoutEvents(String username) {
 		final TypedQuery<UserEntity> q = em.createNamedQuery("getUserWithoutEvents", UserEntity.class);
 		q.setParameter("username", username);
 		return q.getSingleResult();
 	}
 
-	@Transactional
-	private UserWithEvents getOld(String username) {
-		final UserEntity user = getUser(username);
-		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
+	private UserEntity getUserWithEvents(String username) {
+		final TypedQuery<UserEntity> q = em.createNamedQuery("getUserWithEvents", UserEntity.class);
+		q.setParameter("username", username);
+		return q.getSingleResult();
 	}
 
 	public RawUser getWithoutEvents(String username) {
 		final UserEntity user = getUserWithoutEvents(username);
 		return User.persistent(user);
+	}
+
+	@Transactional
+	public UserWithEvents getWithEvents(String username) {
+		final UserEntity user = getUserWithEvents(username);
+		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 	/**
@@ -75,13 +75,14 @@ public class UserFactory {
 	public UserWithEvents addUser(Login login, Instant acceptationTime) {
 		final UserEntity user = new UserEntity(login, "user");
 		final EventAccepted event = user.setAccepted(acceptationTime);
+		LOGGER.info("Persisting {}.", user);
 		em.persist(user);
 		em.persist(event);
 		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 	public UserWithEvents getAppendable(String username) {
-		final UserEntity user = getUser(username);
+		final UserEntity user = getUserWithEvents(username);
 		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 

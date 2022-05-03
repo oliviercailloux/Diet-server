@@ -1,21 +1,23 @@
 package io.github.oliviercailloux.diet;
 
-import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Resources;
 import io.github.oliviercailloux.diet.quarkus.Authenticator;
+import io.github.oliviercailloux.diet.user.Login;
 import io.github.oliviercailloux.diet.user.StaticUserStatus;
 import io.github.oliviercailloux.diet.user.UserFactory;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.specification.RequestSpecification;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.transaction.Transactional;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
@@ -28,6 +30,10 @@ public class UserTests {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserTests.class);
 
+	public static record UserStatus(String username, Set<String> events, List<String> seen, List<String> toSee) {
+
+	}
+
 	@TestHTTPResource
 	URI serverUri;
 	@Inject
@@ -37,32 +43,100 @@ public class UserTests {
 	UserFactory service;
 
 	@Test
-	public void testNE() throws Exception {
-		given().when().get("/v0/notexists").then().statusCode(Response.Status.NOT_FOUND.getStatusCode());
-	}
-
-	@Test
-	@Transactional
 	public void testNotLogged() throws Exception {
-		given().get("/v0/me/status").then().statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
+
+		try (Response response = client.target(target).request().buildGet().invoke()) {
+			assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+		}
 	}
 
 	@Test
-	@Transactional
-	public void testBadLogIn() throws Exception {
-		given().auth().basic("user", "incorrectpassword").get("/v0/me/status").then()
-				.statusCode(Response.Status.UNAUTHORIZED.getStatusCode());
+	public void testBadLogin() throws Exception {
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
+
+		try (Response response = client.target(target).register(new Authenticator("user", "incorrectpassword"))
+				.request().buildGet().invoke()) {
+			assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+		}
 	}
 
 	@Test
-	@Transactional
-	public void testLogIn() throws Exception {
-		final RequestSpecification basic = given().auth().basic("user0", "user");
-		LOGGER.info("Sending basic to user0.");
-		final io.restassured.response.Response response = basic.get("/v0/me/status");
-//		LOGGER.info("Log in yielded: {}.", response.asPrettyString());
-		LOGGER.info("Log in yielded: {}.", response.getStatusCode());
-		response.then().statusCode(Response.Status.OK.getStatusCode());
+	public void testLogin() throws Exception {
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
+
+		try (Response response = client.target(target).register(new Authenticator("user0", "user")).request().buildGet()
+				.invoke()) {
+			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+		}
+	}
+
+	@Test
+	public void testLoginÉlevé() throws Exception {
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
+
+		try (Response response = client.target(target).register(new Authenticator("élevé", "user")).request().buildGet()
+				.invoke()) {
+			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+		}
+	}
+
+	@Test
+	public void testAddWrongMediaType() throws Exception {
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
+		try (Response response = client.target(target).request(MediaType.TEXT_PLAIN).buildPut(Entity.text(""))
+				.invoke()) {
+			assertEquals(Response.Status.UNSUPPORTED_MEDIA_TYPE.getStatusCode(), response.getStatus());
+		}
+	}
+
+	@Test
+	public void testAddWrongContent() throws Exception {
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
+		try (Response response = client.target(target).request(MediaType.APPLICATION_JSON)
+				.buildPut(Entity.json(Json.createValue("ploum"))).invoke()) {
+			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+		}
+	}
+
+	@Test
+	public void testAddWithColon() throws Exception {
+		final Login login = new Login("test:add", "test user password");
+		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
+		try (Response response = client.target(target).request(MediaType.APPLICATION_JSON).buildPut(Entity.json(login))
+				.invoke()) {
+			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
+		}
+	}
+
+	@Test
+	public void testAddThenStatus() throws Exception {
+		final String username = "testAdd " + Instant.now().toString();
+		final Login login = new Login(username, "test user password");
+		{
+			final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
+			try (Response response = client.target(target).request(MediaType.APPLICATION_JSON)
+					.buildPut(Entity.json(login)).invoke()) {
+				assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+			}
+		}
+
+		{
+			final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
+			try (Response response = client.target(target).register(new Authenticator(login)).request().buildGet()
+					.invoke()) {
+				assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+//				final String expectedString = Resources.toString(getClass().getResource("user0.json"),
+//						StandardCharsets.UTF_8);
+//				final StringReader reader = new StringReader(expectedString);
+//				final JsonReader read = Json.createReader(reader);
+//				final JsonObject expected = read.readObject();
+//				final JsonObject obtained = response.readEntity(JsonObject.class);
+				final UserStatus obtained = response.readEntity(UserStatus.class);
+				LOGGER.info("Status: {}.", obtained);
+				assertEquals(username, obtained.username);
+			}
+		}
 	}
 
 	@Test
@@ -75,32 +149,6 @@ public class UserTests {
 //		assertEquals(1, videoSeen0.getFileId());
 //		assertEquals(ImmutableSet.of(), videoSeen0.getCounters());
 //		assertEquals(ImmutableSet.of(), videoSeen0.getCountersFileIds());
-	}
-
-	@Test
-	@Transactional
-	public void testStatusUser0() throws Exception {
-		final String expected = Resources.toString(getClass().getResource("user0.json"), StandardCharsets.UTF_8);
-		final io.restassured.response.Response response = given().auth().basic("user0", "user").get("/v0/me/status");
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
-		final String obtained = response.body().asPrettyString();
-		assertEquals(expected, obtained);
-	}
-
-	@Test
-	@Transactional
-	public void testStatusUserÉlevé() throws Exception {
-		final String expected = Resources.toString(getClass().getResource("élevé.json"), StandardCharsets.UTF_8);
-
-		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
-
-		try (Response response = client.target(target).register(new Authenticator("élevé", "user")).request().buildGet()
-				.invoke()) {
-			assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-			final String obtained = response.readEntity(String.class);
-//			final UserStatus obtained = response.readEntity(UserStatus.class);
-			assertEquals(expected, obtained);
-		}
 	}
 
 	@Test
