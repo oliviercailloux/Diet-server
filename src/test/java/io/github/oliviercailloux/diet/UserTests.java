@@ -111,7 +111,7 @@ public class UserTests {
 
 	@Test
 	public void testAddThenStatus() throws Exception {
-		final String username = "testAdd " + Instant.now().toString();
+		final String username = "testAdd " + Instant.now().toString().replace(":", "");
 		final Login login = new Login(username, "test user password");
 		{
 			final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
