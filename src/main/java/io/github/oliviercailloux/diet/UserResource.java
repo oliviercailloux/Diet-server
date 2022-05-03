@@ -3,9 +3,8 @@ package io.github.oliviercailloux.diet;
 import io.github.oliviercailloux.diet.user.Judgment;
 import io.github.oliviercailloux.diet.user.Login;
 import io.github.oliviercailloux.diet.user.ReadEventJudgment;
-import io.github.oliviercailloux.diet.user.UserAppendable;
 import io.github.oliviercailloux.diet.user.UserFactory;
-import io.github.oliviercailloux.diet.user.UserStatus;
+import io.github.oliviercailloux.diet.user.UserPersistentWithEvents;
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -50,8 +49,8 @@ public class UserResource {
 	@Path("/status")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserStatus status() {
-		return userFactory.getAppendable(getCurrentUsername()).status();
+	public UserPersistentWithEvents status() {
+		return userFactory.getAppendable(getCurrentUsername());
 	}
 
 	/**
@@ -66,9 +65,9 @@ public class UserResource {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserStatus createAcceptingUser(Login login) {
+	public UserPersistentWithEvents createAcceptingUser(Login login) {
 		LOGGER.info("Creating {}.", login);
-		return userFactory.addUser(login).status();
+		return userFactory.addUser(login);
 	}
 
 	@POST
@@ -77,11 +76,11 @@ public class UserResource {
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserStatus postJudgment(Judgment judgment) {
-		final UserAppendable user = userFactory.getAppendable(getCurrentUsername());
+	public UserPersistentWithEvents postJudgment(Judgment judgment) {
+		final UserPersistentWithEvents user = userFactory.getAppendable(getCurrentUsername());
 		final ReadEventJudgment event = ReadEventJudgment.now(judgment);
 		em.persist(judgment);
 		user.persistEvent(event);
-		return user.status();
+		return user;
 	}
 }

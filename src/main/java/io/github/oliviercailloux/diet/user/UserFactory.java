@@ -1,7 +1,6 @@
 package io.github.oliviercailloux.diet.user;
 
 import io.github.oliviercailloux.diet.video.VideoFactory;
-import java.util.Set;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -34,18 +33,14 @@ public class UserFactory {
 	}
 
 	@Transactional
-	private UserStatus getOld(String username) {
+	private UserPersistentWithEvents getOld(String username) {
 		final User user = getUser(username);
-		return UserStatus.fromExistingUser(user, videoFactory);
+		return UserPersistentWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 	public RawUser getWithoutEvents(String username) {
 		final User user = getUserWithoutEvents(username);
 		return UserPersistent.persistent(user);
-	}
-
-	public UserStatus fictitious(String username, Set<ReadEvent> events) {
-		return UserStatus.fromFictitious(username, events, videoFactory);
 	}
 
 	/**
@@ -66,17 +61,17 @@ public class UserFactory {
 	 * @param login with the unencrypted password (it will be encrypted with bcrypt)
 	 */
 	@Transactional
-	public UserAppendable addUser(Login login) {
+	public UserPersistentWithEvents addUser(Login login) {
 		final User user = new User(login, "user");
 		final EventAccepted event = user.setAccepted();
 		em.persist(user);
 		em.persist(event);
-		return UserAppendable.fromExistingWithEvents(em, videoFactory, user);
+		return UserPersistentWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
-	public UserAppendable getAppendable(String username) {
+	public UserPersistentWithEvents getAppendable(String username) {
 		final User user = getUser(username);
-		return UserAppendable.fromExistingWithEvents(em, videoFactory, user);
+		return UserPersistentWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 
 }

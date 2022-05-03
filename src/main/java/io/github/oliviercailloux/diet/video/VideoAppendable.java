@@ -8,6 +8,7 @@ import java.net.URI;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.persistence.EntityManager;
 
+//@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 @JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class VideoAppendable {
 	static VideoAppendable fromPersistent(EntityManager em, Video video) {

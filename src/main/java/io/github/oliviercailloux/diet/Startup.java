@@ -5,8 +5,8 @@ import static com.google.common.base.Preconditions.checkState;
 import io.github.oliviercailloux.diet.user.Judgment;
 import io.github.oliviercailloux.diet.user.Login;
 import io.github.oliviercailloux.diet.user.ReadEventJudgment;
-import io.github.oliviercailloux.diet.user.UserAppendable;
 import io.github.oliviercailloux.diet.user.UserFactory;
+import io.github.oliviercailloux.diet.user.UserPersistentWithEvents;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.Side;
 import io.github.oliviercailloux.diet.video.Video;
@@ -103,14 +103,14 @@ public class Startup {
 		userFactory.addUser(new Login("user0", "user"));
 		userFactory.addUser(new Login("élevé", "user"));
 		{
-			final UserAppendable user = userFactory.addUser(new Login("inited", "user"));
+			final UserPersistentWithEvents user = userFactory.addUser(new Login("inited", "user"));
 			final Judgment judgment = new Judgment(1, 2);
 			LOGGER.info("Adding {}.", judgment);
 			em.persist(judgment);
 			user.persistEvent(ReadEventJudgment.now(judgment));
 		}
 		{
-			final UserAppendable user = userFactory.addUser(new Login("seen", "user"));
+			final UserPersistentWithEvents user = userFactory.addUser(new Login("seen", "user"));
 			final Judgment judgment = new Judgment(3, 1);
 			em.persist(judgment);
 			user.persistEvent(ReadEventJudgment.now(judgment));

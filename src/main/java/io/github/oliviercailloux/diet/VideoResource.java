@@ -1,8 +1,7 @@
 package io.github.oliviercailloux.diet;
 
-import io.github.oliviercailloux.diet.user.UserAppendable;
 import io.github.oliviercailloux.diet.user.UserFactory;
-import io.github.oliviercailloux.diet.user.UserStatus;
+import io.github.oliviercailloux.diet.user.UserPersistentWithEvents;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import javax.annotation.security.RolesAllowed;
@@ -37,9 +36,9 @@ public class VideoResource {
 	@Path("/{fileId}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
-	public UserStatus putSeen(@PathParam("fileId") int fileId) throws WebApplicationException {
-		final UserAppendable user = userFactory.getAppendable(getCurrentUsername());
+	public UserPersistentWithEvents putSeen(@PathParam("fileId") int fileId) throws WebApplicationException {
+		final UserPersistentWithEvents user = userFactory.getAppendable(getCurrentUsername());
 		user.persistEvent(ReadEventSeen.now(videoFactory.getVideo(fileId)));
-		return user.status();
+		return user;
 	}
 }
