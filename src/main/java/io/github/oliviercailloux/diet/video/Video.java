@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "all", query = "SELECT v FROM Video v LEFT JOIN FETCH v.counters ORDER BY v.fileId")
 //@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 @JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
-class Video {
+public class Video {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Video.class);
 
