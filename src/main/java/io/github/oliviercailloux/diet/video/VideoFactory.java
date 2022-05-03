@@ -3,6 +3,7 @@ package io.github.oliviercailloux.diet.video;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.enterprise.context.RequestScoped;
@@ -22,37 +23,41 @@ public class VideoFactory {
 	EntityManager em;
 
 	@Transactional
-	public Video getVideo(int fileId) {
+	public VideoAppendable getVideo(int fileId) {
 		final TypedQuery<Video> q = em.createNamedQuery("get", Video.class);
 		q.setParameter("fileId", fileId);
-		return q.getSingleResult();
+		return VideoAppendable.fromPersistent(em, q.getSingleResult());
+	}
+
+	private ImmutableSet<VideoAppendable> toAppendables(Collection<Video> result) {
+		return result.stream().map(v -> VideoAppendable.fromPersistent(em, v)).collect(ImmutableSet.toImmutableSet());
 	}
 
 	@Transactional
-	public ImmutableSet<Video> getAll() {
+	public ImmutableSet<VideoAppendable> getAll() {
 		final TypedQuery<Video> q = em.createNamedQuery("all", Video.class);
 		LOGGER.info("Querying for videos.");
 		final List<Video> result = q.getResultList();
 		LOGGER.info("Obtained result.");
 		verify(!result.isEmpty());
 		LOGGER.info("Result size {}.", result.size());
-		return ImmutableSet.copyOf(result);
+		return toAppendables(result);
 	}
 
 	@Transactional
-	public ImmutableSet<Video> getStarters() {
+	public ImmutableSet<VideoAppendable> getStarters() {
 		final TypedQuery<Video> q = em.createNamedQuery("starters", Video.class);
 		final List<Video> starters = q.getResultList();
 		verify(!starters.isEmpty());
-		return ImmutableSet.copyOf(starters);
+		return toAppendables(starters);
 	}
 
 	@Transactional
-	public ImmutableSet<Video> getReplies(Set<Video> videos) {
+	public ImmutableSet<VideoAppendable> getReplies(Set<VideoAppendable> videos) {
 		final TypedQuery<Video> q = em.createNamedQuery("replies", Video.class);
-		q.setParameter("videos", videos);
+		q.setParameter("videos", videos.stream().map(VideoAppendable::video).collect(ImmutableSet.toImmutableSet()));
 		final List<Video> replies = q.getResultList();
-		return ImmutableSet.copyOf(replies);
+		return toAppendables(replies);
 	}
 
 }

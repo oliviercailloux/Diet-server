@@ -3,7 +3,7 @@ package io.github.oliviercailloux.diet.user;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSortedSet;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
-import io.github.oliviercailloux.diet.video.Video;
+import io.github.oliviercailloux.diet.video.VideoAppendable;
 import java.util.stream.Stream;
 
 /**
@@ -21,7 +21,7 @@ interface IUser extends RawUser {
 	 */
 	public ImmutableSortedSet<ReadEvent> readEvents();
 
-	private Stream<Video> seenStream() {
+	private Stream<VideoAppendable> seenStream() {
 		return readEvents().stream().filter(e -> e instanceof ReadEventSeen).map(e -> (ReadEventSeen) e)
 				.map(ReadEventSeen::video);
 	}
@@ -31,7 +31,7 @@ interface IUser extends RawUser {
 	 *
 	 * @return the videos seen, in order seen
 	 */
-	default ImmutableList<Video> readSeen() {
+	default ImmutableList<VideoAppendable> readSeen() {
 		return seenStream().collect(ImmutableList.toImmutableList());
 	}
 
@@ -41,6 +41,6 @@ interface IUser extends RawUser {
 	 * @return the video file ids seen, in order seen
 	 */
 	default ImmutableList<Integer> readSeenIds() {
-		return seenStream().map(Video::getFileId).collect(ImmutableList.toImmutableList());
+		return seenStream().map(VideoAppendable::getFileId).collect(ImmutableList.toImmutableList());
 	}
 }

@@ -24,6 +24,10 @@ public class VideoAppendable {
 		checkArgument(video.hasCounters());
 	}
 
+	Video video() {
+		return video;
+	}
+
 	public void persistCounters(VideoAppendable countered) {
 		final ArguerAttack attack = new ArguerAttack(video, countered.video);
 		video.counters().add(attack);

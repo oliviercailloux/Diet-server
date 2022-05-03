@@ -21,7 +21,7 @@ public class ReadEvent {
 			return ReadEventJudgment.fromEvent(e);
 		}
 		if (ReadEventSeen.accept(event)) {
-			return ReadEventSeen.fromEvent(event);
+			return ReadEventSeen.fromEventSeen(event);
 		}
 		throw new VerifyException();
 	}

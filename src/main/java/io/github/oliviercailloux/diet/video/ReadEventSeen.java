@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.diet.video;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import io.github.oliviercailloux.diet.user.Event;
 import io.github.oliviercailloux.diet.user.ReadEvent;
@@ -10,6 +11,7 @@ import java.time.Instant;
 import javax.json.bind.annotation.JsonbTypeSerializer;
 import javax.json.bind.serializer.SerializationContext;
 import javax.json.stream.JsonGenerator;
+import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,33 +28,37 @@ public class ReadEventSeen extends ReadEvent {
 		}
 	}
 
-	public static ReadEventSeen now(Video video) {
+	public static ReadEventSeen now(VideoAppendable video) {
 		return at(Instant.now(), video);
 	}
 
-	public static ReadEventSeen at(Instant creation, Video video) {
-		return new ReadEventSeen(new EventSeen(creation, video));
+	public static ReadEventSeen at(Instant creation, VideoAppendable video) {
+		return new ReadEventSeen(new EventSeen(creation, video.video()), video);
 	}
 
 	public static boolean accept(Event event) {
 		return event instanceof EventSeen;
 	}
 
-	public static ReadEvent fromEvent(Event event) {
+	public static ReadEvent fromEventSeen(EntityManager em, Event event) {
 		checkArgument(accept(event));
-
-		return new ReadEventSeen((EventSeen) event);
+		final EventSeen eventSeen = (EventSeen) event;
+		return fromEventSeenInternal(em, eventSeen);
 	}
 
-	static ReadEvent fromEventSeen(EventSeen event) {
-		return new ReadEventSeen(event);
+	static ReadEvent fromEventSeenInternal(EntityManager em, EventSeen event) {
+		return new ReadEventSeen(event, VideoAppendable.fromPersistent(em, event.getVideo()));
 	}
 
-	private ReadEventSeen(EventSeen event) {
+	private final VideoAppendable video;
+
+	private ReadEventSeen(EventSeen event, VideoAppendable video) {
 		super(event);
+		this.video = checkNotNull(video);
+		checkArgument(event.getVideo().equals(video.video()));
 	}
 
-	public Video video() {
-		return ((EventSeen) underlyingEvent()).getVideo();
+	public VideoAppendable video() {
+		return video;
 	}
 }
