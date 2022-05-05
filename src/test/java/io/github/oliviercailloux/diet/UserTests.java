@@ -2,20 +2,19 @@ package io.github.oliviercailloux.diet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.quarkus.Authenticator;
+import io.github.oliviercailloux.diet.user.Judgment;
 import io.github.oliviercailloux.diet.user.Login;
-import io.github.oliviercailloux.diet.user.StaticUserStatus;
 import io.github.oliviercailloux.diet.user.UserFactory;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 import javax.inject.Inject;
 import javax.json.Json;
-import javax.transaction.Transactional;
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -30,8 +29,15 @@ public class UserTests {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(UserTests.class);
 
-	public static record UserStatus(String username, Set<String> events, List<String> seen, List<String> toSee) {
-
+	public static record UserStatus(String username, List<String> events, List<String> seen, List<String> toSee) {
+		@JsonbCreator
+		public UserStatus(@JsonbProperty("username") String username, @JsonbProperty("events") List<String> events,
+				@JsonbProperty("seen") List<String> seen, @JsonbProperty("toSee") List<String> toSee) {
+			this.username = username;
+			this.events = events;
+			this.seen = seen;
+			this.toSee = toSee;
+		}
 	}
 
 	@TestHTTPResource
@@ -135,6 +141,53 @@ public class UserTests {
 				final UserStatus obtained = response.readEntity(UserStatus.class);
 				LOGGER.info("Status: {}.", obtained);
 				assertEquals(username, obtained.username);
+				assertEquals(1, obtained.events.size());
+				assertEquals(0, obtained.seen.size());
+				assertEquals(16, obtained.toSee.size());
+			}
+		}
+	}
+
+	@Test
+	public void testAddThenJudgeThenStatus() throws Exception {
+		final String username = "testAddJudge " + Instant.now().toString().replace(":", "");
+		final Login login = new Login(username, "test user password");
+		{
+			final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
+			try (Response response = client.target(target).request(MediaType.APPLICATION_JSON)
+					.buildPut(Entity.json(login)).invoke()) {
+				assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+			}
+		}
+
+		{
+//			.body()
+			final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/judgment").build();
+			try (Response response = client.target(target).register(new Authenticator(login)).request()
+					.buildPost(Entity.entity(new Judgment(3, 1), MediaType.APPLICATION_JSON)).invoke()) {
+				assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+				LOGGER.info("Judgment: {}.", response.readEntity(String.class));
+				final UserStatus obtained = response.readEntity(UserStatus.class);
+				LOGGER.info("Judgment as status: {}.", obtained);
+				assertEquals(username, obtained.username);
+				assertEquals(2, obtained.events.size());
+				assertEquals("{ \"daysVegan\": 3,\"daysMeat\": 1}", obtained.events.get(1));
+				assertEquals(0, obtained.seen.size());
+				assertEquals(16, obtained.toSee.size());
+			}
+		}
+
+		{
+			final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
+			try (Response response = client.target(target).register(new Authenticator(login)).request().buildGet()
+					.invoke()) {
+				assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+				final UserStatus obtained = response.readEntity(UserStatus.class);
+				LOGGER.info("Status: {}.", obtained);
+				assertEquals(username, obtained.username);
+				assertEquals(2, obtained.events.size());
+				assertEquals(0, obtained.seen.size());
+				assertEquals(16, obtained.toSee.size());
 			}
 		}
 	}
@@ -160,40 +213,6 @@ public class UserTests {
 //		assertEquals(3, videoSeen.getFileId());
 //		assertEquals(ImmutableSet.of(), videoSeen.getCounters());
 //		assertEquals(ImmutableSet.of(), videoSeen.getCountersFileIds());
-	}
-
-	/**
-	 * Should use a new user to not change the status of a basic one.
-	 */
-	@Test
-	@Transactional
-	public void testJudge() throws Exception {
-		final io.restassured.response.Response response = given().auth().basic("accepted", "user")
-				.contentType(MediaType.APPLICATION_JSON).body("{ \"daysVegan\": 1,\"daysMeat\": 2}")
-				.post("/v0/me/judgment");
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
-		/*
-		 * Deserialization does not work yet: events are not supported because of
-		 * polymorphism.
-		 */
-//		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
-//		assertEquals("accepted", obtained.getUsername());
-//		assertEquals("", obtained.getEvents());
-	}
-
-	@Test
-	@Transactional
-	public void testCreateAccept() throws Exception {
-		final String username = "test-create-accept-username";
-		final io.restassured.response.Response response = given().contentType(MediaType.APPLICATION_JSON)
-				.body("{ \"username\": \"" + username + "\", \"password\": \"test-create-accept-password\"}")
-				.put("/v0/me/create-accept");
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode());
-		final String str = response.body().asPrettyString();
-		LOGGER.info("Resp create accept: {}.", str);
-		final StaticUserStatus obtained = response.as(StaticUserStatus.class);
-		assertEquals(username, obtained.getUsername());
-		assertEquals(ImmutableSet.of(), obtained.getSeen());
 	}
 
 }

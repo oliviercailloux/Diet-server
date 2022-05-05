@@ -7,15 +7,12 @@ import io.github.oliviercailloux.diet.user.UserFactory;
 import io.github.oliviercailloux.diet.user.UserWithEvents;
 import io.github.oliviercailloux.diet.utils.BasicUsername;
 import io.github.oliviercailloux.diet.video.VideoFactory;
-import java.util.Optional;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -84,7 +81,6 @@ public class UserResource {
 	public UserWithEvents postJudgment(Judgment judgment) {
 		final UserWithEvents user = userFactory.getAppendable(getCurrentUsername());
 		final ReadEventJudgment event = ReadEventJudgment.now(judgment);
-		em.persist(judgment);
 		user.persistEvent(event);
 		return user;
 	}
