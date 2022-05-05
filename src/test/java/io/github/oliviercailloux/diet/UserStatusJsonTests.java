@@ -29,7 +29,7 @@ class UserStatusJsonTests {
 	@Test
 	@Transactional
 	void testWithEvents() {
-		final String username = "testWithEvents " + Instant.now().toString();
+		final String username = "testWithEvents " + Instant.now().toString().replace(":", "");
 		final Instant e1 = Instant.parse("2000-01-20T10:10:10.000000000Z");
 		final Instant e2 = e1.plusSeconds(1);
 		final Instant e3 = e2.plusSeconds(1);

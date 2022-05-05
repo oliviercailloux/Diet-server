@@ -3,6 +3,7 @@ package io.github.oliviercailloux.diet.user;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.MoreObjects;
+import java.util.Objects;
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 import javax.json.bind.annotation.JsonbTransient;
@@ -47,6 +48,20 @@ public class Judgment {
 
 	public int getDaysMeat() {
 		return daysMeat;
+	}
+
+	@Override
+	public boolean equals(Object o2) {
+		if (!(o2 instanceof Judgment)) {
+			return false;
+		}
+		final Judgment t2 = (Judgment) o2;
+		return daysVegan == t2.daysVegan && daysMeat == t2.daysMeat;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(daysVegan, daysMeat);
 	}
 
 	@Override
