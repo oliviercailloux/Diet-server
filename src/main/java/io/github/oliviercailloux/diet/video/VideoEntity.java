@@ -19,6 +19,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Persistence;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,8 +101,8 @@ public class VideoEntity {
 	}
 
 	boolean hasCounters() {
-		final boolean hasCounters = counters != null;
-		final boolean hasCounteredBy = counteredBy != null;
+		final boolean hasCounters = Persistence.getPersistenceUtil().isLoaded(this, "counters");
+		final boolean hasCounteredBy = Persistence.getPersistenceUtil().isLoaded(this, "counteredBy");
 		verify(hasCounters == hasCounteredBy);
 		return hasCounters;
 	}

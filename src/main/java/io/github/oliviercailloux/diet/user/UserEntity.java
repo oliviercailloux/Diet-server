@@ -3,7 +3,6 @@ package io.github.oliviercailloux.diet.user;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
 import io.quarkus.elytron.security.common.BcryptUtil;
@@ -23,6 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Persistence;
 import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,10 +110,7 @@ class UserEntity {
 	 *         not been initialized.
 	 */
 	boolean hasEvents() {
-		if (events != null) {
-			verify(!events.isEmpty());
-		}
-		return events != null;
+		return Persistence.getPersistenceUtil().isLoaded(this, "events");
 	}
 
 	/**

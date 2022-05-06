@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.diet.user;
 
+import static com.google.common.base.Verify.verify;
+
 import io.github.oliviercailloux.diet.video.VideoFactory;
 import java.time.Instant;
 import javax.enterprise.context.RequestScoped;
@@ -24,13 +26,17 @@ public class UserFactory {
 	private UserEntity getUserWithoutEvents(String username) {
 		final TypedQuery<UserEntity> q = em.createNamedQuery("getUserWithoutEvents", UserEntity.class);
 		q.setParameter("username", username);
-		return q.getSingleResult();
+		final UserEntity user = q.getSingleResult();
+		verify(!user.hasEvents());
+		return user;
 	}
 
 	private UserEntity getUserWithEvents(String username) {
 		final TypedQuery<UserEntity> q = em.createNamedQuery("getUserWithEvents", UserEntity.class);
 		q.setParameter("username", username);
-		return q.getSingleResult();
+		final UserEntity user = q.getSingleResult();
+		verify(user.hasEvents());
+		return user;
 	}
 
 	public RawUser getWithoutEvents(String username) {
@@ -78,11 +84,6 @@ public class UserFactory {
 		LOGGER.info("Persisting {}.", user);
 		em.persist(user);
 		em.persist(event);
-		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
-	}
-
-	public UserWithEvents getAppendable(String username) {
-		final UserEntity user = getUserWithEvents(username);
 		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);
 	}
 

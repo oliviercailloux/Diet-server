@@ -52,7 +52,7 @@ public class UserResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserWithEvents status() {
-		return userFactory.getAppendable(getCurrentUsername());
+		return userFactory.getWithEvents(getCurrentUsername());
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class UserResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserWithEvents postJudgment(Judgment judgment) {
-		final UserWithEvents user = userFactory.getAppendable(getCurrentUsername());
+		final UserWithEvents user = userFactory.getWithEvents(getCurrentUsername());
 		final ReadEventJudgment event = ReadEventJudgment.now(judgment);
 		user.persistEvent(event);
 		return user;

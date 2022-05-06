@@ -94,7 +94,7 @@ public class TestResource {
 		{
 			final Stopwatch stopwatch = Stopwatch.createStarted();
 			for (int i = 0; i < nbIterations; ++i) {
-				userFactory.getAppendable("user0");
+				userFactory.getWithEvents("user0");
 			}
 			stopwatch.stop();
 			LOGGER.warn("Average time over {} complex " + queries + ": {} ms.", nbIterations,
@@ -137,7 +137,7 @@ public class TestResource {
 	@Transactional
 	public UserWithEvents getUser0() {
 		LOGGER.info("Getting user0.");
-		return userFactory.getAppendable("user0");
+		return userFactory.getWithEvents("user0");
 	}
 
 }

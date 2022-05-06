@@ -1,10 +1,10 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.video;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.oliviercailloux.diet.video.Video;
-import io.github.oliviercailloux.diet.video.VideoFactory;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URI;
 import javax.inject.Inject;
@@ -28,7 +28,7 @@ public class VideoFactoryTests {
 
 	@Test
 	@Transactional
-	public void testGet() throws Exception {
+	public void testGetSets() throws Exception {
 		final ImmutableSet<Video> starters = videoFactory.getStarters();
 		assertEquals(ImmutableSet.of(1, 2, 3, 4, 5, 6, 7, 8, 16),
 				starters.stream().map(Video::getFileId).collect(ImmutableSet.toImmutableSet()));

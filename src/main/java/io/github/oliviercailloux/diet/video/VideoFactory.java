@@ -33,7 +33,13 @@ public class VideoFactory {
 	public Video getVideo(int fileId) {
 		final TypedQuery<VideoEntity> q = em.createNamedQuery("get", VideoEntity.class);
 		q.setParameter("fileId", fileId);
-		return Video.fromPersistent(q.getSingleResult());
+		final VideoEntity entity = q.getSingleResult();
+		/*
+		 * Apprently, can sometimes skip the query and return a cached entity; thus it
+		 * might have counters.
+		 */
+//		verify(!entity.hasCounters());
+		return Video.fromPersistent(entity);
 	}
 
 	private ImmutableSet<Video> toVideos(Collection<VideoEntity> result) {

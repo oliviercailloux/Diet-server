@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.user;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.jupiter.api.Assertions.assertEquals;

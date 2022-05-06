@@ -37,7 +37,7 @@ public class VideoResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Transactional
 	public UserWithEvents putSeen(@PathParam("fileId") int fileId) throws WebApplicationException {
-		final UserWithEvents user = userFactory.getAppendable(getCurrentUsername());
+		final UserWithEvents user = userFactory.getWithEvents(getCurrentUsername());
 		user.persistEvent(ReadEventSeen.now(videoFactory.getVideo(fileId)));
 		return user;
 	}
