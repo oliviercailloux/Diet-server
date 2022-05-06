@@ -19,7 +19,6 @@ public class ReadEventSerializer<T extends ReadEvent> implements JsonbSerializer
 	@SuppressWarnings("resource")
 	@Override
 	public void serialize(T event, JsonGenerator generator, SerializationContext ctx) {
-		LOGGER.info("Writing {}.", event);
 		generator.writeStartObject();
 		final String typeName = event.getClass().getSimpleName();
 		verify(typeName.startsWith("ReadEvent"), typeName);

@@ -80,7 +80,6 @@ public class UserFactory {
 	public UserWithEvents addUser(Login login, Instant acceptationTime) {
 		final UserEntity user = new UserEntity(login, "user");
 		final EventAccepted event = user.setAccepted(acceptationTime);
-		LOGGER.info("Persisting {}.", user);
 		em.persist(user);
 		em.persist(event);
 		return UserWithEvents.fromExistingWithEvents(em, videoFactory, user);

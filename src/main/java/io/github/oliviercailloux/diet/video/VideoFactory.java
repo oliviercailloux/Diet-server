@@ -48,22 +48,16 @@ public class VideoFactory {
 	@Transactional
 	public ImmutableSet<VideoWithCounters> getAll() {
 		final TypedQuery<VideoEntity> q = em.createNamedQuery("all", VideoEntity.class);
-		LOGGER.info("Querying for videos.");
 		final List<VideoEntity> result = q.getResultList();
-		LOGGER.info("Obtained result.");
 		verify(!result.isEmpty());
-		LOGGER.info("Result size {}.", result.size());
 		return toAppendables(result);
 	}
 
 	@Transactional
 	public ImmutableSet<Video> getAllSimple() {
 		final TypedQuery<VideoEntity> q = em.createNamedQuery("all", VideoEntity.class);
-		LOGGER.info("Querying for videos.");
 		final List<VideoEntity> result = q.getResultList();
-		LOGGER.info("Obtained result.");
 		verify(!result.isEmpty());
-		LOGGER.info("Result size {}.", result.size());
 		return toVideos(result);
 	}
 

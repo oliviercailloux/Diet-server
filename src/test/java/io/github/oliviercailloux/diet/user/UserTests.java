@@ -4,9 +4,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.github.oliviercailloux.diet.quarkus.Authenticator;
-import io.github.oliviercailloux.diet.user.Judgment;
-import io.github.oliviercailloux.diet.user.Login;
-import io.github.oliviercailloux.diet.user.UserFactory;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.lang.reflect.Type;
@@ -46,9 +43,6 @@ public class UserTests {
 
 		@Override
 		public BareEvent deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-//			final Event eventStart = parser.next();
-//			checkArgument(eventStart == Event.START_OBJECT, eventStart);
-
 			checkArgument(parser.next() == Event.KEY_NAME);
 			checkArgument(parser.getString().equals("type"));
 			checkArgument(parser.next() == Event.VALUE_STRING);
@@ -60,10 +54,6 @@ public class UserTests {
 			final String creationString = parser.getString();
 			final Instant creation = Instant.parse(creationString);
 
-//			final Event endEvent = parser.next();
-//			if (endEvent == Event.END_OBJECT) {
-//				return new BareEvent(type, creation, Optional.empty());
-//			}
 			final Optional<Judgment> judgmentOpt;
 			final Optional<Integer> fileIdOpt;
 			final Event next = parser.next();
@@ -149,8 +139,7 @@ public class UserTests {
 	@Test
 	public void testAddWrongMediaType() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
-		try (Response response = client.target(target).request(MediaType.TEXT_PLAIN).buildPut(Entity.text(""))
-				.invoke()) {
+		try (Response response = client.target(target).request().buildPut(Entity.text("")).invoke()) {
 			assertEquals(Response.Status.UNSUPPORTED_MEDIA_TYPE.getStatusCode(), response.getStatus());
 		}
 	}
@@ -158,8 +147,8 @@ public class UserTests {
 	@Test
 	public void testAddWrongContent() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
-		try (Response response = client.target(target).request(MediaType.APPLICATION_JSON)
-				.buildPut(Entity.json(Json.createValue("ploum"))).invoke()) {
+		try (Response response = client.target(target).request().buildPut(Entity.json(Json.createValue("ploum")))
+				.invoke()) {
 			assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
 		}
 	}
