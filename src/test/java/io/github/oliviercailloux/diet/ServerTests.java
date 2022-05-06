@@ -5,8 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import java.net.URI;
-import javax.inject.Inject;
-import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import org.junit.jupiter.api.Test;
@@ -20,14 +19,12 @@ public class ServerTests {
 
 	@TestHTTPResource
 	URI serverUri;
-	@Inject
-	Client client;
 
 	@Test
 	public void testNE() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/notexists").build();
 
-		try (Response response = client.target(target).request().buildGet().invoke()) {
+		try (Response response = ClientBuilder.newClient().target(target).request().buildGet().invoke()) {
 			assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
 		}
 	}
