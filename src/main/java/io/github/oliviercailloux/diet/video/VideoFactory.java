@@ -34,11 +34,6 @@ public class VideoFactory {
 		final TypedQuery<VideoEntity> q = em.createNamedQuery("get", VideoEntity.class);
 		q.setParameter("fileId", fileId);
 		final VideoEntity entity = q.getSingleResult();
-		/*
-		 * Apprently, can sometimes skip the query and return a cached entity; thus it
-		 * might have counters.
-		 */
-//		verify(!entity.hasCounters());
 		return Video.fromPersistent(entity);
 	}
 

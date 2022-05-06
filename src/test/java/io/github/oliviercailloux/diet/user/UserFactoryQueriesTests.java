@@ -1,15 +1,15 @@
 package io.github.oliviercailloux.diet.user;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import io.github.oliviercailloux.diet.video.Video;
 import io.quarkus.test.junit.QuarkusTest;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import org.hibernate.SessionFactory;
 import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.Test;
@@ -64,6 +64,33 @@ public class UserFactoryQueriesTests {
 		{
 			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
 			assertEquals(2, nbQueries);
+		}
+	}
+
+	@Test
+	@Transactional
+	public void testGetFromCache() throws Exception {
+		final Statistics stats = sessionFactory.getStatistics();
+		final long queryCountStart = stats.getQueryExecutionCount();
+
+		{
+			final RawUser user = factory.getWithoutEvents("user0");
+			assertFalse(((User) user).user.hasEvents());
+			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
+			assertEquals(1, nbQueries);
+		}
+
+		{
+			factory.getWithEvents("user0");
+			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
+			assertEquals(2, nbQueries);
+		}
+
+		{
+			final RawUser user = factory.getWithoutEvents("user0");
+			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
+			assertEquals(3, nbQueries);
+			assertTrue(((User) user).user.hasEvents());
 		}
 	}
 

@@ -27,7 +27,6 @@ public class UserFactory {
 		final TypedQuery<UserEntity> q = em.createNamedQuery("getUserWithoutEvents", UserEntity.class);
 		q.setParameter("username", username);
 		final UserEntity user = q.getSingleResult();
-		verify(!user.hasEvents());
 		return user;
 	}
 
