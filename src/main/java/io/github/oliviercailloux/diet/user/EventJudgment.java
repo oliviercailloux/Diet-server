@@ -27,7 +27,7 @@ class EventJudgment extends Event {
 		this.judgment = checkNotNull(judgment);
 	}
 
-	public EventJudgment(UserEntity user, Instant creation, Judgment judgment) {
+	EventJudgment(UserEntity user, Instant creation, Judgment judgment) {
 		super(user, creation);
 		this.judgment = checkNotNull(judgment);
 	}
