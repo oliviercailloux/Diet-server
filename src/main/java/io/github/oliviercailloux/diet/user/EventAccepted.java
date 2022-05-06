@@ -6,7 +6,7 @@ import java.time.Instant;
 import javax.persistence.Entity;
 
 @Entity
-public class EventAccepted extends Event {
+class EventAccepted extends Event {
 
 	EventAccepted() {
 		/* For JPA. */
