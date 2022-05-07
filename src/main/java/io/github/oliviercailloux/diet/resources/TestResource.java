@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.resources;
 
 import com.google.common.base.Stopwatch;
 import io.github.oliviercailloux.diet.user.UserFactory;

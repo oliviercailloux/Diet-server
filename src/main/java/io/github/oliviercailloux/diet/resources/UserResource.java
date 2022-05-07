@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.resources;
 
 import io.github.oliviercailloux.diet.user.Judgment;
 import io.github.oliviercailloux.diet.user.Login;

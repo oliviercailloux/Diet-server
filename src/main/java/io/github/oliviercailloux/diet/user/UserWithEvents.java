@@ -3,6 +3,7 @@ package io.github.oliviercailloux.diet.user;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
@@ -10,6 +11,7 @@ import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.Video;
 import io.github.oliviercailloux.diet.video.VideoFactory;
+import io.github.oliviercailloux.diet.video.VideoWithCounters;
 import java.util.stream.Stream;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.persistence.EntityManager;
@@ -26,6 +28,7 @@ public class UserWithEvents implements RawUser {
 	private final EntityManager em;
 	private final VideoFactory videoFactory;
 	private final UserEntity user;
+	private ImmutableSet<VideoWithCounters> all;
 
 	private UserWithEvents(EntityManager em, VideoFactory videoFactory, UserEntity user) {
 		this.em = checkNotNull(em);
@@ -34,6 +37,7 @@ public class UserWithEvents implements RawUser {
 		checkArgument(user.isPersistent());
 		checkArgument(user.hasEvents());
 		checkArgument(user.role().equals(UserEntity.USER_ROLE));
+		all = null;
 	}
 
 	@Override
@@ -97,14 +101,24 @@ public class UserWithEvents implements RawUser {
 		return readEvents();
 	}
 
-	public ImmutableList<Video> getSeen() {
-		return readSeen();
+	private void lazyAll() {
+		if (all == null) {
+			all = videoFactory.getAll();
+		}
 	}
 
-	public ImmutableSet<Video> getToSee() {
+	public ImmutableList<VideoWithCounters> getSeen() {
+		lazyAll();
+		final ImmutableList<Integer> seenIds = readSeenIds();
+		final ImmutableBiMap<Integer, VideoWithCounters> byId = all.stream()
+				.collect(ImmutableBiMap.toImmutableBiMap(VideoWithCounters::getFileId, v -> v));
+		return seenIds.stream().map(byId::get).collect(ImmutableList.toImmutableList());
+	}
+
+	public ImmutableSet<VideoWithCounters> getToSee() {
+		lazyAll();
 		final ImmutableSet<Integer> seenIds = ImmutableSet.copyOf(readSeenIds());
-		final ImmutableSet<Video> all = videoFactory.getAllSimple();
-		final ImmutableSet<Video> toSee = all.stream().filter(vi -> !seenIds.contains(vi.getFileId()))
+		final ImmutableSet<VideoWithCounters> toSee = all.stream().filter(vi -> !seenIds.contains(vi.getFileId()))
 				.collect(ImmutableSet.toImmutableSet());
 		return toSee;
 	}

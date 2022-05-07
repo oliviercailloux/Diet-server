@@ -1,0 +1,123 @@
+
+{
+    "username": "%s",
+    "events": [
+        {
+            "type": "Accepted",
+            "creation": "%s"
+        },
+        {
+            "type": "Judgment",
+            "creation": "%s",
+            "judgment": {
+                "daysMeat": 0,
+                "daysVegan": 3
+            }
+        },
+        {
+            "type": "Seen",
+            "creation": "%s",
+            "fileId": 6
+        }
+    ],
+    "seen": [
+        {
+            "fileId": 6,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/006.mp4",
+            "description": "Effort écologique",
+            "side": "VEGAN"
+        }
+    ],
+    "toSee": [
+        {
+            "fileId": 1,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/001.mp4",
+            "description": "Climat et biodiversité",
+            "side": "VEGAN"
+        },
+        {
+            "fileId": 2,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/002.mp4",
+            "description": "Santé vegan",
+            "side": "VEGAN"
+        },
+        {
+            "fileId": 3,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/003.mp4",
+            "description": "Réduction pour écologie",
+            "side": "VEGAN"
+        },
+        {
+            "fileId": 4,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/004.mp4",
+            "description": "Entente",
+            "side": "VEGAN"
+        },
+        {
+            "fileId": 5,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/005.mp4",
+            "description": "Stratégie",
+            "side": "VEGAN"
+        },
+        {
+            "fileId": 7,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/007.mp4",
+            "description": "Consolidation",
+            "side": "VEGAN"
+        },
+        {
+            "fileId": 8,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/008.mp4",
+            "description": "Durable, éthique et gout",
+            "side": "VEGAN"
+        },
+        {
+            "fileId": 9,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/009.mp4",
+            "description": "Élevage moindre mal que transport",
+            "side": "MEAT"
+        },
+        {
+            "fileId": 10,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/010.mp4",
+            "description": "Élevage encourage biodiversité",
+            "side": "MEAT"
+        },
+        {
+            "fileId": 11,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/011.mp4",
+            "description": "Prairies bonnes pour GES",
+            "side": "MEAT"
+        },
+        {
+            "fileId": 12,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/012.mp4",
+            "description": "Santé viande",
+            "side": "MEAT"
+        },
+        {
+            "fileId": 13,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/013.mp4",
+            "description": "Viande pour ados",
+            "side": "MEAT"
+        },
+        {
+            "fileId": 14,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/014.mp4",
+            "description": "Liberté de choix aux enfants",
+            "side": "MEAT"
+        },
+        {
+            "fileId": 15,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/015.mp4",
+            "description": "B12 ou mauvais traitement",
+            "side": "MEAT"
+        },
+        {
+            "fileId": 16,
+            "url": "https://www.lamsade.dauphine.fr/~ocailloux/Diet/016.mp4",
+            "description": "Imposition de classe",
+            "side": "MEAT"
+        }
+    ]
+}

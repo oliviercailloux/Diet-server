@@ -28,10 +28,6 @@ public class VideoWithCounters extends Video {
 		return video().counters().stream().map(ArguerAttack::getCounters);
 	}
 
-	public ImmutableSet<VideoEntity> getCountersVideos() {
-		return getCountersStream().collect(ImmutableSet.toImmutableSet());
-	}
-
 	public ImmutableSet<Integer> getCountersFileIds() {
 		return getCountersStream().map(VideoEntity::getFileId).sorted().collect(ImmutableSet.toImmutableSet());
 	}

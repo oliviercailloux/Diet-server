@@ -57,7 +57,6 @@ public class Startup {
 		final VideoWithCounters v15 = videoFactory.add(15, "B12 ou mauvais traitement", Side.MEAT);
 		final VideoWithCounters v16 = videoFactory.add(16, "Imposition de classe", Side.MEAT);
 		v9.persistCounters(v1);
-		v9.persistCounters(v1);
 		v9.persistCounters(v3);
 		v10.persistCounters(v1);
 		v11.persistCounters(v1);

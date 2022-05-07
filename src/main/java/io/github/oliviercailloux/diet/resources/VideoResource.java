@@ -1,4 +1,4 @@
-package io.github.oliviercailloux.diet;
+package io.github.oliviercailloux.diet.resources;
 
 import io.github.oliviercailloux.diet.user.UserFactory;
 import io.github.oliviercailloux.diet.user.UserWithEvents;
