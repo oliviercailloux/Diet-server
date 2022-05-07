@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGSVGElement;
 
 public class Drawer {
 	@SuppressWarnings("unused")
@@ -85,17 +86,17 @@ public class Drawer {
 		final DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
 		final SVGDocument doc = (SVGDocument) impl.createDocument(SVG_NAMESPACE_URI, "svg", null);
 
-		Element svgRoot = doc.getRootElement();
+		final SVGSVGElement svgRoot = doc.getRootElement();
 
-		svgRoot.setAttributeNS(null, "width", "400");
-		svgRoot.setAttributeNS(null, "height", "450");
+		svgRoot.setAttribute("width", "400");
+		svgRoot.setAttribute("height", "450");
 
 		Element rectangle = doc.createElementNS(SVG_NAMESPACE_URI, "rect");
 		rectangle.setAttribute("x", "10");
-		rectangle.setAttributeNS(null, "y", "20");
-		rectangle.setAttributeNS(null, "width", "100");
-		rectangle.setAttributeNS(null, "height", "50");
-		rectangle.setAttributeNS(null, "fill", "red");
+		rectangle.setAttribute("y", "20");
+		rectangle.setAttribute("width", "100");
+		rectangle.setAttribute("height", "50");
+		rectangle.setAttribute("fill", "red");
 
 		svgRoot.appendChild(rectangle);
 
