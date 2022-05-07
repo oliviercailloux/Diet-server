@@ -23,10 +23,10 @@ public class VideoFactory {
 	EntityManager em;
 
 	@Transactional
-	public VideoWithCounters add(int fileId, String description, Side side) {
+	public VideoAppendable add(int fileId, String description, Side side) {
 		final VideoEntity v = new VideoEntity(fileId, description, side);
 		em.persist(v);
-		return VideoWithCounters.fromPersistent(em, v);
+		return VideoAppendable.fromPersistent(em, v);
 	}
 
 	@Transactional
@@ -41,12 +41,12 @@ public class VideoFactory {
 		return result.stream().map(v -> Video.fromPersistent(v)).collect(ImmutableSet.toImmutableSet());
 	}
 
-	private ImmutableSet<VideoWithCounters> toAppendables(Collection<VideoEntity> result) {
-		return result.stream().map(v -> VideoWithCounters.fromPersistent(em, v)).collect(ImmutableSet.toImmutableSet());
+	private ImmutableSet<VideoAppendable> toAppendables(Collection<VideoEntity> result) {
+		return result.stream().map(v -> VideoAppendable.fromPersistent(em, v)).collect(ImmutableSet.toImmutableSet());
 	}
 
 	@Transactional
-	public ImmutableSet<VideoWithCounters> getAll() {
+	public ImmutableSet<VideoAppendable> getAll() {
 		final TypedQuery<VideoEntity> q = em.createNamedQuery("all", VideoEntity.class);
 		final List<VideoEntity> result = q.getResultList();
 		verify(!result.isEmpty());

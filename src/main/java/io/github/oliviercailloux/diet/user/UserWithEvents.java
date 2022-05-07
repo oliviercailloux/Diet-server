@@ -11,7 +11,7 @@ import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.Video;
 import io.github.oliviercailloux.diet.video.VideoFactory;
-import io.github.oliviercailloux.diet.video.VideoWithCounters;
+import io.github.oliviercailloux.diet.video.VideoAppendable;
 import java.util.stream.Stream;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.persistence.EntityManager;
@@ -28,7 +28,7 @@ public class UserWithEvents implements RawUser {
 	private final EntityManager em;
 	private final VideoFactory videoFactory;
 	private final UserEntity user;
-	private ImmutableSet<VideoWithCounters> all;
+	private ImmutableSet<VideoAppendable> all;
 
 	private UserWithEvents(EntityManager em, VideoFactory videoFactory, UserEntity user) {
 		this.em = checkNotNull(em);
@@ -107,18 +107,18 @@ public class UserWithEvents implements RawUser {
 		}
 	}
 
-	public ImmutableList<VideoWithCounters> getSeen() {
+	public ImmutableList<VideoAppendable> getSeen() {
 		lazyAll();
 		final ImmutableList<Integer> seenIds = readSeenIds();
-		final ImmutableBiMap<Integer, VideoWithCounters> byId = all.stream()
-				.collect(ImmutableBiMap.toImmutableBiMap(VideoWithCounters::getFileId, v -> v));
+		final ImmutableBiMap<Integer, VideoAppendable> byId = all.stream()
+				.collect(ImmutableBiMap.toImmutableBiMap(VideoAppendable::getFileId, v -> v));
 		return seenIds.stream().map(byId::get).collect(ImmutableList.toImmutableList());
 	}
 
-	public ImmutableSet<VideoWithCounters> getToSee() {
+	public ImmutableSet<VideoAppendable> getToSee() {
 		lazyAll();
 		final ImmutableSet<Integer> seenIds = ImmutableSet.copyOf(readSeenIds());
-		final ImmutableSet<VideoWithCounters> toSee = all.stream().filter(vi -> !seenIds.contains(vi.getFileId()))
+		final ImmutableSet<VideoAppendable> toSee = all.stream().filter(vi -> !seenIds.contains(vi.getFileId()))
 				.collect(ImmutableSet.toImmutableSet());
 		return toSee;
 	}

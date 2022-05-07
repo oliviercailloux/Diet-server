@@ -28,7 +28,7 @@ public class UserFactoryQueriesTests {
 	UserFactory factory;
 
 	@Test
-	public void testQueriesUser0() throws Exception {
+	void testQueriesUser0() throws Exception {
 		final Statistics stats = sessionFactory.getStatistics();
 		final long queryCountStart = stats.getQueryExecutionCount();
 
@@ -52,7 +52,7 @@ public class UserFactoryQueriesTests {
 	}
 
 	@Test
-	public void testQueriesUserSeen() throws Exception {
+	void testQueriesUserSeen() throws Exception {
 		final Statistics stats = sessionFactory.getStatistics();
 		final long queryCountStart = stats.getQueryExecutionCount();
 
@@ -77,7 +77,7 @@ public class UserFactoryQueriesTests {
 
 	@Test
 	@Transactional
-	public void testGetFromCache() throws Exception {
+	void testGetFromCache() throws Exception {
 		final Statistics stats = sessionFactory.getStatistics();
 		final long queryCountStart = stats.getQueryExecutionCount();
 

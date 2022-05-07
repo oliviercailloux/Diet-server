@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import io.github.oliviercailloux.diet.user.UserFactory;
-import io.github.oliviercailloux.diet.user.UserWithEvents;
 import io.github.oliviercailloux.diet.video.Video;
 import io.quarkus.test.junit.QuarkusTest;
 import javax.inject.Inject;
@@ -18,7 +16,7 @@ public class UserFactoryTests {
 	UserFactory factory;
 
 	@Test
-	public void testStatusUser0() throws Exception {
+	void testStatusUser0() throws Exception {
 		final UserWithEvents user = factory.getWithEvents("user0");
 		assertEquals("user0", user.getUsername());
 		assertEquals(ImmutableList.of(), user.getSeen());
@@ -27,7 +25,7 @@ public class UserFactoryTests {
 	}
 
 	@Test
-	public void testStatusUserSeen() throws Exception {
+	void testStatusUserSeen() throws Exception {
 		final UserWithEvents user = factory.getWithEvents("seen");
 		assertEquals("seen", user.getUsername());
 		assertEquals(3, Iterables.getOnlyElement(user.getSeen()).getFileId());

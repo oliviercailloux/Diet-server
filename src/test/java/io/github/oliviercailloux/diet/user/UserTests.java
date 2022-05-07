@@ -98,7 +98,7 @@ public class UserTests {
 	Client client;
 
 	@Test
-	public void testNotLogged() throws Exception {
+	void testNotLogged() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
 
 		try (Response response = client.target(target).request().buildGet().invoke()) {
@@ -107,7 +107,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testBadLogin() throws Exception {
+	void testBadLogin() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
 
 		try (Response response = client.target(target).register(new Authenticator("user", "incorrectpassword"))
@@ -117,7 +117,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testLogin() throws Exception {
+	void testLogin() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
 
 		try (Response response = client.target(target).register(new Authenticator("user0", "user")).request().buildGet()
@@ -127,7 +127,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testLoginÉlevé() throws Exception {
+	void testLoginÉlevé() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/status").build();
 
 		try (Response response = client.target(target).register(new Authenticator("élevé", "user")).request().buildGet()
@@ -137,7 +137,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testAddWrongMediaType() throws Exception {
+	void testAddWrongMediaType() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
 		try (Response response = client.target(target).request().buildPut(Entity.text("")).invoke()) {
 			assertEquals(Response.Status.UNSUPPORTED_MEDIA_TYPE.getStatusCode(), response.getStatus());
@@ -145,7 +145,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testAddWrongContent() throws Exception {
+	void testAddWrongContent() throws Exception {
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
 		try (Response response = client.target(target).request().buildPut(Entity.json(Json.createValue("ploum")))
 				.invoke()) {
@@ -154,7 +154,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testAddWithColon() throws Exception {
+	void testAddWithColon() throws Exception {
 		final Login login = new Login("test:add", "test user password");
 		final URI target = UriBuilder.fromUri(serverUri).path("/v0/me/create-accept").build();
 		try (Response response = client.target(target).request(MediaType.APPLICATION_JSON).buildPut(Entity.json(login))
@@ -164,7 +164,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testAddThenStatus() throws Exception {
+	void testAddThenStatus() throws Exception {
 		final String username = "testAdd " + Instant.now().toString().replace(":", "");
 		final Login login = new Login(username, "test user password");
 		{
@@ -197,7 +197,7 @@ public class UserTests {
 	}
 
 	@Test
-	public void testAddThenJudgeThenStatus() throws Exception {
+	void testAddThenJudgeThenStatus() throws Exception {
 		final String username = "testAddJudge " + Instant.now().toString().replace(":", "");
 		final Login login = new Login(username, "test user password");
 		{
