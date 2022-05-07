@@ -1,29 +1,25 @@
 package io.github.oliviercailloux.diet.draw;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
 import io.github.oliviercailloux.diet.video.Video;
 import io.github.oliviercailloux.diet.video.VideoWithCounters;
 import io.github.oliviercailloux.jaris.xml.DomHelper;
 import java.util.Set;
-import org.apache.batik.anim.dom.SVGDOMImplementation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGSVGElement;
 
 public class Drawer {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Drawer.class);
 
-	/**
-	 * SVG 2 namespace,
-	 * <a href="https://svgwg.org/svg2-draft/struct.html#Namespace">same</a> as for
-	 * earlier versions of SVG
-	 */
-	public static final String SVG_NAMESPACE_URI = "http://www.w3.org/2000/svg";
+	private static final String HTML = DomHelper.HTML_NS_URI.toString();
+
+	private static final String SVG = DomHelper.SVG_NS_URI.toString();
 
 	private static final Point ELLIPSE_SEMI = new Point(80, 40);
 	private static final Point SPACE = ELLIPSE_SEMI.plus(ELLIPSE_SEMI).plus(new Point(20, 10));
@@ -63,6 +59,7 @@ public class Drawer {
 		builder.put(byId.get(14), new Point(8, 2));
 		builder.put(byId.get(15), new Point(10, 2));
 		abstractPositions = builder.build();
+		checkState(abstractPositions.keySet().equals(videos));
 	}
 
 	private Point toSvg(Point abstractPoint) {
@@ -77,21 +74,13 @@ public class Drawer {
 				.collect(ImmutableBiMap.toImmutableBiMap(v -> v, v -> toSvg(abstractPositions.get(v))));
 	}
 
-	public void produce() {
-		byId = videos.stream().collect(ImmutableBiMap.toImmutableBiMap(VideoWithCounters::getFileId, v -> v));
-		initAbstractPositions();
-		computeSvgPositions();
-
-		/* https://issues.apache.org/jira/browse/BATIK-1325 */
-		final DOMImplementation impl = SVGDOMImplementation.getDOMImplementation();
-		final SVGDocument doc = (SVGDocument) impl.createDocument(SVG_NAMESPACE_URI, "svg", null);
-
-		final SVGSVGElement svgRoot = doc.getRootElement();
+	private void populateSvg(Element svgRoot) {
+		final Document doc = svgRoot.getOwnerDocument();
 
 		svgRoot.setAttribute("width", "400");
 		svgRoot.setAttribute("height", "450");
 
-		Element rectangle = doc.createElementNS(SVG_NAMESPACE_URI, "rect");
+		Element rectangle = doc.createElementNS(SVG, "rect");
 		rectangle.setAttribute("x", "10");
 		rectangle.setAttribute("y", "20");
 		rectangle.setAttribute("width", "100");
@@ -99,8 +88,34 @@ public class Drawer {
 		rectangle.setAttribute("fill", "red");
 
 		svgRoot.appendChild(rectangle);
+	}
 
-		final String string = DomHelper.domHelper().toString(doc);
-		LOGGER.info("Produced: {}.", string);
+	public Document html() {
+		byId = videos.stream().collect(ImmutableBiMap.toImmutableBiMap(VideoWithCounters::getFileId, v -> v));
+		initAbstractPositions();
+		computeSvgPositions();
+
+		final Document doc = DomHelper.domHelper().html();
+		final Element html = doc.getDocumentElement();
+
+		final Element body = doc.createElementNS(HTML, "body");
+		html.appendChild(body);
+
+		final Element svgRoot = doc.createElementNS(SVG, "svg");
+		body.appendChild(svgRoot);
+
+		populateSvg(svgRoot);
+		return doc;
+	}
+
+	public Document svg() {
+		byId = videos.stream().collect(ImmutableBiMap.toImmutableBiMap(VideoWithCounters::getFileId, v -> v));
+		initAbstractPositions();
+		computeSvgPositions();
+
+		final Document doc = DomHelper.domHelper().svg();
+		final Element svgRoot = doc.getDocumentElement();
+		populateSvg(svgRoot);
+		return doc;
 	}
 }
