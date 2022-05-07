@@ -34,10 +34,14 @@ public class UserFactoryQueriesTests {
 
 		final UserWithEvents user = factory.getWithEvents("user0");
 		assertEquals("user0", user.getUsername());
-		assertEquals(ImmutableList.of(), user.getSeen());
 		{
 			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
 			assertEquals(1, nbQueries);
+		}
+		assertEquals(ImmutableList.of(), user.getSeen());
+		{
+			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
+			assertEquals(2, nbQueries);
 		}
 		final Video videoSeen0 = user.getToSee().asList().get(0);
 		assertEquals(1, videoSeen0.getFileId());
@@ -54,10 +58,14 @@ public class UserFactoryQueriesTests {
 
 		final UserWithEvents user = factory.getWithEvents("seen");
 		assertEquals("seen", user.getUsername());
-		assertEquals(3, Iterables.getOnlyElement(user.getSeen()).getFileId());
 		{
 			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
 			assertEquals(1, nbQueries);
+		}
+		assertEquals(3, Iterables.getOnlyElement(user.getSeen()).getFileId());
+		{
+			final long nbQueries = stats.getQueryExecutionCount() - queryCountStart;
+			assertEquals(2, nbQueries);
 		}
 		final Video videoSeen0 = user.getToSee().asList().get(0);
 		assertEquals(1, videoSeen0.getFileId());
