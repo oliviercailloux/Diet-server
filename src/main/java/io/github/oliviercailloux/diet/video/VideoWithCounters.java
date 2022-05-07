@@ -8,7 +8,6 @@ import java.util.stream.Stream;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 import javax.persistence.EntityManager;
 
-//@JsonIgnoreProperties(value = { "url" }, allowGetters = true)
 @JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class VideoWithCounters extends Video {
 	static VideoWithCounters fromPersistent(EntityManager em, VideoEntity video) {
