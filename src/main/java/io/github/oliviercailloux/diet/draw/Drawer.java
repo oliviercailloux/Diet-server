@@ -23,9 +23,10 @@ public class Drawer {
 	private static final String SVG = DomHelper.SVG_NS_URI.toString();
 
 	private static final double ELLIPSE_RY = 60d;
+	private static final Ellipse ELLIPSE_SHAPE = Ellipse.optimal(ELLIPSE_RY);
 
-	private static final SvgSize ELLIPSE_SEMI = new SvgSize(ELLIPSE_RY * Math.sqrt(2d), ELLIPSE_RY);
-	private static final SvgSize ELLIPSE = ELLIPSE_SEMI.mult(2d);
+	private static final SvgSize ELLIPSE_SEMI = ELLIPSE_SHAPE.semiSize();
+	private static final SvgSize ELLIPSE = ELLIPSE_SHAPE.size();
 
 	private static final SvgSize SPACE = ELLIPSE_SEMI.mult(1.75d);
 
@@ -177,7 +178,7 @@ public class Drawer {
 
 		final Element clipPath = document.createElementNS(SVG, "clipPath");
 		clipPath.setAttribute("id", "video-clip");
-		final Element clipEllipse = creator.ellipse(SvgPoint.zero(), ELLIPSE_SEMI.plus(new SvgSize(-1d, -1d)));
+		final Element clipEllipse = creator.ellipse(SvgPoint.zero(), ELLIPSE_SEMI.plus(new GeneralSize(-1d, -1d)));
 		clipPath.appendChild(clipEllipse);
 		svgRoot.appendChild(clipPath);
 
@@ -214,6 +215,10 @@ public class Drawer {
 		final Element head = document.createElementNS(HTML, "head");
 		html.appendChild(head);
 
+		final Element scriptFA = document.createElementNS(HTML, "script");
+		scriptFA.setAttribute("src", "https://use.fontawesome.com/releases/v5.15.3/js/all.js");
+		head.appendChild(scriptFA);
+
 		final Element link = document.createElementNS(HTML, "link");
 		link.setAttribute("rel", "stylesheet");
 		link.setAttribute("href", "svg.css");
@@ -221,6 +226,11 @@ public class Drawer {
 
 		final Element body = document.createElementNS(HTML, "body");
 		html.appendChild(body);
+
+		final Element spanPlay = document.createElementNS(HTML, "span");
+		spanPlay.setAttribute("data-fa-symbol", "play");
+		spanPlay.setAttribute("class", "fas fa-play");
+		body.appendChild(spanPlay);
 
 		final Element svgRoot = document.createElementNS(SVG, "svg");
 		body.appendChild(svgRoot);
