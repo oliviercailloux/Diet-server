@@ -1,0 +1,50 @@
+#video-graph {
+	display: block;
+    margin: 0 auto;
+}
+
+.video-description {
+    text-align: center;
+    overflow: auto;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.side-MEAT {
+    stroke: red;
+}
+
+.side-VEGAN {
+    stroke: green;
+}
+
+.reachable {
+    fill: white;
+}
+
+.unreachable {
+    fill: silver;
+}
+
+.seen {
+    fill: silver;
+}
+
+.fa-play {
+    color: blue;
+}
+
+.foreign-video {
+    clip-path: url(#video-clip);
+}
+
+.video-description-id:before {
+	content: "(";
+}
+.video-description-id {
+	font-size: 60%;
+}
+.video-description-id:after {
+	content: ")";
+}
