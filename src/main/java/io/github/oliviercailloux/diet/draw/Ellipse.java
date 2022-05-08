@@ -37,8 +37,8 @@ class Ellipse {
 		return semiSize.mult(2d);
 	}
 
-	public SvgSize inscribedSquareSize() {
-		return size().mult(Math.sqrt(2d));
+	public SvgSize inscribedRectangleSize() {
+		return size().mult(1d / Math.sqrt(2d));
 	}
 
 	@Override

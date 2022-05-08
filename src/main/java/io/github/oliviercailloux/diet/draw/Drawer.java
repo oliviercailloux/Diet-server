@@ -22,13 +22,9 @@ public class Drawer {
 
 	private static final String SVG = DomHelper.SVG_NS_URI.toString();
 
-	private static final double ELLIPSE_RY = 60d;
-	private static final Ellipse ELLIPSE_SHAPE = Ellipse.optimal(ELLIPSE_RY);
+	private static final Ellipse ELLIPSE = Ellipse.optimal(60d);
 
-	private static final SvgSize ELLIPSE_SEMI = ELLIPSE_SHAPE.semiSize();
-	private static final SvgSize ELLIPSE = ELLIPSE_SHAPE.size();
-
-	private static final SvgSize SPACE = ELLIPSE_SEMI.mult(1.75d);
+	private static final SvgSize SPACE = ELLIPSE.semiSize().mult(1.75d);
 
 	public static Drawer drawer(Set<? extends VideoWithCounters> videos) {
 		return new Drawer(videos);
@@ -78,7 +74,7 @@ public class Drawer {
 		final double spaceX = abstractPoint.x() * SPACE.x();
 		final double spaceY = abstractPoint.y() * SPACE.y();
 		final SvgPoint space = new SvgPoint(spaceX, spaceY);
-		return space.plus(ELLIPSE_SEMI);
+		return space.plus(ELLIPSE.semiSize());
 	}
 
 	private void computeSvgPositions() {
@@ -113,7 +109,7 @@ public class Drawer {
 			globalGroup.setAttribute("transform", "translate" + point.coords());
 		}
 
-		final Element ell = creator.ellipse(SvgPoint.zero(), ELLIPSE_SEMI);
+		final Element ell = creator.ellipse(SvgPoint.zero(), ELLIPSE.semiSize());
 		{
 			final String sideClass = "side-" + v.getSide().toString();
 			final String reachability = v.counters().isEmpty() ? "reachable" : "unreachable";
@@ -121,8 +117,8 @@ public class Drawer {
 		}
 		globalGroup.appendChild(ell);
 
-		final SvgSize innerSquareSize = ELLIPSE.mult(1d / Math.sqrt(2d));
-		final Element foreignForDescription = creator.foreignCenteredAt(SvgPoint.zero(), innerSquareSize);
+		final Element foreignForDescription = creator.foreignCenteredAt(SvgPoint.zero(),
+				ELLIPSE.inscribedRectangleSize());
 		{
 			foreignForDescription.setAttribute("class", "video-description-parent");
 		}
@@ -135,26 +131,26 @@ public class Drawer {
 		}
 		foreignForDescription.appendChild(pForDescription);
 
-		final SvgSize svgSize;
+		final SvgSize coveringSize;
 		{
 			final double widthPerHeight = 16d / 9d;
 			/*
 			 * We want at least height ellipse and at least width of ellipse so that the
 			 * whole ellipse is covered.
 			 */
-			final double widthIfFitToWidth = ELLIPSE_SEMI.x() * 2d;
-			final double widthIfFitToHeight = widthPerHeight * ELLIPSE_SEMI.y() * 2d;
+			final double widthIfFitToWidth = ELLIPSE.size().x();
+			final double widthIfFitToHeight = widthPerHeight * ELLIPSE.size().y();
 			final double effectiveWidth = Math.max(widthIfFitToWidth, widthIfFitToHeight);
 			final double effectiveHeight = effectiveWidth / widthPerHeight;
-			svgSize = new SvgSize(effectiveWidth, effectiveHeight);
+			coveringSize = new SvgSize(effectiveWidth, effectiveHeight);
 		}
-		final Element foreignForVideo = creator.foreignCenteredAt(SvgPoint.zero(), svgSize);
+		final Element foreignForVideo = creator.foreignCenteredAt(SvgPoint.zero(), coveringSize);
 		{
 			foreignForVideo.setAttribute("class", "foreign-video");
 			final Element vE = document.createElementNS(HTML, "video");
 			vE.setAttribute("width", "100%");
 			vE.setAttribute("height", "100%");
-//			vE.setAttribute("hidden", "hidden");
+			vE.setAttribute("hidden", "hidden");
 			foreignForVideo.appendChild(vE);
 			final Element videoSource = document.createElementNS(HTML, "source");
 			videoSource.setAttribute("src", v.getUrl().toString());
@@ -162,8 +158,9 @@ public class Drawer {
 		}
 		globalGroup.appendChild(foreignForVideo);
 
-		final double remainingHeight = ELLIPSE_SEMI.y() - innerSquareSize.y() / 2;
-		final Element use = creator.useCorneredAt(new SvgPoint(-remainingHeight / 2d, ELLIPSE_SEMI.y()),
+		final double inscribedSemiHeight = ELLIPSE.inscribedRectangleSize().y() / 2;
+		final double remainingHeight = ELLIPSE.semiSize().y() - inscribedSemiHeight;
+		final Element use = creator.useCorneredAt(new SvgPoint(-remainingHeight / 2d, inscribedSemiHeight),
 				SvgSize.square(remainingHeight));
 //		document.createEntityReference("play");
 		use.setAttribute("href", "#play");
@@ -178,7 +175,8 @@ public class Drawer {
 
 		final Element clipPath = document.createElementNS(SVG, "clipPath");
 		clipPath.setAttribute("id", "video-clip");
-		final Element clipEllipse = creator.ellipse(SvgPoint.zero(), ELLIPSE_SEMI.plus(new GeneralSize(-1d, -1d)));
+		final Element clipEllipse = creator.ellipse(SvgPoint.zero(),
+				ELLIPSE.semiSize().plus(new GeneralSize(-1d, -1d)));
 		clipPath.appendChild(clipEllipse);
 		svgRoot.appendChild(clipPath);
 

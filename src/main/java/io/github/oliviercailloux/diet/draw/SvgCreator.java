@@ -19,14 +19,14 @@ public class SvgCreator {
 		this.document = checkNotNull(document);
 	}
 
-	public Element ellipse(SvgPoint position, SvgSize size) {
+	public Element ellipse(SvgPoint position, SvgSize semiSize) {
 		final Element ell = document.createElementNS(SVG, "ellipse");
 		if (!position.equals(SvgPoint.zero())) {
 			ell.setAttribute("cx", String.valueOf(position.x()));
 			ell.setAttribute("cy", String.valueOf(position.y()));
 		}
-		ell.setAttribute("rx", String.valueOf(size.x()));
-		ell.setAttribute("ry", String.valueOf(size.y()));
+		ell.setAttribute("rx", String.valueOf(semiSize.x()));
+		ell.setAttribute("ry", String.valueOf(semiSize.y()));
 		return ell;
 	}
 
