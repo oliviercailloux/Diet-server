@@ -6,17 +6,26 @@ import io.github.oliviercailloux.jaris.xml.DomHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class SvgCreator {
+public class SvgHelper {
 	private static final String SVG = DomHelper.SVG_NS_URI.toString();
 
-	public static SvgCreator using(Document document) {
-		return new SvgCreator(document);
+	public static SvgHelper using(Document document) {
+		return new SvgHelper(document);
 	}
 
 	private final Document document;
 
-	private SvgCreator(Document document) {
+	private SvgHelper(Document document) {
 		this.document = checkNotNull(document);
+	}
+
+	public Element line(SvgPoint start, SvgPoint destination) {
+		final Element line = document.createElementNS(SVG, "line");
+		line.setAttribute("x1", String.valueOf(start.x()));
+		line.setAttribute("y1", String.valueOf(start.y()));
+		line.setAttribute("x2", String.valueOf(destination.x()));
+		line.setAttribute("y2", String.valueOf(destination.y()));
+		return line;
 	}
 
 	public Element ellipse(SvgPoint position, SvgSize semiSize) {
@@ -51,6 +60,12 @@ public class SvgCreator {
 		foreignForDescription.setAttribute("width", String.valueOf(size.x()));
 		foreignForDescription.setAttribute("height", String.valueOf(size.y()));
 		return foreignForDescription;
+	}
+
+	public Element setSize(Element svgElement, SvgSize size) {
+		svgElement.setAttribute("width", String.valueOf(size.x()));
+		svgElement.setAttribute("height", String.valueOf(size.y()));
+		return svgElement;
 	}
 
 }

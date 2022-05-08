@@ -8,6 +8,10 @@ record SvgSize(double x, double y) implements MathSize {
 		return new SvgSize(length, length);
 	}
 
+	public static SvgSize between(SvgPoint start, SvgPoint end) {
+		return new SvgSize(end.x() - start.x(), end.y() - start.y());
+	}
+
 	public SvgSize {
 		checkArgument(Double.isFinite(x));
 		checkArgument(Double.isFinite(y));

@@ -37,7 +37,7 @@ public class Drawer {
 
 	private Document document;
 
-	private SvgCreator creator;
+	private SvgHelper svgHelper;
 
 	private Drawer(Set<? extends VideoWithCounters> videos) {
 		this.videos = ImmutableSet.copyOf(videos);
@@ -45,27 +45,30 @@ public class Drawer {
 		abstractPositions = null;
 		svgPositions = null;
 		document = null;
-		creator = null;
+		svgHelper = null;
 	}
 
 	private void initAbstractPositions() {
 		final ImmutableBiMap.Builder<Video, Point> builder = ImmutableBiMap.builder();
-		builder.put(byId.get(16), new Point(0, 0));
-		builder.put(byId.get(2), new Point(2, 0));
-		builder.put(byId.get(6), new Point(4, 0));
-		builder.put(byId.get(5), new Point(6, 0));
-		builder.put(byId.get(4), new Point(8, 0));
-		builder.put(byId.get(1), new Point(10, 0));
-		builder.put(byId.get(3), new Point(1, 1));
-		builder.put(byId.get(7), new Point(3, 1));
-		builder.put(byId.get(8), new Point(5, 1));
-		builder.put(byId.get(9), new Point(7, 1));
-		builder.put(byId.get(10), new Point(9, 1));
-		builder.put(byId.get(11), new Point(2, 2));
-		builder.put(byId.get(12), new Point(4, 2));
-		builder.put(byId.get(13), new Point(6, 2));
-		builder.put(byId.get(14), new Point(8, 2));
-		builder.put(byId.get(15), new Point(10, 2));
+		builder.put(byId.get(8), new Point(0, 1));
+		builder.put(byId.get(16), new Point(1, 0));
+		builder.put(byId.get(6), new Point(3, 0));
+		builder.put(byId.get(5), new Point(4, 1));
+		builder.put(byId.get(4), new Point(2, 1));
+		builder.put(byId.get(1), new Point(3, 2));
+		builder.put(byId.get(2), new Point(6, 0));
+		builder.put(byId.get(7), new Point(0, 3));
+		builder.put(byId.get(3), new Point(1, 2));
+
+		builder.put(byId.get(9), new Point(2, 3));
+		builder.put(byId.get(10), new Point(3, 4));
+		builder.put(byId.get(11), new Point(4, 3));
+
+		builder.put(byId.get(12), new Point(5, 2));
+		builder.put(byId.get(13), new Point(6, 3));
+		builder.put(byId.get(14), new Point(7, 2));
+		builder.put(byId.get(15), new Point(7, 4));
+
 		abstractPositions = builder.build();
 		checkState(abstractPositions.keySet().equals(videos));
 	}
@@ -82,12 +85,15 @@ public class Drawer {
 				.collect(ImmutableBiMap.toImmutableBiMap(v -> v, v -> toSvg(abstractPositions.get(v))));
 	}
 
+	private SvgSize boundingBox() {
+		final ImmutableSet<SvgPoint> corners = svgPositions.values().stream().map(p -> p.plus(ELLIPSE.semiSize()))
+				.collect(ImmutableSet.toImmutableSet());
+		final SvgPoint max = corners.stream().reduce(SvgPoint::max).orElseThrow();
+		return SvgSize.between(SvgPoint.zero(), max);
+	}
+
 	private Element line(SvgPoint start, SvgPoint destination) {
-		final Element line = document.createElementNS(SVG, "line");
-		line.setAttribute("x1", String.valueOf(start.x()));
-		line.setAttribute("y1", String.valueOf(start.y()));
-		line.setAttribute("x2", String.valueOf(destination.x()));
-		line.setAttribute("y2", String.valueOf(destination.y()));
+		final Element line = svgHelper.line(start, destination);
 		line.setAttribute("stroke", "black");
 		return line;
 	}
@@ -109,7 +115,7 @@ public class Drawer {
 			globalGroup.setAttribute("transform", "translate" + point.coords());
 		}
 
-		final Element ell = creator.ellipse(SvgPoint.zero(), ELLIPSE.semiSize());
+		final Element ell = svgHelper.ellipse(SvgPoint.zero(), ELLIPSE.semiSize());
 		{
 			final String sideClass = "side-" + v.getSide().toString();
 			final String reachability = v.counters().isEmpty() ? "reachable" : "unreachable";
@@ -117,7 +123,7 @@ public class Drawer {
 		}
 		globalGroup.appendChild(ell);
 
-		final Element foreignForDescription = creator.foreignCenteredAt(SvgPoint.zero(),
+		final Element foreignForDescription = svgHelper.foreignCenteredAt(SvgPoint.zero(),
 				ELLIPSE.inscribedRectangleSize());
 		{
 			foreignForDescription.setAttribute("class", "video-description-parent");
@@ -127,7 +133,16 @@ public class Drawer {
 		final Element pForDescription = document.createElementNS(HTML, "p");
 		{
 			pForDescription.setAttribute("class", "video-description");
-			pForDescription.appendChild(document.createTextNode(v.getDescription()));
+
+			final Element spanDescr = document.createElementNS(HTML, "span");
+			spanDescr.setAttribute("class", "video-description-main");
+			pForDescription.appendChild(spanDescr);
+			spanDescr.appendChild(document.createTextNode(v.getDescription()));
+
+			final Element spanId = document.createElementNS(HTML, "span");
+			spanId.setAttribute("class", "video-description-id");
+			pForDescription.appendChild(spanId);
+			spanId.appendChild(document.createTextNode(String.valueOf(v.getFileId())));
 		}
 		foreignForDescription.appendChild(pForDescription);
 
@@ -144,7 +159,7 @@ public class Drawer {
 			final double effectiveHeight = effectiveWidth / widthPerHeight;
 			coveringSize = new SvgSize(effectiveWidth, effectiveHeight);
 		}
-		final Element foreignForVideo = creator.foreignCenteredAt(SvgPoint.zero(), coveringSize);
+		final Element foreignForVideo = svgHelper.foreignCenteredAt(SvgPoint.zero(), coveringSize);
 		{
 			foreignForVideo.setAttribute("class", "foreign-video");
 			final Element vE = document.createElementNS(HTML, "video");
@@ -160,9 +175,8 @@ public class Drawer {
 
 		final double inscribedSemiHeight = ELLIPSE.inscribedRectangleSize().y() / 2;
 		final double remainingHeight = ELLIPSE.semiSize().y() - inscribedSemiHeight;
-		final Element use = creator.useCorneredAt(new SvgPoint(-remainingHeight / 2d, inscribedSemiHeight),
+		final Element use = svgHelper.useCorneredAt(new SvgPoint(-remainingHeight / 2d, inscribedSemiHeight),
 				SvgSize.square(remainingHeight));
-//		document.createEntityReference("play");
 		use.setAttribute("href", "#play");
 		globalGroup.appendChild(use);
 
@@ -170,12 +184,12 @@ public class Drawer {
 	}
 
 	private void populateSvg(Element svgRoot) {
-		svgRoot.setAttribute("width", "4000");
-		svgRoot.setAttribute("height", "4500");
+		svgRoot.setAttribute("id", "video-graph");
+		svgHelper.setSize(svgRoot, boundingBox());
 
 		final Element clipPath = document.createElementNS(SVG, "clipPath");
 		clipPath.setAttribute("id", "video-clip");
-		final Element clipEllipse = creator.ellipse(SvgPoint.zero(),
+		final Element clipEllipse = svgHelper.ellipse(SvgPoint.zero(),
 				ELLIPSE.semiSize().plus(new GeneralSize(-1d, -1d)));
 		clipPath.appendChild(clipEllipse);
 		svgRoot.appendChild(clipPath);
@@ -195,7 +209,7 @@ public class Drawer {
 		computeSvgPositions();
 
 		document = DomHelper.domHelper().svg();
-		creator = SvgCreator.using(document);
+		svgHelper = SvgHelper.using(document);
 		final Element svgRoot = document.getDocumentElement();
 		populateSvg(svgRoot);
 		return document;
@@ -207,7 +221,7 @@ public class Drawer {
 		computeSvgPositions();
 
 		document = DomHelper.domHelper().html();
-		creator = SvgCreator.using(document);
+		svgHelper = SvgHelper.using(document);
 		final Element html = document.getDocumentElement();
 
 		final Element head = document.createElementNS(HTML, "head");
