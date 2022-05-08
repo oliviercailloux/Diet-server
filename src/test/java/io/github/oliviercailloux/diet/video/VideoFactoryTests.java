@@ -1,8 +1,6 @@
 package io.github.oliviercailloux.diet.video;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import io.quarkus.test.junit.QuarkusTest;
@@ -25,6 +23,19 @@ public class VideoFactoryTests {
 
 	@Inject
 	Client client;
+
+	@Test
+	@Transactional
+	public void testRelations() throws Exception {
+		final VideoWithCounters v1 = videoFactory.getWithCounters(1);
+		final Video v3 = videoFactory.getVideo(3);
+		final VideoWithCounters v9 = videoFactory.getWithCounters(9);
+		final Video v10 = videoFactory.getVideo(10);
+		final Video v11 = videoFactory.getVideo(11);
+		assertEquals(ImmutableSet.of(v1, v3), v9.counters());
+		assertEquals(ImmutableSet.of(), v9.counteredBy());
+		assertEquals(ImmutableSet.of(v9, v10, v11), v1.counteredBy());
+	}
 
 	@Test
 	@Transactional

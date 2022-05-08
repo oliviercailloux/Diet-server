@@ -37,6 +37,14 @@ public class VideoFactory {
 		return Video.fromPersistent(entity);
 	}
 
+	@Transactional
+	public VideoWithCounters getWithCounters(int fileId) {
+		final TypedQuery<VideoEntity> q = em.createNamedQuery("getWithCounters", VideoEntity.class);
+		q.setParameter("fileId", fileId);
+		final VideoEntity entity = q.getSingleResult();
+		return VideoWithCounters.fromPersistent(entity);
+	}
+
 	private ImmutableSet<Video> toVideos(Collection<VideoEntity> result) {
 		return result.stream().map(v -> Video.fromPersistent(v)).collect(ImmutableSet.toImmutableSet());
 	}

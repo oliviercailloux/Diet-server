@@ -4,6 +4,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import io.github.oliviercailloux.diet.video.Video;
 import io.github.oliviercailloux.diet.video.VideoWithCounters;
 import io.github.oliviercailloux.jaris.xml.DomHelper;
@@ -21,8 +22,12 @@ public class Drawer {
 
 	private static final String SVG = DomHelper.SVG_NS_URI.toString();
 
-	private static final Point ELLIPSE_SEMI = new Point(80, 40);
-	private static final Point SPACE = ELLIPSE_SEMI.plus(ELLIPSE_SEMI).plus(new Point(20, 10));
+	private static final double ELLIPSE_RY = 60d;
+
+	private static final SvgSize ELLIPSE_SEMI = new SvgSize(ELLIPSE_RY * Math.sqrt(2d), ELLIPSE_RY);
+	private static final SvgSize ELLIPSE = ELLIPSE_SEMI.mult(2d);
+
+	private static final SvgSize SPACE = ELLIPSE_SEMI.mult(1.75d);
 
 	public static Drawer drawer(Set<? extends VideoWithCounters> videos) {
 		return new Drawer(videos);
@@ -31,13 +36,19 @@ public class Drawer {
 	private final ImmutableSet<VideoWithCounters> videos;
 	private ImmutableBiMap<Integer, VideoWithCounters> byId;
 	private ImmutableBiMap<Video, Point> abstractPositions;
-	private ImmutableBiMap<Video, Point> svgPositions;
+	private ImmutableBiMap<Video, SvgPoint> svgPositions;
+
+	private Document document;
+
+	private SvgCreator creator;
 
 	private Drawer(Set<? extends VideoWithCounters> videos) {
 		this.videos = ImmutableSet.copyOf(videos);
 		byId = null;
 		abstractPositions = null;
 		svgPositions = null;
+		document = null;
+		creator = null;
 	}
 
 	private void initAbstractPositions() {
@@ -62,11 +73,11 @@ public class Drawer {
 		checkState(abstractPositions.keySet().equals(videos));
 	}
 
-	private Point toSvg(Point abstractPoint) {
-		final int spaceX = abstractPoint.x() * SPACE.x();
-		final int spaceY = abstractPoint.y() * SPACE.y();
-		final Point space = new Point(spaceX, spaceY);
-		return ELLIPSE_SEMI.plus(space);
+	private SvgPoint toSvg(Point abstractPoint) {
+		final double spaceX = abstractPoint.x() * SPACE.x();
+		final double spaceY = abstractPoint.y() * SPACE.y();
+		final SvgPoint space = new SvgPoint(spaceX, spaceY);
+		return space.plus(ELLIPSE_SEMI);
 	}
 
 	private void computeSvgPositions() {
@@ -74,38 +85,109 @@ public class Drawer {
 				.collect(ImmutableBiMap.toImmutableBiMap(v -> v, v -> toSvg(abstractPositions.get(v))));
 	}
 
-	private void populateSvg(Element svgRoot) {
-		final Document doc = svgRoot.getOwnerDocument();
-
-		svgRoot.setAttribute("width", "400");
-		svgRoot.setAttribute("height", "450");
-
-		Element rectangle = doc.createElementNS(SVG, "rect");
-		rectangle.setAttribute("x", "10");
-		rectangle.setAttribute("y", "20");
-		rectangle.setAttribute("width", "100");
-		rectangle.setAttribute("height", "50");
-		rectangle.setAttribute("fill", "red");
-
-		svgRoot.appendChild(rectangle);
+	private Element line(SvgPoint start, SvgPoint destination) {
+		final Element line = document.createElementNS(SVG, "line");
+		line.setAttribute("x1", String.valueOf(start.x()));
+		line.setAttribute("y1", String.valueOf(start.y()));
+		line.setAttribute("x2", String.valueOf(destination.x()));
+		line.setAttribute("y2", String.valueOf(destination.y()));
+		line.setAttribute("stroke", "black");
+		return line;
 	}
 
-	public Document html() {
-		byId = videos.stream().collect(ImmutableBiMap.toImmutableBiMap(VideoWithCounters::getFileId, v -> v));
-		initAbstractPositions();
-		computeSvgPositions();
+	private ImmutableSet<Element> linesFrom(VideoWithCounters start) {
+		final SvgPoint startPoint = svgPositions.get(start);
+		final ImmutableSortedSet<Video> dests = start.counteredBy();
+		final ImmutableSet<SvgPoint> destPoints = dests.stream().map(svgPositions::get)
+				.collect(ImmutableSet.toImmutableSet());
+		final ImmutableSet<Element> lines = destPoints.stream().map(d -> line(startPoint, d))
+				.collect(ImmutableSet.toImmutableSet());
+		return lines;
+	}
 
-		final Document doc = DomHelper.domHelper().html();
-		final Element html = doc.getDocumentElement();
+	private Element ellipseGroup(VideoWithCounters v) {
+		final Element globalGroup = document.createElementNS(SVG, "g");
+		{
+			final SvgPoint point = svgPositions.get(v);
+			globalGroup.setAttribute("transform", "translate" + point.coords());
+		}
 
-		final Element body = doc.createElementNS(HTML, "body");
-		html.appendChild(body);
+		final Element ell = creator.ellipse(SvgPoint.zero(), ELLIPSE_SEMI);
+		{
+			final String sideClass = "side-" + v.getSide().toString();
+			final String reachability = v.counters().isEmpty() ? "reachable" : "unreachable";
+			ell.setAttribute("class", sideClass + " " + reachability);
+		}
+		globalGroup.appendChild(ell);
 
-		final Element svgRoot = doc.createElementNS(SVG, "svg");
-		body.appendChild(svgRoot);
+		final SvgSize innerSquareSize = ELLIPSE.mult(1d / Math.sqrt(2d));
+		final Element foreignForDescription = creator.foreignCenteredAt(SvgPoint.zero(), innerSquareSize);
+		{
+			foreignForDescription.setAttribute("class", "video-description-parent");
+		}
+		globalGroup.appendChild(foreignForDescription);
 
-		populateSvg(svgRoot);
-		return doc;
+		final Element pForDescription = document.createElementNS(HTML, "p");
+		{
+			pForDescription.setAttribute("class", "video-description");
+			pForDescription.appendChild(document.createTextNode(v.getDescription()));
+		}
+		foreignForDescription.appendChild(pForDescription);
+
+		final SvgSize svgSize;
+		{
+			final double widthPerHeight = 16d / 9d;
+			/*
+			 * We want at least height ellipse and at least width of ellipse so that the
+			 * whole ellipse is covered.
+			 */
+			final double widthIfFitToWidth = ELLIPSE_SEMI.x() * 2d;
+			final double widthIfFitToHeight = widthPerHeight * ELLIPSE_SEMI.y() * 2d;
+			final double effectiveWidth = Math.max(widthIfFitToWidth, widthIfFitToHeight);
+			final double effectiveHeight = effectiveWidth / widthPerHeight;
+			svgSize = new SvgSize(effectiveWidth, effectiveHeight);
+		}
+		final Element foreignForVideo = creator.foreignCenteredAt(SvgPoint.zero(), svgSize);
+		{
+			foreignForVideo.setAttribute("class", "foreign-video");
+			final Element vE = document.createElementNS(HTML, "video");
+			vE.setAttribute("width", "100%");
+			vE.setAttribute("height", "100%");
+//			vE.setAttribute("hidden", "hidden");
+			foreignForVideo.appendChild(vE);
+			final Element videoSource = document.createElementNS(HTML, "source");
+			videoSource.setAttribute("src", v.getUrl().toString());
+			vE.appendChild(videoSource);
+		}
+		globalGroup.appendChild(foreignForVideo);
+
+		final double remainingHeight = ELLIPSE_SEMI.y() - innerSquareSize.y() / 2;
+		final Element use = creator.useCorneredAt(new SvgPoint(-remainingHeight / 2d, ELLIPSE_SEMI.y()),
+				SvgSize.square(remainingHeight));
+//		document.createEntityReference("play");
+		use.setAttribute("href", "#play");
+		globalGroup.appendChild(use);
+
+		return globalGroup;
+	}
+
+	private void populateSvg(Element svgRoot) {
+		svgRoot.setAttribute("width", "4000");
+		svgRoot.setAttribute("height", "4500");
+
+		final Element clipPath = document.createElementNS(SVG, "clipPath");
+		clipPath.setAttribute("id", "video-clip");
+		final Element clipEllipse = creator.ellipse(SvgPoint.zero(), ELLIPSE_SEMI.plus(new SvgSize(-1d, -1d)));
+		clipPath.appendChild(clipEllipse);
+		svgRoot.appendChild(clipPath);
+
+		final ImmutableSet<Element> lines = videos.stream().flatMap(v -> linesFrom(v).stream())
+				.collect(ImmutableSet.toImmutableSet());
+		lines.stream().forEach(svgRoot::appendChild);
+
+		final ImmutableSet<Element> ellipses = videos.stream().map(this::ellipseGroup)
+				.collect(ImmutableSet.toImmutableSet());
+		ellipses.stream().forEach(svgRoot::appendChild);
 	}
 
 	public Document svg() {
@@ -113,9 +195,37 @@ public class Drawer {
 		initAbstractPositions();
 		computeSvgPositions();
 
-		final Document doc = DomHelper.domHelper().svg();
-		final Element svgRoot = doc.getDocumentElement();
+		document = DomHelper.domHelper().svg();
+		creator = SvgCreator.using(document);
+		final Element svgRoot = document.getDocumentElement();
 		populateSvg(svgRoot);
-		return doc;
+		return document;
+	}
+
+	public Document html() {
+		byId = videos.stream().collect(ImmutableBiMap.toImmutableBiMap(VideoWithCounters::getFileId, v -> v));
+		initAbstractPositions();
+		computeSvgPositions();
+
+		document = DomHelper.domHelper().html();
+		creator = SvgCreator.using(document);
+		final Element html = document.getDocumentElement();
+
+		final Element head = document.createElementNS(HTML, "head");
+		html.appendChild(head);
+
+		final Element link = document.createElementNS(HTML, "link");
+		link.setAttribute("rel", "stylesheet");
+		link.setAttribute("href", "svg.css");
+		head.appendChild(link);
+
+		final Element body = document.createElementNS(HTML, "body");
+		html.appendChild(body);
+
+		final Element svgRoot = document.createElementNS(SVG, "svg");
+		body.appendChild(svgRoot);
+
+		populateSvg(svgRoot);
+		return document;
 	}
 }

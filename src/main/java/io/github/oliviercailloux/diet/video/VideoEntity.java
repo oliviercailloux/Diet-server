@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 @NamedQuery(name = "replies", query = "SELECT a.video FROM VideoEntity v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
 @NamedQuery(name = "starters", query = "SELECT v FROM VideoEntity v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM VideoEntity v WHERE v.fileId = :fileId")
+@NamedQuery(name = "getWithCounters", query = "SELECT v FROM VideoEntity v LEFT JOIN FETCH v.counters LEFT JOIN FETCH v.counteredBy WHERE v.fileId = :fileId")
 @NamedQuery(name = "all", query = "SELECT v FROM VideoEntity v LEFT JOIN FETCH v.counters LEFT JOIN FETCH v.counteredBy ORDER BY v.fileId")
 class VideoEntity {
 	@SuppressWarnings("unused")

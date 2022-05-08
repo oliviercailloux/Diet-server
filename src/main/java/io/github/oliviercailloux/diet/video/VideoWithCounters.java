@@ -2,7 +2,8 @@ package io.github.oliviercailloux.diet.video;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import java.util.Comparator;
 import java.util.stream.Stream;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
@@ -18,11 +19,26 @@ public class VideoWithCounters extends Video {
 		checkArgument(video.hasCounters());
 	}
 
-	private Stream<VideoEntity> getCountersStream() {
+	private Stream<VideoEntity> countersStream() {
 		return video().counters().stream().map(ArguerAttack::getCounters);
 	}
 
-	public ImmutableSet<Integer> getCountersFileIds() {
-		return getCountersStream().map(VideoEntity::getFileId).sorted().collect(ImmutableSet.toImmutableSet());
+	private Stream<VideoEntity> counteredByStream() {
+		return video().counteredBy().stream().map(ArguerAttack::getVideo);
+	}
+
+	public ImmutableSortedSet<Video> counters() {
+		return countersStream().map(Video::fromPersistent)
+				.collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.comparing(Video::getFileId)));
+	}
+
+	public ImmutableSortedSet<Integer> getCountersFileIds() {
+		return countersStream().map(VideoEntity::getFileId).sorted()
+				.collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.naturalOrder()));
+	}
+
+	public ImmutableSortedSet<Video> counteredBy() {
+		return counteredByStream().map(Video::fromPersistent)
+				.collect(ImmutableSortedSet.toImmutableSortedSet(Comparator.comparing(Video::getFileId)));
 	}
 }

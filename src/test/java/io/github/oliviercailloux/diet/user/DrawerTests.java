@@ -1,6 +1,6 @@
 package io.github.oliviercailloux.diet.user;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import io.github.oliviercailloux.diet.draw.Drawer;
 import io.github.oliviercailloux.diet.video.VideoFactory;
@@ -26,11 +26,11 @@ public class DrawerTests {
 	void testDraw() throws Exception {
 		final Drawer drawer = Drawer.drawer(factory.getAll());
 		final Document doc = drawer.html();
-//		SchemaHelper.schemaHelper().asSchema()
-		final String string = DomHelper.domHelper().toString(doc);
-		Files.writeString(Path.of("svg.xhtml"), string);
-		LOGGER.info("Produced: {}.", string);
-		assertFalse(true);
+
+		final String html = DomHelper.domHelper().toString(doc);
+		Files.writeString(Path.of("svg.xhtml"), html);
+		LOGGER.info("Produced: {}.", html);
+		assertTrue(html.contains("svg"));
 	}
 
 }
