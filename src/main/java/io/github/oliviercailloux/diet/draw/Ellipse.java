@@ -12,6 +12,13 @@ class Ellipse {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Ellipse.class);
 
 	static Ellipse optimal(double semiHeight) {
+		/*
+		 * Consider an ellipse of width 2a and height 2b. The inscribed rectangle with
+		 * max area and crossing the foci has its upper right corner at (a cos π/4, b
+		 * sin π/4) = (√2 a / 2, √2 b / 2) with, I think, a = √2 b. Its width is √2 a =
+		 * 2 b and height is √2 b = a.
+		 */
+
 		return ab(new SvgSize(semiHeight * Math.sqrt(2d), semiHeight));
 	}
 
