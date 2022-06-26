@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" height="540.0" id="video-graph" width="1209.1525958289963">
+    <clipPath id="video-clip">
+        <ellipse rx="83.8528137423857" ry="59.0"/>
+    </clipPath>
+    <line stroke="black" x1="530.3300858899106" x2="381.8376618407357" y1="270.0" y2="375.0"/>
+    <line stroke="black" x1="530.3300858899106" x2="530.3300858899106" y1="270.0" y2="480.0"/>
+    <line stroke="black" x1="530.3300858899106" x2="678.8225099390856" y1="270.0" y2="375.0"/>
+    <line stroke="black" x1="975.8073580374356" x2="827.3149339882607" y1="60.0" y2="270.0"/>
+    <line stroke="black" x1="975.8073580374356" x2="975.8073580374356" y1="60.0" y2="375.0"/>
+    <line stroke="black" x1="975.8073580374356" x2="1124.2997820866105" y1="60.0" y2="270.0"/>
+    <line stroke="black" x1="975.8073580374356" x2="1124.2997820866105" y1="60.0" y2="480.0"/>
+    <line stroke="black" x1="233.3452377915607" x2="381.8376618407357" y1="270.0" y2="375.0"/>
+    <g transform="translate(530.3300858899106, 270.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Climat et biodiversité</span>
+                <span class="video-description-id">1</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/001.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(975.8073580374356, 60.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Santé vegan</span>
+                <span class="video-description-id">2</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/002.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(233.3452377915607, 270.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Réduction pour écologie</span>
+                <span class="video-description-id">3</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/003.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(381.8376618407357, 165.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Entente</span>
+                <span class="video-description-id">4</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/004.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(678.8225099390856, 165.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Stratégie</span>
+                <span class="video-description-id">5</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/005.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(530.3300858899106, 60.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Effort écologique</span>
+                <span class="video-description-id">6</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/006.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(84.8528137423857, 375.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Consolidation</span>
+                <span class="video-description-id">7</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/007.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(84.8528137423857, 165.0)">
+        <ellipse class="side-VEGAN reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Durable, éthique et gout</span>
+                <span class="video-description-id">8</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/008.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(381.8376618407357, 375.0)">
+        <ellipse class="side-MEAT unreachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Élevage moindre mal que transport</span>
+                <span class="video-description-id">9</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/009.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(530.3300858899106, 480.0)">
+        <ellipse class="side-MEAT unreachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Élevage encourage biodiversité</span>
+                <span class="video-description-id">10</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/010.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(678.8225099390856, 375.0)">
+        <ellipse class="side-MEAT unreachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Prairies bonnes pour GES</span>
+                <span class="video-description-id">11</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/011.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(827.3149339882607, 270.0)">
+        <ellipse class="side-MEAT unreachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Santé viande</span>
+                <span class="video-description-id">12</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/012.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(975.8073580374356, 375.0)">
+        <ellipse class="side-MEAT unreachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Viande pour ados</span>
+                <span class="video-description-id">13</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/013.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(1124.2997820866105, 270.0)">
+        <ellipse class="side-MEAT unreachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Liberté de choix aux enfants</span>
+                <span class="video-description-id">14</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/014.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(1124.2997820866105, 480.0)">
+        <ellipse class="side-MEAT unreachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">B12 ou mauvais traitement</span>
+                <span class="video-description-id">15</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/015.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+    <g transform="translate(233.3452377915607, 60.0)">
+        <ellipse class="side-MEAT reachable" rx="84.8528137423857" ry="60.0"/>
+        <foreignObject class="video-description-parent" height="84.85281374238569" width="120.0" x="-60.0" y="-42.426406871192846">
+            <p xmlns="http://www.w3.org/1999/xhtml" class="video-description">
+                <span class="video-description-main">Imposition de classe</span>
+                <span class="video-description-id">16</span>
+            </p>
+        </foreignObject>
+        <foreignObject class="foreign-video" height="120.0" width="213.33333333333331" x="-106.66666666666666" y="-60.0">
+            <video xmlns="http://www.w3.org/1999/xhtml" height="100%" hidden="hidden" width="100%">
+                <source src="https://www.lamsade.dauphine.fr/~ocailloux/Diet/016.mp4"/>
+            </video>
+        </foreignObject>
+        <use height="17.573593128807154" href="#play" width="17.573593128807154" x="-8.786796564403577" y="42.426406871192846"/>
+    </g>
+</svg>
