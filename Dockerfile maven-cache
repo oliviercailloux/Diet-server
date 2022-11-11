@@ -1,11 +1,15 @@
 # syntax=docker/dockerfile:1
 FROM ghcr.io/oliviercailloux/djm
 WORKDIR /tmp/
-COPY . .
+#Do NOT copy: we do not want to copy secrets into this public image.
+RUN apt-get update && apt-get -qy --no-install-recommends install git
+RUN git clone --depth 1 https://github.com/oliviercailloux/Diet-server.git
+WORKDIR Diet-server/
 ENV MAVEN_OPTS="-Djansi.force=true"
 ENV MAVEN_CLI_OPTS="-Dstyle.color=always -B"
 #Does not really download everything: running mvn test afterwards still requires new plugins
 #RUN mvn $MAVEN_CLI_OPTS org.apache.maven.plugins:maven-dependency-plugin:3.3.0:resolve org.apache.maven.plugins:maven-dependency-plugin:3.3.0:resolve-plugins
-RUN mvn $MAVEN_CLI_OPTS package
+#No DB available so tests would fail
+RUN mvn $MAVEN_CLI_OPTS -DskipTests package
 CMD ["jshell"]
 
