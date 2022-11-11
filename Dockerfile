@@ -6,4 +6,4 @@ ENV MAVEN_OPTS="-Djansi.force=true"
 ENV MAVEN_CLI_OPTS="-Dstyle.color=always -B"
 RUN mvn $MAVEN_CLI_OPTS package
 CMD ["java", "-jar", "target/quarkus-app/quarkus-run.jar"]
-EXPOSE 80
+EXPOSE 10000
