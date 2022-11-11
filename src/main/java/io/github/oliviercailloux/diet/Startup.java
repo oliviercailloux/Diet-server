@@ -9,13 +9,15 @@ import io.github.oliviercailloux.diet.user.UserFactory;
 import io.github.oliviercailloux.diet.user.UserWithEvents;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.Side;
-import io.github.oliviercailloux.diet.video.VideoFactory;
 import io.github.oliviercailloux.diet.video.VideoAppendable;
+import io.github.oliviercailloux.diet.video.VideoFactory;
 import io.quarkus.runtime.StartupEvent;
+import java.net.URI;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +25,12 @@ import org.slf4j.LoggerFactory;
 public class Startup {
 	@SuppressWarnings("unused")
 	private static final Logger LOGGER = LoggerFactory.getLogger(Startup.class);
+
+	@ConfigProperty(name = "quarkus.http.port")
+	int port;
+
+	@ConfigProperty(name = "quarkus.datasource.jdbc.url")
+	URI url;
 
 	@Inject
 	VideoFactory videoFactory;
@@ -33,6 +41,8 @@ public class Startup {
 	@Transactional
 	public void loadAtStartup(@Observes StartupEvent evt) {
 		LOGGER.info("Loading at startup, considering {}.", evt);
+		checkState(url.getUserInfo() == null);
+		LOGGER.info("Connected to {}.", url);
 		loadVideos();
 		loadUsers();
 	}
