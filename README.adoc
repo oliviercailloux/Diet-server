@@ -4,3 +4,15 @@
 :repository: Diet-server
 
 A JAX-RS server for the Diet project. Based on my https://github.com/oliviercailloux/Sample-Quarkus-Heroku[Sample Quarkus on Heroku].
+
+== Local Docker build
+* `docker build -t oliviercailloux/diet-server-local -f "Dockerfile local" .`
+* `docker run --name diet-server -p 8080:8080 oliviercailloux/diet-server-local`
+* install procps less
+* `docker exec -it diet-server bash`
+* `jcmd 1 VM.native_memory summary scale=MB | less`
+
+== Release
+* `docker build -t ghcr.io/oliviercailloux/diet-server-maven-cache -f "Dockerfile maven-cache" .`
+* `cat "GitHub token" | docker login ghcr.io --username oliviercailloux --password-stdin`
+* `docker push ghcr.io/oliviercailloux/diet-server-maven-cache`
