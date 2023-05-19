@@ -3,9 +3,7 @@ package io.github.oliviercailloux.diet.video;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.collect.ImmutableSet;
-import java.util.stream.Stream;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 
 public class VideoAppendable extends VideoWithCounters {
 	static VideoAppendable fromPersistent(EntityManager em, VideoEntity video) {

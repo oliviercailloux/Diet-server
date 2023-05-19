@@ -4,9 +4,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.VerifyException;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
 import java.util.Comparator;
-import javax.persistence.EntityManager;
 
 public class ReadEvent {
 	public static final Comparator<ReadEvent> COMPARATOR = Comparator.comparing(ReadEvent::creation)

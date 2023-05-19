@@ -1,11 +1,11 @@
 package io.github.oliviercailloux.diet.user;
 
 import io.github.oliviercailloux.diet.user.ReadEventJudgment.ReadEventJudgmentSerializer;
+import jakarta.json.bind.annotation.JsonbTypeSerializer;
+import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.stream.JsonGenerator;
+import jakarta.persistence.EntityManager;
 import java.time.Instant;
-import javax.json.bind.annotation.JsonbTypeSerializer;
-import javax.json.bind.serializer.SerializationContext;
-import javax.json.stream.JsonGenerator;
-import javax.persistence.EntityManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

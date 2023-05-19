@@ -1,9 +1,9 @@
 package io.github.oliviercailloux.diet.utils;
 
 import io.github.oliviercailloux.diet.user.Login;
-import javax.enterprise.context.ApplicationScoped;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

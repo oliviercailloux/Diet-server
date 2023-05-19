@@ -3,9 +3,9 @@ package io.github.oliviercailloux.diet.video;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.ImmutableSortedSet;
+import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import java.util.Comparator;
 import java.util.stream.Stream;
-import javax.json.bind.annotation.JsonbPropertyOrder;
 
 @JsonbPropertyOrder({ "fileId", "url", "description", "side", "countersFileIds" })
 public class VideoWithCounters extends Video {
