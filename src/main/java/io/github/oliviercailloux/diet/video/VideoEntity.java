@@ -6,28 +6,27 @@ import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.MoreObjects;
 import io.github.oliviercailloux.diet.utils.Utils;
-import jakarta.json.bind.annotation.JsonbTransient;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Persistence;
-import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.text.NumberFormat;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Persistence;
+import javax.validation.constraints.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Entity
 @NamedQuery(name = "latest file id", query = "SELECT MAX(v.fileId) FROM VideoEntity v")
-//@NamedQuery(name = "replies", query = "SELECT a.video, a, a.counters FROM ArguerAttack a RIGHT JOIN FETCH a.counters v WHERE v IN (:videos)")
-@NamedQuery(name = "replies", query = "SELECT a.video FROM ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
+@NamedQuery(name = "replies", query = "SELECT a.video FROM VideoEntity v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
 @NamedQuery(name = "starters", query = "SELECT v FROM VideoEntity v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM VideoEntity v WHERE v.fileId = :fileId")
 @NamedQuery(name = "getWithCounters", query = "SELECT v FROM VideoEntity v LEFT JOIN FETCH v.counters LEFT JOIN FETCH v.counteredBy WHERE v.fileId = :fileId")

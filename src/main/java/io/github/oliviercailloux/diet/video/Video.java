@@ -4,9 +4,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
-import jakarta.json.bind.annotation.JsonbPropertyOrder;
 import java.net.URI;
 import java.util.Objects;
+import javax.json.bind.annotation.JsonbPropertyOrder;
 
 @JsonbPropertyOrder({ "fileId", "url", "description", "side" })
 public class Video {

@@ -2,8 +2,8 @@ package io.github.oliviercailloux.diet.user;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import jakarta.persistence.Entity;
 import java.time.Instant;
+import javax.persistence.Entity;
 
 @Entity
 class EventAccepted extends Event {

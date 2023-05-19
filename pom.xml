@@ -1,16 +1,14 @@
 <?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.oliviercailloux</groupId>
 	<artifactId>diet</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<properties>
 		<maven.compiler.parameters>true</maven.compiler.parameters>
-		<quarkus.platform.version>3.0.3.Final</quarkus.platform.version>
-		<maven.compiler.release>17</maven.compiler.release>
+		<quarkus.platform.version>2.14.1.Final</quarkus.platform.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -48,8 +46,7 @@
 				<configuration>
 					<systemPropertyVariables>
 						<!-- https://github.com/eclipse-m2e/m2e-core/issues/174 -->
-						<java.util.logging.manager>
-							org.jboss.logmanager.LogManager</java.util.logging.manager>
+						<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
 					</systemPropertyVariables>
 				</configuration>
 			</plugin>
@@ -80,10 +77,8 @@
 								</goals>
 								<configuration>
 									<systemPropertyVariables>
-										<native.image.path>
-											${project.build.directory}/${project.build.finalName}-runner</native.image.path>
-										<java.util.logging.manager>
-											org.jboss.logmanager.LogManager</java.util.logging.manager>
+										<native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+										<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
 									</systemPropertyVariables>
 								</configuration>
 							</execution>

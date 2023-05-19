@@ -7,12 +7,12 @@ import io.github.oliviercailloux.diet.user.Login;
 import io.github.oliviercailloux.jaris.collections.ImmutableCompleteMap;
 import io.github.oliviercailloux.jaris.credentials.CredentialsReader;
 import io.github.oliviercailloux.jaris.credentials.CredentialsReader.ClassicalCredentials;
-import jakarta.ws.rs.client.ClientRequestContext;
-import jakarta.ws.rs.client.ClientRequestFilter;
-import jakarta.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.core.HttpHeaders;
 
 public class Authenticator implements ClientRequestFilter {
 

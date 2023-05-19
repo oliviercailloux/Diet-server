@@ -10,11 +10,11 @@ import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 import io.github.oliviercailloux.diet.video.ReadEventSeen;
 import io.github.oliviercailloux.diet.video.Video;
-import io.github.oliviercailloux.diet.video.VideoAppendable;
 import io.github.oliviercailloux.diet.video.VideoFactory;
-import jakarta.json.bind.annotation.JsonbPropertyOrder;
-import jakarta.persistence.EntityManager;
+import io.github.oliviercailloux.diet.video.VideoAppendable;
 import java.util.stream.Stream;
+import javax.json.bind.annotation.JsonbPropertyOrder;
+import javax.persistence.EntityManager;
 
 /**
  * A user with role User, thus, whose events start with an accepted event.

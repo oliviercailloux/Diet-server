@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import io.github.oliviercailloux.diet.video.Video;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
+import javax.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest

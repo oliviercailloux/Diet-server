@@ -4,11 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.common.collect.ImmutableSet;
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.core.Response;
 import java.net.URI;
+import javax.inject.Inject;
+import javax.transaction.Transactional;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

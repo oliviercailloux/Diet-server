@@ -1,7 +1,7 @@
 package io.github.oliviercailloux.diet.user;
 
-import jakarta.json.bind.annotation.JsonbTypeSerializer;
 import java.time.Instant;
+import javax.json.bind.annotation.JsonbTypeSerializer;
 
 @JsonbTypeSerializer(ReadEventSerializer.class)
 public class ReadEventAccepted extends ReadEvent {
