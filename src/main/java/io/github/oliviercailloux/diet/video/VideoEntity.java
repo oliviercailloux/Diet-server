@@ -26,7 +26,8 @@ import org.slf4j.LoggerFactory;
 
 @Entity
 @NamedQuery(name = "latest file id", query = "SELECT MAX(v.fileId) FROM VideoEntity v")
-@NamedQuery(name = "replies", query = "SELECT a.video FROM VideoEntity v, ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
+//@NamedQuery(name = "replies", query = "SELECT a.video, a, a.counters FROM ArguerAttack a RIGHT JOIN FETCH a.counters v WHERE v IN (:videos)")
+@NamedQuery(name = "replies", query = "SELECT a.video FROM ArguerAttack a JOIN a.counters v WHERE v IN (:videos)")
 @NamedQuery(name = "starters", query = "SELECT v FROM VideoEntity v WHERE v.counters IS EMPTY")
 @NamedQuery(name = "get", query = "SELECT v FROM VideoEntity v WHERE v.fileId = :fileId")
 @NamedQuery(name = "getWithCounters", query = "SELECT v FROM VideoEntity v LEFT JOIN FETCH v.counters LEFT JOIN FETCH v.counteredBy WHERE v.fileId = :fileId")
