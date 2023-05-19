@@ -1,7 +1,6 @@
-GitHub token
 svg.xhtml
 
-#Maven
+# Maven
 target/
 
 # Eclipse
@@ -10,6 +9,6 @@ target/
 .settings/
 bin/
 
-#Quarkus
+# Quarkus
 .env
 
