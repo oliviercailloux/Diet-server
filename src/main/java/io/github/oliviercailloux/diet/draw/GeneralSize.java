@@ -2,6 +2,7 @@ package io.github.oliviercailloux.diet.draw;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+/** Possibly negative. */
 record GeneralSize(double x, double y) implements MathSize {
 
 	public static GeneralSize square(double length) {
